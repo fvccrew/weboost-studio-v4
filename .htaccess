@@ -1,0 +1,43 @@
+# ═══ Weboost Studio — configuration Apache (OVH) ═══
+
+# ── HTTPS et www forcés : une seule adresse canonique ──
+RewriteEngine On
+RewriteCond %{HTTPS} off
+RewriteRule ^(.*)$ https://www.weboost-studio.fr/$1 [R=301,L]
+RewriteCond %{HTTP_HOST} !^www\. [NC]
+RewriteRule ^(.*)$ https://www.weboost-studio.fr/$1 [R=301,L]
+
+# ── Anciennes URL : redirections une-pour-une, jamais vers l'accueil ──
+# Rediriger en masse vers / est traité par Google comme une page introuvable :
+# le référencement acquis est perdu au lieu d'être transféré.
+Redirect 301 /zones.html /developpeur-web-var.html
+Redirect 301 /service-ads.html /
+Redirect 301 /creation-site-internet-cavalaire-sur-mer.html /creation-site-internet-cavalaire.html
+
+# ── Compression ──
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css application/javascript image/svg+xml application/json text/xml
+</IfModule>
+
+# ── Cache : un an sur les ressources versionnées, rien sur le HTML ──
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresByType image/webp "access plus 1 year"
+  ExpiresByType video/mp4 "access plus 1 year"
+  ExpiresByType video/webm "access plus 1 year"
+  ExpiresByType font/woff2 "access plus 1 year"
+  ExpiresByType application/javascript "access plus 1 year"
+  ExpiresByType text/css "access plus 1 year"
+  ExpiresByType text/html "access plus 0 seconds"
+</IfModule>
+<IfModule mod_headers.c>
+  <FilesMatch "\.(webp|woff2|js|css|mp4|webm)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  Header set X-Content-Type-Options "nosniff"
+  Header set Referrer-Policy "strict-origin-when-cross-origin"
+  Header set X-Frame-Options "SAMEORIGIN"
+</IfModule>
+
+# ── Pages d'erreur ──
+ErrorDocument 404 /index.html

@@ -1,0 +1,2311 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#050505">
+<link rel="canonical" href="https://www.weboost-studio.fr/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Développeur web Golfe de Saint-Tropez — Weboost Studio">
+<meta property="og:description" content="Sites vitrines et référencement local pour les entreprises du Var. En ligne en 7 jours, devis gratuit sous 24 h.">
+<meta property="og:url" content="https://www.weboost-studio.fr/">
+<meta property="og:image" content="https://www.weboost-studio.fr/assets/img/hero-golfe-1100.webp">
+<meta property="og:locale" content="fr_FR">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="icon" href="favicon.ico" sizes="32x32">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<title>Développeur web Golfe de Saint-Tropez — Weboost Studio</title>
+<meta name="description" content="Développeur web indépendant dans le Var. Sites vitrines, refontes et référencement local pour les commerces du Golfe de Saint-Tropez. Hébergé en France, sans cookie tiers.">
+
+<link rel="preload" href="assets/img/hero-golfe-1100.webp" as="image" fetchpriority="high">
+<link rel="preload" href="assets/fonts/space-grotesk-700.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/inter-300.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+/* Polices auto-hébergées, réduites aux 125 glyphes du site. Aucune requête
+   vers un tiers. font-display:swap affiche le texte immédiatement. */
+@font-face{font-family:'Space Grotesk';font-style:normal;font-weight:500;font-display:swap;src:url(assets/fonts/space-grotesk-500.woff2) format('woff2')}
+@font-face{font-family:'Space Grotesk';font-style:normal;font-weight:700;font-display:swap;src:url(assets/fonts/space-grotesk-700.woff2) format('woff2')}
+@font-face{font-family:'Inter';font-style:normal;font-weight:300;font-display:swap;src:url(assets/fonts/inter-300.woff2) format('woff2')}
+@font-face{font-family:'Inter';font-style:normal;font-weight:400;font-display:swap;src:url(assets/fonts/inter-400.woff2) format('woff2')}
+@font-face{font-family:'IBM Plex Mono';font-style:normal;font-weight:400;font-display:swap;src:url(assets/fonts/ibm-plex-mono-400.woff2) format('woff2')}
+</style>
+
+<style>
+/* ═══════════════ TOKENS ═══════════════ */
+:root{
+  --void:#08080A; --pure:#fff;
+  /* Accent : laiton chaud plutôt que néon cyan. Le chaud sur la photo
+     bleue nocturne fait « artisanat premium » là où le cyan faisait
+     « science-fiction ». Pour revenir au bleu : --cyan:#C9A87C. */
+  --cyan:#C9A87C; --blue:#4A6A88;
+  --grey:#7A8189; --grey-2:#AEB5BC; --line:rgba(255,255,255,.10);
+  --display:'Space Grotesk',system-ui,sans-serif;
+  --body:'Inter',system-ui,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,monospace;
+  --ease-cine:cubic-bezier(.16,1,.3,1);
+  --pad:clamp(20px,4.5vw,80px);
+}
+*,*::before,*::after{ box-sizing:border-box; margin:0; padding:0; }
+body{ background:var(--void); color:var(--pure); font-family:var(--body);
+      -webkit-font-smoothing:antialiased;
+      /* clip, PAS hidden : hidden ferait du body un conteneur de défilement
+         et casserait position:sticky de la scène latérale. */
+      overflow-x:clip; }
+::selection{ background:var(--cyan); color:#1A1206; }
+
+/* ═══════════════ NAVIGATION ═══════════════
+   Absente sur le hero — il doit rester entier — puis elle descend dès qu'on
+   quitte la première image, et se rétracte quand on redescend. */
+.nav{
+  position:fixed; top:0; left:0; right:0; z-index:30;
+  display:flex; align-items:center; gap:clamp(16px,3vw,44px);
+  padding:14px var(--pad);
+  background:rgba(8,8,10,.82); backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line);
+  transform:translateY(-100%);
+  transition:transform .6s var(--ease-cine);
+}
+.nav.is-on{ transform:none; }
+.nav__brand{
+  font-family:var(--display); font-weight:700; font-size:.95rem;
+  letter-spacing:-.02em; text-decoration:none; color:var(--pure); white-space:nowrap;
+}
+.nav__brand i{ font-style:normal; color:var(--grey); }
+.nav__links{ display:flex; gap:clamp(14px,2.2vw,30px); margin-left:auto; }
+.nav__links a{
+  font-family:var(--mono); font-size:.66rem; letter-spacing:.08em;
+  text-transform:uppercase; color:var(--grey-2); text-decoration:none;
+  padding:6px 0; position:relative; transition:color .35s;
+}
+.nav__links a::after{
+  content:""; position:absolute; left:0; right:0; bottom:0; height:1px;
+  background:var(--cyan); transform:scaleX(0); transform-origin:0 50%;
+  transition:transform .5s var(--ease-cine);
+}
+.nav__links a:hover{ color:var(--pure); }
+.nav__links a:hover::after,.nav__links a.is-here::after{ transform:scaleX(1); }
+.nav__links a.is-here{ color:var(--pure); }
+.nav__tel{
+  display:inline-flex; align-items:center; gap:8px; white-space:nowrap;
+  padding:9px 18px; border-radius:999px; background:var(--cyan); color:#1A1206;
+  font-family:var(--body); font-weight:500; font-size:.8rem; text-decoration:none;
+  transition:transform .5s var(--ease-cine), box-shadow .5s var(--ease-cine);
+}
+.nav__tel span{ font-size:.6em; }
+.nav__tel:hover{ transform:translateY(-1px); box-shadow:0 8px 26px rgba(201,168,124,.3); }
+.nav a:focus-visible,.nav button:focus-visible{ outline:2px solid var(--cyan); outline-offset:3px; }
+
+/* ── Menu au doigt ── */
+.nav__burger{
+  display:none; width:38px; height:32px; margin-left:auto; padding:0;
+  border:1px solid var(--line); border-radius:9px; background:transparent; cursor:pointer;
+  flex-direction:column; align-items:center; justify-content:center; gap:5px;
+}
+.nav__burger span{ display:block; width:15px; height:1px; background:var(--pure);
+  transition:transform .4s var(--ease-cine), opacity .3s; }
+.nav__burger[aria-expanded="true"] span:first-child{ transform:translateY(3px) rotate(45deg); }
+.nav__burger[aria-expanded="true"] span:last-child{ transform:translateY(-3px) rotate(-45deg); }
+
+.navmenu{
+  position:fixed; inset:0; z-index:29; display:grid; align-content:center;
+  gap:6px; padding:0 var(--pad); background:rgba(8,8,10,.97);
+  backdrop-filter:blur(20px);
+  opacity:0; transition:opacity .4s var(--ease-cine);
+}
+.navmenu.is-on{ opacity:1; }
+.navmenu[hidden]{ display:none !important; }
+.navmenu a{
+  padding:14px 0; border-bottom:1px solid var(--line); text-decoration:none;
+  font-family:var(--display); font-weight:500; font-size:1.6rem;
+  letter-spacing:-.03em; color:var(--pure);
+}
+.navmenu__tel{ color:var(--cyan) !important; border-bottom:0 !important; }
+
+@media (max-width:900px){
+  .nav__links,.nav__tel{ display:none; }
+  .nav__burger{ display:flex; }
+}
+@media (prefers-reduced-motion:reduce){
+  .nav{ transition:none; }
+}
+
+/* ═══════════════ HERO ═══════════════ */
+.hero{
+  position:relative; min-height:100svh;
+  display:grid; grid-template-rows:auto 1fr auto;
+  padding:clamp(20px,3.2vw,38px) var(--pad) 0;
+  overflow:hidden; isolation:isolate;
+}
+
+/* z-3 image · z-2 champ · z-1 voile
+   Le voile passe AU-DESSUS du champ : les traînées sont assombries
+   elles aussi côté gauche, sinon elles traversent le titre. */
+.hero__bg{
+  position:absolute; inset:-3%; z-index:-3;
+  background:url("assets/img/hero-golfe-1100.webp") 42% 58%/cover no-repeat;
+  transform:scale(1.05); will-change:transform;
+  /* Peinte dès le premier rendu, sous le voile opaque du preloader : le
+     navigateur enregistre ainsi son plus grand élément visible tôt, au lieu
+     d'attendre la fin de l'intro. Le visiteur ne la voit pas avant. */
+  opacity:1;
+}
+.hero__field{ position:absolute; inset:0; z-index:-2; width:100%; height:100%;
+              display:block; opacity:0; }
+
+/* Voile latéral : dense à gauche pour le texte, nul à droite pour
+   laisser le clocher respirer. C'est le contraire d'un scrim centré. */
+.hero__veil{
+  position:absolute; inset:0; z-index:-1; pointer-events:none;
+  transition:opacity .8s var(--ease-cine);
+  background:
+    linear-gradient(96deg,
+      rgba(5,5,5,.96) 0%, rgba(5,5,5,.92) 30%, rgba(5,5,5,.60) 54%,
+      rgba(5,5,5,.18) 70%, transparent 86%),
+    linear-gradient(180deg,
+      rgba(5,5,5,.45) 0%, transparent 16%,
+      transparent 70%, rgba(5,5,5,.72) 92%, var(--void) 100%),
+    radial-gradient(135% 105% at 45% 50%, transparent 52%, rgba(0,0,0,.42) 100%);
+}
+
+/* ─── Barre haute ─── */
+.hero__top{ display:flex; align-items:center; justify-content:space-between;
+            gap:20px; position:relative; z-index:2; }
+.brand{ font-family:var(--display); font-weight:700; font-size:1rem;
+        letter-spacing:-.02em; text-decoration:none; color:var(--pure); }
+.brand i{ font-style:normal; color:var(--grey); }
+.hero__place{ display:flex; align-items:center; gap:9px; font-family:var(--mono);
+              font-size:.68rem; letter-spacing:.1em; text-transform:uppercase; color:var(--grey-2); }
+.hero__place::before{ content:""; width:6px; height:6px; border-radius:50%;
+  background:var(--cyan); }
+
+/* ─── Bloc texte, colonne de gauche ─── */
+.hero__body{
+  position:relative; z-index:2;
+  display:grid; align-content:center;
+  /* Décalé vers le bas : le titre arrivait trop près de la barre de marque. */
+  padding-top:clamp(40px,9vh,110px); justify-items:start;
+  max-width:min(64%, 900px);
+  padding-bottom:clamp(30px,7vh,90px);
+}
+
+.hero__eyebrow{
+  display:flex; align-items:center; gap:14px;
+  font-family:var(--mono); font-size:.7rem; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--grey-2);
+  margin-bottom:clamp(18px,2.6vh,30px);
+}
+.hero__eyebrow::before{
+  content:""; width:36px; height:1px; background:var(--cyan);
+  
+}
+
+.hero__title{
+  font-family:var(--display); font-weight:700;
+  font-size:clamp(2.4rem, min(7.6vw, 11vh), 8.6rem);
+  line-height:1; letter-spacing:-.035em;
+  text-transform:uppercase;
+  text-shadow:0 2px 40px rgba(0,0,0,.7);
+}
+/* Capitales : décommente si tu préfères
+.hero__title{ text-transform:uppercase; letter-spacing:-.03em; } */
+
+.line{ display:block; overflow:hidden; padding-bottom:.1em; }
+/* Mot d'accent plein */
+.t-acc{ color:var(--cyan); }
+/* Lettrage évidé : contour seul, pour la ligne de commune */
+.t-out{
+  color:transparent;
+  -webkit-text-stroke:1.4px rgba(255,255,255,.82);
+  paint-order:stroke fill;
+}
+.line__in{ display:block; will-change:transform; }
+
+.hero__sub{
+  max-width:40ch; margin-top:clamp(20px,2.6vh,30px);
+  font-weight:300; font-size:clamp(1rem,1.22vw,1.16rem); line-height:1.68;
+  color:var(--grey-2);
+}
+.hero__sub b{ color:var(--pure); font-weight:400; }
+.hero__sub em{ font-style:normal; color:var(--cyan); }
+
+/* ─── Légende du clocher : dit ce qu'on regarde et pourquoi ─── */
+.landmark{
+  position:absolute; z-index:2;
+  right:var(--pad); top:52%; transform:translateY(-50%);
+  display:flex; align-items:center; gap:14px;
+  writing-mode:vertical-rl;
+  font-family:var(--mono); font-size:.65rem; letter-spacing:.08em;
+  text-transform:uppercase; color:var(--grey-2);
+}
+.landmark::before{
+  content:""; width:1px; height:56px;
+  background:linear-gradient(180deg,transparent,var(--cyan),transparent);
+}
+.landmark b{ font-weight:400; color:var(--pure); }
+
+/* ─── Pied ─── */
+
+/* Sans bouton, c'est cette invite qui porte la descente */
+@keyframes drain{ 0%{transform:translateX(-100%)} 60%,100%{transform:translateX(100%)} }
+
+/* Peints d'emblée, masqués par le voile du preloader. L'entrée animée
+   reprend la main dès que le rideau se lève. */
+.js-fade{ opacity:1; }
+
+/* ═══════════════ RESPONSIVE ═══════════════ */
+@media (max-width:1100px){
+  .hero__body{ max-width:78%; }
+  .landmark{ display:none; }
+}
+@media (max-width:860px){
+  /* On GARDE la composition : titre à gauche, clocher à droite.
+     Le cadrage se recale sur le clocher (le portrait rogne les côtés)
+     et le voile reste latéral, pas vertical. */
+  .hero__bg{ background-position:76% 50%; }
+  .hero__veil{
+    background:
+      linear-gradient(102deg, rgba(5,5,5,.95) 0%, rgba(5,5,5,.86) 34%,
+                              rgba(5,5,5,.44) 62%, rgba(5,5,5,.10) 82%, transparent 96%),
+      linear-gradient(180deg, rgba(5,5,5,.5) 0%, transparent 20%,
+                              transparent 68%, rgba(5,5,5,.8) 92%, var(--void) 100%);
+  }
+  .hero__body{ max-width:none; }
+  .hero__title{ font-size:clamp(3.6rem,16vw,7rem); }
+  .hero__sub{ max-width:34ch; }
+    .hero__place span{ display:none; }
+}
+
+
+/* ═══════════════ BANDE VIDÉO ═══════════════
+   Respiration entre le texte du « à propos » et le formulaire. Décor, pas
+   contenu : muette, en boucle, sans contrôles. Elle n'est chargée que
+   lorsqu'elle approche de l'écran — d'où preload="none" et le montage des
+   sources en JavaScript. */
+.film{
+  position:relative; height:clamp(300px,58svh,560px); overflow:hidden;
+  border-top:1px solid var(--line); background:#08090B;
+}
+.film__media{ position:absolute; inset:0; }
+.film__v{
+  width:100%; height:100%; object-fit:cover; display:block;
+  opacity:0; transition:opacity 1.4s var(--ease-cine);
+}
+.film.is-on .film__v{ opacity:1; }
+/* Dégradés haut et bas : la bande se fond dans la page au lieu d'être un
+   rectangle rapporté. */
+.film::after{
+  content:""; position:absolute; inset:0; z-index:1; pointer-events:none;
+  background:
+    /* Voile allégé : le centre reste presque libre pour ne pas éteindre le
+       coucher de soleil. Seuls les bords fondent dans les sections voisines. */
+    linear-gradient(180deg, #08090B 0%, rgba(8,9,11,.14) 16%,
+                    rgba(8,9,11,.10) 60%, rgba(8,9,11,.45) 88%, #08090B 100%),
+    radial-gradient(130% 100% at 50% 45%, transparent 58%, rgba(0,0,0,.32) 100%);
+}
+.film__txt{
+  position:absolute; z-index:2; left:var(--pad); bottom:clamp(28px,6vh,58px);
+  max-width:min(90%, 46ch);
+}
+.film__ia{
+  position:absolute; z-index:2; right:var(--pad); bottom:clamp(28px,6vh,58px);
+  padding:6px 12px; border:1px solid rgba(255,255,255,.2); border-radius:999px;
+  background:rgba(8,9,11,.5); backdrop-filter:blur(6px);
+  font-family:var(--mono); font-size:.58rem; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--grey-2);
+}
+
+.film__lab{
+  display:flex; align-items:center; gap:12px; margin-bottom:12px;
+  text-shadow:0 1px 14px rgba(5,5,5,.9);
+  font-family:var(--mono); font-size:.64rem; letter-spacing:.14em;
+  text-transform:uppercase; color:var(--grey-2);
+}
+.film__lab::before{ content:""; width:32px; height:1px; background:var(--cyan); }
+.film__line{
+  font-family:var(--display); font-weight:700;
+  font-size:clamp(1.5rem,3.6vw,3rem); line-height:1.04; letter-spacing:-.04em;
+  text-shadow:0 2px 18px rgba(5,5,5,.95), 0 1px 40px rgba(5,5,5,.7);
+}
+@media (max-width:620px){
+  .film{ height:clamp(260px,46svh,360px); }
+  .film__line br{ display:none; }
+  /* Le badge remonte : en bas, il chevaucherait le texte */
+  .film__ia{ top:16px; bottom:auto; right:16px; font-size:.52rem; padding:5px 10px; }
+}
+@media (prefers-reduced-motion:reduce){
+  /* Sans mouvement : l'image de remplacement suffit, la vidéo ne charge pas. */
+  .film__v{ display:none; }
+  .film{ background:#08090B url(assets/img/golfe-poster.webp) center/cover; }
+}
+
+/* ═══════════════ CONTACT ═══════════════ */
+.contact{
+  position:relative;
+  padding:clamp(80px,13vh,170px) var(--pad) clamp(70px,11vh,130px);
+  background:
+    radial-gradient(72% 46% at 78% 6%, rgba(201,168,124,.05), transparent 64%),
+    var(--void);
+  border-top:1px solid var(--line);
+}
+.contact-grid{
+  display:grid; grid-template-columns:.85fr 1.15fr;
+  gap:clamp(38px,6vw,100px); align-items:start;
+}
+
+/* Coordonnées en grand : un artisan appelle, il ne remplit pas un formulaire */
+.big-link{
+  display:block; text-decoration:none; color:var(--pure);
+  font-family:var(--display); font-weight:700;
+  font-size:clamp(1.45rem,2.9vw,2.4rem); letter-spacing:-.035em; line-height:1.1;
+  transition:color .4s var(--ease-cine);
+}
+.big-link + .big-link{ margin-top:clamp(16px,2vw,24px); }
+.big-link:hover{ color:var(--cyan); }
+.big-link:focus-visible{ outline:2px solid var(--cyan); outline-offset:5px; }
+.big-link small{
+  display:block; margin-bottom:7px;
+  font-family:var(--mono); font-size:.64rem; font-weight:400;
+  letter-spacing:.1em; text-transform:uppercase; color:var(--grey);
+}
+.contact-side .spec{ margin-top:clamp(30px,4vh,50px); }
+
+/* ── Formulaire : des filets, pas des boîtes ── */
+.form{ display:grid; grid-template-columns:1fr 1fr; gap:clamp(18px,2vw,30px); }
+.field{ display:flex; flex-direction:column; }
+.field--full{ grid-column:1 / -1; }
+.field label{
+  font-family:var(--mono); font-size:.64rem; letter-spacing:.09em;
+  text-transform:uppercase; color:var(--grey); margin-bottom:9px;
+}
+.field input,.field textarea,/* Tant que rien n'est choisi, le libellé reste gris : le visiteur voit qu'il
+   doit se prononcer, au lieu de partir avec la première formule par défaut. */
+.field select:invalid{ color:var(--grey); }
+.field select{
+  width:100%; padding:10px 0; color:var(--pure);
+  font-family:var(--body); font-weight:300; font-size:1rem;
+  background:transparent; border:0; border-bottom:1px solid rgba(255,255,255,.18);
+  border-radius:0; transition:border-color .45s var(--ease-cine);
+}
+.field textarea{ resize:vertical; min-height:96px; line-height:1.6; }
+/* Tant que rien n'est choisi, le libellé reste gris : le visiteur voit qu'il
+   doit se prononcer, au lieu de partir avec la première formule par défaut. */
+.field select:invalid{ color:var(--grey); }
+.field select{ appearance:none; cursor:pointer; }
+.field select option{ background:#0B0C0E; color:var(--pure); }
+.field input:focus,.field textarea:focus,.field select:focus{
+  outline:none; border-bottom-color:var(--cyan);
+}
+.field input::placeholder,.field textarea::placeholder{ color:rgba(255,255,255,.24); }
+/* :user-invalid → l'erreur n'apparaît qu'après interaction, jamais au chargement */
+.field input:user-invalid,.field textarea:user-invalid{ border-bottom-color:#FF6B5A; }
+
+.consent{
+  grid-column:1 / -1; display:flex; align-items:flex-start; gap:12px;
+  font-weight:300; font-size:.84rem; line-height:1.6; color:var(--grey-2);
+}
+.consent input{ margin-top:.25em; width:15px; height:15px; accent-color:var(--cyan); flex:0 0 auto; }
+.consent a{ color:var(--pure); }
+
+.submit{
+  grid-column:1 / -1; justify-self:start;
+  display:inline-flex; align-items:center; gap:10px;
+  margin-top:6px; padding:16px 32px; border:0; border-radius:999px;
+  background:var(--cyan); color:#1A1206; cursor:pointer;
+  font-family:var(--body); font-weight:500; font-size:.9rem;
+  transition:transform .55s var(--ease-cine), box-shadow .55s var(--ease-cine);
+}
+.submit:hover{ transform:translateY(-2px); box-shadow:0 12px 34px rgba(201,168,124,.24); }
+.submit:focus-visible{ outline:2px solid var(--pure); outline-offset:4px; }
+.submit i{ font-style:normal; transition:transform .55s var(--ease-cine); }
+.submit:hover i{ transform:translateX(4px); }
+
+.hp{ position:absolute; left:-9999px; width:1px; height:1px; overflow:hidden; }
+.form-status{
+  grid-column:1 / -1; margin-top:12px; padding:14px 16px; border-radius:12px;
+  font-weight:300; font-size:.9rem; line-height:1.6;
+  border:1px solid var(--line); color:var(--grey-2);
+}
+.form-status[hidden]{ display:none !important; }
+.form-status.ok{ border-color:rgba(201,168,124,.5); color:var(--pure); }
+.form-status.ko{ border-color:rgba(224,112,95,.5); color:#E0705F; }
+.submit[disabled]{ opacity:.5; cursor:default; transform:none; }
+
+.form-done{
+  grid-column:1 / -1; margin-top:14px; padding:16px 18px;
+  border:1px dashed rgba(201,168,124,.45); border-radius:12px;
+  font-weight:300; font-size:.88rem; line-height:1.65; color:var(--grey-2);
+}
+.form-done[hidden]{ display:none !important; }
+.form-done b{ color:var(--pure); font-weight:400; }
+.form-done a{ color:var(--cyan); }
+.form-copy{
+  display:inline-block; margin-top:10px; padding:8px 15px; cursor:pointer;
+  border:1px solid var(--line); border-radius:999px; background:transparent;
+  font-family:var(--mono); font-size:.62rem; letter-spacing:.08em;
+  text-transform:uppercase; color:var(--grey-2);
+  transition:border-color .35s, color .35s;
+}
+.form-copy:hover{ border-color:var(--cyan); color:var(--cyan); }
+
+.form-note{
+  grid-column:1 / -1; margin-top:2px;
+  font-family:var(--mono); font-size:.66rem; letter-spacing:.05em; color:var(--grey);
+}
+
+/* ═══════════════ PIED DE PAGE ═══════════════ */
+.foot{
+  padding:clamp(50px,7vh,80px) var(--pad) clamp(28px,4vh,44px);
+  background:#08090B; border-top:1px solid var(--line);
+}
+.foot-grid{
+  display:grid; grid-template-columns:1.4fr repeat(3,1fr);
+  gap:clamp(28px,4vw,60px); padding-bottom:clamp(36px,5vh,60px);
+}
+.foot-brand{ font-family:var(--display); font-weight:700; font-size:1.15rem; letter-spacing:-.025em; }
+.foot-brand i{ font-style:normal; color:var(--grey); }
+.foot-brand p{
+  margin-top:12px; max-width:30ch; font-weight:300; font-size:.9rem;
+  line-height:1.65; color:var(--grey-2); font-family:var(--body); letter-spacing:0;
+}
+.foot h4{
+  font-family:var(--mono); font-size:.64rem; font-weight:400;
+  letter-spacing:.1em; text-transform:uppercase; color:var(--grey); margin-bottom:16px;
+}
+.foot ul{ list-style:none; display:grid; gap:10px; }
+.foot a{ color:var(--grey-2); text-decoration:none; font-size:.88rem; font-weight:300; transition:color .35s; }
+.foot a:hover{ color:var(--cyan); }
+.foot a:focus-visible{ outline:2px solid var(--cyan); outline-offset:3px; }
+
+.foot-bar{
+  display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between;
+  gap:12px 22px; padding-top:24px; border-top:1px solid var(--line);
+  font-family:var(--mono); font-size:.65rem; letter-spacing:.05em; color:var(--grey);
+}
+.foot-bar .sep{ color:rgba(255,255,255,.2); margin:0 8px; }
+.foot-bar em{ font-style:normal; color:var(--cyan); }
+
+@media (max-width:900px){
+  .contact-grid{ grid-template-columns:1fr; gap:44px; }
+  .form{ grid-template-columns:1fr; }
+  .foot-grid{ grid-template-columns:1fr 1fr; }
+  .foot-brand{ grid-column:1 / -1; }
+}
+
+
+
+/* ═══════════════ ACCESSIBILITÉ ═══════════════ */
+
+/* ═══════════════ SERVICES ═══════════════ */
+.services{
+  position:relative;
+  padding:clamp(80px,13vh,170px) var(--pad) clamp(70px,11vh,140px);
+  background:
+    radial-gradient(80% 50% at 88% 0%, rgba(74,106,136,.07), transparent 62%),
+    var(--void);
+  border-top:1px solid var(--line);
+}
+
+.sec-head{
+  display:grid; grid-template-columns:1.25fr .9fr;
+  gap:clamp(28px,5vw,90px); align-items:end;
+  margin-bottom:clamp(50px,8vh,100px);
+}
+.sec-eyebrow{
+  display:flex; align-items:center; gap:14px;
+  font-family:var(--mono); font-size:.7rem; letter-spacing:.11em;
+  text-transform:uppercase; color:var(--grey-2); margin-bottom:clamp(16px,2.4vh,26px);
+}
+.sec-eyebrow::before{ content:""; width:36px; height:1px; background:var(--cyan);
+   }
+.sec-title{
+  font-family:var(--display); font-weight:700;
+  font-size:clamp(2.3rem,6vw,5.4rem); line-height:.9; letter-spacing:-.045em;
+}
+.sec-title em{ font-style:normal; color:var(--grey); }
+.sec-intro{
+  font-weight:300; font-size:clamp(.96rem,1.1vw,1.06rem); line-height:1.72;
+  color:var(--grey-2); max-width:44ch; padding-bottom:.4em;
+}
+.sec-intro b{ color:var(--pure); font-weight:400; }
+
+/* ── La colonne de contours ──
+   Chaque service a son motif géométrique, tracé au trait quand la ligne
+   entre à l'écran : le même geste que les contours de communes ailleurs sur
+   le site. Aucun scroll détourné, aucune 3D. */
+.col{ margin-top:clamp(34px,5vh,66px); display:grid; }
+.cl{
+  display:grid; grid-template-columns:clamp(88px,13vw,180px) 1fr;
+  gap:clamp(20px,4vw,56px); align-items:center;
+  padding:clamp(28px,4.6vh,54px) 0; border-top:1px solid var(--line);
+}
+.cl:last-child{ border-bottom:1px solid var(--line); }
+.cl__fig{ width:100%; height:auto; color:var(--cyan); }
+.cl__fig path,.cl__fig rect,.cl__fig circle{
+  stroke:currentColor; stroke-width:1.4; fill:none;
+  stroke-linecap:round; stroke-linejoin:round;
+  vector-effect:non-scaling-stroke;
+}
+/* Armé par le script : chaque tracé connaît sa longueur, donc le dessin
+   dure le même temps quelle que soit sa complexité. */
+.cl.is-armed .cl__fig path,.cl.is-armed .cl__fig rect,.cl.is-armed .cl__fig circle{
+  stroke-dasharray:var(--l); stroke-dashoffset:var(--l);
+}
+.cl.is-armed.is-on .cl__fig path,
+.cl.is-armed.is-on .cl__fig rect,
+.cl.is-armed.is-on .cl__fig circle{
+  animation:dessine 1.5s var(--ease-cine) forwards;
+  animation-delay:calc(var(--i,0) * .1s);
+}
+@keyframes dessine{ to{ stroke-dashoffset:0 } }
+
+.cl__n{ font-family:var(--mono); font-size:.64rem; letter-spacing:.14em; color:var(--cyan); }
+.cl__t{
+  font-family:var(--display); font-weight:700; margin-top:9px;
+  font-size:clamp(1.5rem,3.2vw,2.5rem); letter-spacing:-.04em; line-height:1;
+}
+.cl__d{
+  max-width:58ch; margin-top:13px; font-weight:300;
+  font-size:clamp(.94rem,1.05vw,1rem); line-height:1.7; color:var(--grey-2);
+}
+.cl__d b{ color:var(--pure); font-weight:400; }
+.cl__tags{ display:flex; flex-wrap:wrap; gap:7px; list-style:none; margin-top:14px; }
+.cl__tags li{
+  font-family:var(--mono); font-size:.61rem; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--grey-2); padding:5px 11px; border:1px solid var(--line); border-radius:999px;
+}
+@media (max-width:700px){
+  .cl{ grid-template-columns:1fr; gap:16px; padding:26px 0; }
+  .cl__fig{ max-width:104px; }
+  .cl__tags{ gap:6px; }
+}
+
+.svc-note{
+  margin-top:clamp(28px,4vh,46px);
+  font-family:var(--mono); font-size:.7rem; letter-spacing:.05em; color:var(--grey);
+}
+.svc-note b{ color:var(--grey-2); font-weight:400; }
+
+/* ═══════════════ FORMULES ═══════════════ */
+.formules{
+  position:relative;
+  padding:clamp(80px,13vh,170px) var(--pad) clamp(70px,11vh,140px);
+  background:
+    radial-gradient(70% 45% at 10% 0%, rgba(201,168,124,.04), transparent 62%),
+    #08090B;
+  border-top:1px solid var(--line);
+}
+
+.plans{ display:grid; grid-template-columns:repeat(3,1fr); gap:clamp(14px,1.6vw,22px); }
+
+.plan{
+  position:relative; display:flex; flex-direction:column;
+  padding:clamp(26px,2.4vw,40px);
+  border:1px solid var(--line); border-radius:20px;
+  background:rgba(255,255,255,.018);
+  transition:border-color .5s var(--ease-cine), background .5s var(--ease-cine),
+             transform .7s var(--ease-cine);
+}
+.plan:hover{ border-color:rgba(255,255,255,.2); background:rgba(255,255,255,.035);
+             transform:translateY(-4px); }
+
+/* La plus demandée : signal réel, pas décoration */
+.plan--hi{ border-color:rgba(201,168,124,.38); background:rgba(201,168,124,.05); }
+.plan--hi:hover{ border-color:rgba(201,168,124,.65); }
+.plan__flag{
+  position:absolute; top:0; right:clamp(20px,2vw,32px); transform:translateY(-50%);
+  padding:5px 12px; border-radius:999px; background:var(--cyan); color:#1A1206;
+  font-family:var(--mono); font-size:.6rem; letter-spacing:.08em; text-transform:uppercase;
+}
+
+/* Échelle de périmètre : 1, 2 ou 3 segments allumés.
+   Les formules sont cumulatives — ce repère dit une chose vraie. */
+.plan__scope{ display:flex; gap:5px; margin-bottom:clamp(20px,2vw,28px); }
+.plan__scope span{ height:2px; flex:1; border-radius:2px; background:rgba(255,255,255,.12); }
+.plan__scope span.on{ background:var(--cyan); }
+
+.plan__name{ font-family:var(--display); font-weight:700;
+  font-size:clamp(1.3rem,1.9vw,1.7rem); letter-spacing:-.025em; }
+.plan__for{ margin-top:8px; font-weight:300; font-size:.94rem; line-height:1.6; color:var(--grey-2); }
+
+.plan__price{
+  margin-top:clamp(20px,2vw,28px);
+  font-family:var(--display); font-weight:500;
+  font-size:clamp(2.1rem,3.4vw,3rem); letter-spacing:-.035em; line-height:1;
+  font-variant-numeric:tabular-nums;
+}
+.plan--hi .plan__price{ color:var(--cyan); }
+.plan__quote{ font-family:var(--display); font-weight:700; letter-spacing:-.03em; }
+.plan__from{
+  display:block; margin-bottom:8px;
+  font-family:var(--mono); font-size:.62rem; letter-spacing:.09em;
+  text-transform:uppercase; color:var(--grey); font-variant-numeric:normal;
+}
+
+.plan__feat{ list-style:none; margin:clamp(24px,2.4vw,34px) 0 0; border-top:1px solid var(--line); }
+.plan__feat li{
+  padding:13px 0 13px 22px; position:relative; border-bottom:1px solid var(--line);
+  font-weight:300; font-size:.92rem; line-height:1.5; color:var(--grey-2);
+}
+.plan__feat li::before{ content:""; position:absolute; left:0; top:1.15em;
+  width:8px; height:1px; background:var(--cyan); }
+.plan__feat li.base{
+  color:var(--pure); font-family:var(--mono); font-size:.66rem;
+  letter-spacing:.1em; text-transform:uppercase; padding-left:0;
+}
+.plan__feat li.base::before{ display:none; }
+
+.plans-note{
+  max-width:74ch; margin-top:clamp(24px,3.4vh,40px);
+  font-weight:300; font-size:.86rem; line-height:1.7; color:var(--grey);
+}
+.plans-note b{ color:var(--grey-2); font-weight:400; }
+.plan__link{
+  margin-top:auto; padding-top:clamp(24px,2.4vw,32px);
+  display:inline-flex; align-items:center; gap:9px;
+  font-family:var(--body); font-size:.86rem; font-weight:500;
+  color:var(--pure); text-decoration:none;
+}
+.plan__link u{ text-decoration:none; border-bottom:1px solid rgba(255,255,255,.25);
+               padding-bottom:2px; transition:border-color .4s, color .4s; }
+.plan__link i{ font-style:normal; transition:transform .6s var(--ease-cine); }
+.plan:hover .plan__link u{ border-color:var(--cyan); color:var(--cyan); }
+.plan:hover .plan__link i{ transform:translateX(5px); }
+.plan__link:focus-visible{ outline:2px solid var(--cyan); outline-offset:5px; }
+
+/* Ce qui est commun aux trois : dit une fois, pas répété dans chaque carte */
+.included{
+  margin-top:clamp(24px,3vh,40px); padding-top:22px; border-top:1px solid var(--line);
+  display:flex; flex-wrap:wrap; align-items:baseline; gap:8px 18px;
+  font-family:var(--mono); font-size:.68rem; letter-spacing:.05em; color:var(--grey);
+}
+.included b{ color:var(--grey-2); font-weight:400; }
+.included .sep{ color:rgba(255,255,255,.2); }
+
+/* ═══════════════ ZONES — LA CARTE DU GOLFE ═══════════════
+   Contours communaux réels (IGN, simplifiés). Chaque commune se dessine
+   au trait, puis son nom apparaît. Zoomé sur le golfe : les étiquettes
+   ont enfin la place de tenir sans se recouvrir. */
+.villes{
+  position:relative;
+  padding:clamp(80px,13vh,170px) var(--pad) clamp(70px,11vh,140px);
+  background:
+    radial-gradient(75% 48% at 82% 100%, rgba(74,106,136,.07), transparent 64%),
+    var(--void);
+  border-top:1px solid var(--line);
+}
+
+.golfe{
+  position:relative; margin:clamp(16px,3vh,40px) auto 0;
+  width:100%; max-width:min(680px, 100%); aspect-ratio:1000 / 1193;
+}
+.golfe__svg{ position:absolute; inset:0; width:100%; height:100%; }
+
+.cm{ cursor:pointer; }
+.cm__fill{
+  fill:rgba(255,255,255,.022); opacity:0;
+  transition:fill .45s var(--ease-cine), opacity .5s ease;
+}
+.cm__line{
+  stroke:rgba(255,255,255,.38); stroke-width:1.2; fill:none;
+  stroke-linejoin:round; vector-effect:non-scaling-stroke;
+  stroke-dasharray:var(--len); stroke-dashoffset:var(--len);
+  transition:stroke .4s var(--ease-cine), stroke-width .4s;
+}
+.golfe.is-draw .cm__line{
+  animation:drawCm 1.5s var(--ease-cine) forwards;
+  animation-delay:calc(var(--i) * .11s);
+}
+.golfe.is-draw .cm__fill{ opacity:1; transition-delay:calc(var(--i) * .11s + .8s); }
+@keyframes drawCm{ to{ stroke-dashoffset:0 } }
+
+.cm:hover .cm__line,.cm:focus-visible .cm__line{ stroke:var(--cyan); stroke-width:2; }
+.cm:hover .cm__fill,.cm:focus-visible .cm__fill{ fill:rgba(201,168,124,.13); }
+.cm:focus-visible{ outline:none; }
+/* Commune où un site est en ligne */
+.cm--done .cm__line{ stroke:rgba(201,168,124,.75); }
+.cm--done .cm__fill{ fill:rgba(201,168,124,.07); }
+
+/* ── Étiquettes, posées au centre de gravité de chaque commune ── */
+.cm__lab{
+  position:absolute; left:calc(var(--x) / 1000 * 100%); top:calc(var(--y) / 1193 * 100%);
+  transform:translate(-50%,-50%);
+  font-family:var(--display); font-weight:500;
+  font-size:clamp(.6rem,1.35vw,.86rem); letter-spacing:-.01em; line-height:1.1;
+  color:var(--grey-2); text-align:center; white-space:nowrap; pointer-events:none;
+  text-shadow:0 1px 10px rgba(5,5,5,.9);
+  opacity:0; transition:opacity .5s var(--ease-cine), color .3s;
+}
+.golfe.is-on .cm__lab{ opacity:1; transition-delay:calc(1.1s + var(--i) * .07s); }
+.cm__lab--done{ color:var(--cyan); }
+/* Commune couverte mais sans page dédiée : lisible, non cliquable */
+.cm--off{ cursor:default; }
+.cm--off .cm__line{ stroke:rgba(255,255,255,.22); }
+.cm--off:hover .cm__line{ stroke:rgba(255,255,255,.42); }
+.cm--off:hover .cm__fill{ fill:rgba(255,255,255,.05); }
+.cm__lab.is-hot{ color:var(--pure); }
+
+/* ── Lecture de la commune ── */
+.wall-cap{
+  display:grid; grid-template-columns:auto 1fr auto;
+  align-items:baseline; gap:clamp(12px,2vw,26px);
+  margin-top:clamp(26px,4vh,46px); padding-top:22px;
+  border-top:1px solid var(--line); min-height:76px;
+}
+.wall-cap__name{
+  font-family:var(--display); font-weight:500; font-size:1.05rem;
+  letter-spacing:-.02em; color:var(--pure); white-space:nowrap;
+}
+.wall-cap__txt{
+  font-weight:300; font-size:clamp(.9rem,1.05vw,1rem); line-height:1.6; color:var(--grey-2);
+}
+/* display:inline-flex écrase [hidden] : sans cette règle, le lien reste
+   affiché sur les communes qui n'ont pas de page. */
+.wall-cap__go[hidden]{ display:none !important; }
+.wall-cap__go{
+  display:inline-flex; align-items:center; gap:8px; white-space:nowrap;
+  font-family:var(--body); font-weight:500; font-size:.83rem;
+  color:var(--pure); text-decoration:none;
+}
+.wall-cap__go u{ text-decoration:none; padding-bottom:2px;
+  border-bottom:1px solid rgba(255,255,255,.25); transition:border-color .4s, color .4s; }
+.wall-cap__go:hover u{ border-color:var(--cyan); color:var(--cyan); }
+.wall-cap__go i{ font-style:normal; transition:transform .6s var(--ease-cine); }
+.wall-cap__go:hover i{ transform:translateX(5px); }
+.wall-cap__go:focus-visible{ outline:2px solid var(--cyan); outline-offset:4px; }
+.wall-cap__name,.wall-cap__txt{ transition:opacity .28s ease; }
+.wall-cap.is-swap .wall-cap__name,.wall-cap.is-swap .wall-cap__txt{ opacity:0; }
+
+.varmap-legend{
+  display:flex; flex-wrap:wrap; gap:10px 26px; margin-top:18px;
+  font-family:var(--mono); font-size:.63rem; letter-spacing:.06em; color:var(--grey);
+}
+.varmap-legend span{ display:flex; align-items:center; gap:9px; }
+.varmap-legend em{ font-style:normal; width:16px; height:2px; }
+.varmap-legend .e1{ background:rgba(255,255,255,.38); }
+.varmap-legend .e2{ background:var(--cyan); }
+
+.villes-far{
+  display:flex; flex-wrap:wrap; gap:8px;
+  margin-top:clamp(32px,5vh,58px); padding-top:24px; border-top:1px solid var(--line);
+}
+.villes-far span{
+  padding:8px 15px; border:1px solid var(--line); border-radius:999px;
+  font-family:var(--body); font-weight:300; font-size:.84rem;
+  color:var(--grey-2); text-decoration:none;
+  transition:border-color .35s, color .35s;
+}
+
+
+/* ── Travail à distance ──
+   Bordure en pointillés, seul trait discontinu de toute la page : elle
+   dit « hors zone physique » avant même qu'on ait lu la ligne. */
+.remote{
+  display:grid; grid-template-columns:auto 1fr auto;
+  align-items:center; gap:clamp(14px,2.5vw,34px);
+  margin-top:clamp(26px,4vh,44px);
+  padding:clamp(18px,2.2vw,26px) clamp(18px,2.4vw,30px);
+  border:1px dashed rgba(255,255,255,.2); border-radius:14px;
+  background:rgba(255,255,255,.014);
+  transition:border-color .5s var(--ease-cine);
+}
+.remote:hover{ border-color:rgba(201,168,124,.45); }
+.remote__tag{
+  display:flex; align-items:center; gap:10px;
+  font-family:var(--mono); font-size:.62rem; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--cyan); white-space:nowrap;
+}
+.remote__tag::before{
+  content:""; width:22px; height:1px;
+  background:repeating-linear-gradient(90deg, var(--cyan) 0 3px, transparent 3px 6px);
+}
+.remote__txt{
+  font-weight:300; font-size:clamp(.88rem,1.02vw,.98rem); line-height:1.62; color:var(--grey-2);
+}
+.remote__txt b{ color:var(--pure); font-weight:400; }
+.remote__go{
+  display:inline-flex; align-items:center; gap:8px; white-space:nowrap;
+  font-family:var(--body); font-weight:500; font-size:.83rem;
+  color:var(--pure); text-decoration:none;
+}
+.remote__go u{ text-decoration:none; padding-bottom:2px;
+  border-bottom:1px solid rgba(255,255,255,.25); transition:border-color .4s, color .4s; }
+.remote__go i{ font-style:normal; transition:transform .6s var(--ease-cine); }
+.remote__go:hover u{ border-color:var(--cyan); color:var(--cyan); }
+.remote__go:hover i{ transform:translateX(5px); }
+.remote__go:focus-visible{ outline:2px solid var(--cyan); outline-offset:4px; }
+
+@media (max-width:760px){
+  .remote{ grid-template-columns:1fr; gap:12px; }
+}
+
+.villes-note{
+  margin-top:clamp(18px,2.6vh,30px);
+  font-family:var(--mono); font-size:.64rem; line-height:1.75;
+  letter-spacing:.04em; color:var(--grey);
+}
+.villes-note b{ color:var(--grey-2); font-weight:400; }
+
+@media (max-width:760px){
+  .golfe{ max-width:100%; }
+  .cm__lab{ font-size:clamp(.52rem,2.5vw,.7rem); }
+  .wall-cap{ grid-template-columns:1fr; gap:8px; min-height:0; }
+}
+
+/* ═══════════════ À PROPOS ═══════════════ */
+.apropos{
+  position:relative;
+  padding:clamp(80px,13vh,170px) var(--pad) clamp(70px,11vh,140px);
+  background:#08090B; border-top:1px solid var(--line);
+}
+
+/* ── Portrait ──
+   Rectangle à angles doux, même rayon que les fenêtres de navigateur du
+   portfolio. L'effet ne vient pas de la forme mais de l'entrée : un volet
+   laiton balaie l'image de bas en haut et la découvre sur son passage —
+   c'est la ligne de scan du preloader, appliquée à la photo. */
+.portrait{
+  position:relative; align-self:center; justify-self:center;
+  width:100%; max-width:340px;
+}
+.portrait__box{
+  position:relative; overflow:hidden; border-radius:14px; background:#0B0C0E;
+  box-shadow:0 24px 70px rgba(0,0,0,.5), 0 0 0 1px rgba(255,255,255,.07);
+}
+.portrait__img{
+  display:block; width:100%; height:auto;
+  /* Découverte par masque : l'image est révélée du bas vers le haut */
+  -webkit-mask-image:linear-gradient(0deg, #000 var(--rv,0%), transparent calc(var(--rv,0%) + 14%));
+  mask-image:linear-gradient(0deg, #000 var(--rv,0%), transparent calc(var(--rv,0%) + 14%));
+  filter:grayscale(1) contrast(1.05);
+  transition:filter 1.6s var(--ease-cine) .7s;
+}
+.portrait.is-on .portrait__img{ filter:grayscale(0) contrast(1); }
+
+/* Le trait laiton qui accompagne le front de révélation */
+.portrait__scan{
+  position:absolute; left:0; right:0; height:1px; z-index:2;
+  bottom:var(--rv,0%);
+  background:linear-gradient(90deg, transparent, var(--cyan) 25%, #fff 50%, var(--cyan) 75%, transparent);
+  opacity:0; transition:opacity .4s ease;
+}
+.portrait.is-scanning .portrait__scan{ opacity:.9; }
+
+/* Une trame fine, qui s'efface une fois l'image révélée */
+.portrait__grid{
+  position:absolute; inset:0; z-index:1; pointer-events:none;
+  background-image:
+    repeating-linear-gradient(0deg, rgba(201,168,124,.16) 0 1px, transparent 1px 8px);
+  opacity:0; transition:opacity 1.1s var(--ease-cine);
+}
+.portrait.is-scanning .portrait__grid{ opacity:1; }
+
+.portrait figcaption{
+  margin-top:18px; text-align:center;
+  font-family:var(--mono); font-size:.64rem; letter-spacing:.09em;
+  text-transform:uppercase; color:var(--pure);
+}
+.portrait figcaption span{ display:block; margin-top:5px; color:var(--grey); }
+
+@media (prefers-reduced-motion:reduce){
+    .portrait__img{ -webkit-mask-image:none; mask-image:none; filter:none; }
+  .portrait__scan,.portrait__grid{ display:none; }
+}
+
+.about-grid{
+  display:grid; grid-template-columns:.58fr 1.05fr .72fr;
+  gap:clamp(36px,6vw,110px); align-items:start;
+}
+
+/* Chaque mot s'allume au passage de la lecture. L'opacité plutôt que la
+   couleur : chaque paragraphe garde ainsi la sienne — le premier reste
+   blanc, les suivants gris. */
+.about-text .w{
+  opacity:.13;
+  transition:opacity .6s var(--ease-cine);
+}
+.about-text .w.is-lit{ opacity:1; }
+
+.about-text p{
+  font-weight:300; font-size:clamp(1rem,1.18vw,1.12rem); line-height:1.75;
+  color:var(--grey-2); margin-top:1.35em; max-width:52ch;
+}
+/* Le premier paragraphe est une déclaration, pas du corps de texte */
+.about-text p:first-child{
+  margin-top:0; max-width:26ch;
+  font-family:var(--display); font-weight:500;
+  font-size:clamp(1.3rem,2.1vw,1.9rem); line-height:1.28; letter-spacing:-.028em;
+  color:var(--pure);
+}
+.about-text b{ color:var(--pure); font-weight:400; }
+
+/* Fiche technique : des faits vérifiables, pas une histoire */
+.spec{ border-top:1px solid var(--line); }
+.spec > div{
+  display:flex; align-items:baseline; justify-content:space-between; gap:18px;
+  padding:13px 0; border-bottom:1px solid var(--line);
+  font-family:var(--mono); font-size:.7rem; letter-spacing:.04em;
+}
+.spec dt{ color:var(--grey); letter-spacing:.08em; text-transform:uppercase; white-space:nowrap; }
+.spec dd{ color:var(--pure); text-align:right; }
+.spec dd em{ font-style:normal; color:var(--cyan); }
+
+/* Dire ce qu'on ne fait pas rassure plus qu'une liste de promesses */
+.nots{
+  margin-top:clamp(46px,7vh,86px);
+  display:grid; grid-template-columns:repeat(3,1fr); gap:clamp(20px,3vw,44px);
+}
+.not{ padding-top:20px; border-top:1px solid var(--line); }
+.not b{
+  display:flex; align-items:center; gap:10px; font-weight:400;
+  font-family:var(--mono); font-size:.66rem; letter-spacing:.09em;
+  text-transform:uppercase; color:var(--pure);
+}
+.not b::before{ content:"✕"; color:rgba(255,255,255,.28); font-size:.85em; }
+.not p{
+  margin-top:11px; font-weight:300; font-size:.93rem; line-height:1.65; color:var(--grey-2);
+}
+
+@media (max-width:1100px){
+  .about-grid{ grid-template-columns:.72fr 1.28fr; }
+  .about-grid .spec{ grid-column:1 / -1; }
+}
+@media (max-width:760px){
+  .portrait{ max-width:260px; }
+}
+@media (max-width:900px){
+  .about-grid{ grid-template-columns:1fr; gap:44px; }
+  .nots{ grid-template-columns:1fr; gap:26px; }
+}
+
+/* ═══════════════ RÉALISATIONS — LA CARTE DU GOLFE ═══════════════ */
+.works-sec{
+  position:relative;
+  padding:clamp(80px,13vh,170px) var(--pad) clamp(40px,6vh,80px);
+  background:radial-gradient(70% 44% at 18% 4%, rgba(201,168,124,.045), transparent 62%), #07080A;
+  border-top:1px solid var(--line);
+}
+
+/* La carte occupe toute la scène collée. Le descriptif vient en bande
+   basse, fondu dans le noir : il est sous la carte sans la rogner. */
+.hscroll{ position:relative; margin-inline:calc(var(--pad) * -1); }
+.hscroll__stage{ position:sticky; top:0; height:100svh; overflow:hidden; }
+.mapwrap{ position:absolute; inset:0; }
+.mapc{ position:absolute; inset:0; width:100%; height:100%; display:block; }
+
+/* ── Panneau descriptif, sous la carte ──
+      Les cinq fiches sont superposées ; seule celle de la commune traversée
+      est visible. Le fondu est court : on doit sentir la bascule. */
+.panel{
+  position:absolute; left:0; right:0; bottom:0; z-index:2;
+  height:clamp(224px,33svh,332px);
+  background:linear-gradient(180deg,
+    transparent 0%, rgba(5,5,5,.72) 26%, rgba(5,5,5,.94) 56%, #050505 100%);
+  opacity:0; transition:opacity .55s var(--ease-cine);
+}
+.panel.is-open{ opacity:1; }
+.proj{
+  position:absolute; inset:0;
+  display:grid; grid-template-columns:minmax(0,.78fr) minmax(0,1.22fr);
+  gap:clamp(18px,3vw,48px); align-items:center;
+  padding:clamp(30px,4.5vh,50px) var(--pad) clamp(44px,6vh,62px);
+  align-content:end;
+  opacity:0; visibility:hidden; transform:translateY(16px);
+  transition:opacity .5s var(--ease-cine), transform .7s var(--ease-cine), visibility .5s;
+}
+.proj.is-on{ opacity:1; visibility:visible; transform:none; }
+/* Largeur plafonnée pour que la maquette tienne dans le panneau sans
+   qu'on touche à ses proportions. */
+.proj__view{ max-height:100%; max-width:min(100%, 340px); }
+
+.proj__where{
+  display:flex; align-items:center; gap:9px; margin-bottom:10px;
+  font-family:var(--mono); font-size:.63rem; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--cyan);
+}
+.proj__where::before{
+  content:""; width:6px; height:6px; border-radius:50%;
+  background:var(--cyan);
+}
+.proj__name{
+  font-family:var(--display); font-weight:700;
+  font-size:clamp(1.4rem,2.8vw,2.4rem); line-height:1; letter-spacing:-.042em;
+}
+.proj__badge{
+  display:inline-block; margin-left:11px; vertical-align:middle;
+  padding:4px 10px; border-radius:999px; border:1px solid var(--line);
+  font-family:var(--mono); font-size:.56rem; letter-spacing:.08em;
+  text-transform:uppercase; color:var(--grey-2);
+}
+.proj__desc{
+  margin-top:12px; max-width:52ch;
+  font-weight:300; font-size:clamp(.88rem,1vw,.98rem); line-height:1.62; color:var(--grey-2);
+}
+.proj__tags{ display:flex; flex-wrap:wrap; gap:6px; margin-top:14px; list-style:none; }
+.proj__tags li{
+  font-family:var(--mono); font-size:.58rem; letter-spacing:.1em; text-transform:uppercase;
+  color:var(--grey-2); padding:4px 10px; border:1px solid var(--line); border-radius:999px;
+}
+/* Bouton plutôt que lien souligné : l'action est plus visible, et le nom de
+   domaine — qui ne disait rien au visiteur — disparaît. */
+.proj__link{
+  display:inline-flex; align-items:center; gap:9px; margin-top:18px;
+  padding:10px 20px; border:1px solid var(--line); border-radius:999px;
+  font-family:var(--body); font-weight:500; font-size:.84rem;
+  color:var(--pure); text-decoration:none; width:max-content;
+  transition:border-color .45s var(--ease-cine), background .45s var(--ease-cine);
+}
+.proj__link:hover{ border-color:var(--cyan); background:rgba(201,168,124,.08); }
+.proj__link i{ font-style:normal; transition:transform .6s var(--ease-cine); }
+.proj__link:hover i{ transform:translateX(5px); }
+.proj__link:focus-visible{ outline:2px solid var(--cyan); outline-offset:3px; }
+
+.works-note{
+  margin-top:clamp(30px,4vh,52px); padding-top:22px; border-top:1px solid var(--line);
+  font-family:var(--mono); font-size:.68rem; letter-spacing:.05em; color:var(--grey);
+}
+.works-note b{ color:var(--grey-2); font-weight:400; }
+
+@media (max-width:900px){
+  .panel{ height:clamp(228px,35svh,300px); }
+  .hs-foot{ bottom:10px; font-size:.54rem; gap:9px; }
+  .proj{
+    grid-template-columns:44% minmax(0,1fr); gap:14px;
+    padding:clamp(26px,4vh,42px) var(--pad) clamp(34px,5vh,44px);
+  }
+  .proj__where{ margin-bottom:7px; font-size:.56rem; letter-spacing:.09em; }
+  .proj__name{ font-size:clamp(1.15rem,5.4vw,1.7rem); }
+  .proj__badge{ margin-left:0; margin-top:8px; display:block; width:max-content; }
+  .proj__desc{
+    display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical;
+    overflow:hidden; margin-top:8px; font-size:.82rem; line-height:1.5;
+  }
+  .proj__tags{ display:none; }
+  /* Bouton plutôt que lien souligné : l'action est plus visible et le nom de
+   domaine, qui ne disait rien au visiteur, disparaît. */
+  .proj__link{ margin-top:12px; padding:9px 17px; font-size:.8rem; }
+  .hs-foot{ bottom:16px; font-size:.58rem; gap:12px; }
+}
+
+/* ═══════════════ FORMULES ═══════════════ */
+.formules{
+  position:relative;
+  padding:clamp(80px,13vh,170px) var(--pad) clamp(70px,11vh,140px);
+  background:
+    radial-gradient(70% 45% at 10% 0%, rgba(201,168,124,.04), transparent 62%),
+    #08090B;
+  border-top:1px solid var(--line);
+}
+
+.plans{ display:grid; grid-template-columns:repeat(3,1fr); gap:clamp(14px,1.6vw,22px); }
+
+.plan{
+  position:relative; display:flex; flex-direction:column;
+  padding:clamp(26px,2.4vw,40px);
+  border:1px solid var(--line); border-radius:20px;
+  background:rgba(255,255,255,.018);
+  transition:border-color .5s var(--ease-cine), background .5s var(--ease-cine),
+             transform .7s var(--ease-cine);
+}
+.plan:hover{ border-color:rgba(255,255,255,.2); background:rgba(255,255,255,.035);
+             transform:translateY(-4px); }
+
+/* La plus demandée : signal réel, pas décoration */
+.plan--hi{ border-color:rgba(201,168,124,.38); background:rgba(201,168,124,.05); }
+.plan--hi:hover{ border-color:rgba(201,168,124,.65); }
+.plan__flag{
+  position:absolute; top:0; right:clamp(20px,2vw,32px); transform:translateY(-50%);
+  padding:5px 12px; border-radius:999px; background:var(--cyan); color:#1A1206;
+  font-family:var(--mono); font-size:.6rem; letter-spacing:.08em; text-transform:uppercase;
+}
+
+/* Échelle de périmètre : 1, 2 ou 3 segments allumés.
+   Les formules sont cumulatives — ce repère dit une chose vraie. */
+.plan__scope{ display:flex; gap:5px; margin-bottom:clamp(20px,2vw,28px); }
+.plan__scope span{ height:2px; flex:1; border-radius:2px; background:rgba(255,255,255,.12); }
+.plan__scope span.on{ background:var(--cyan); }
+
+.plan__name{ font-family:var(--display); font-weight:700;
+  font-size:clamp(1.3rem,1.9vw,1.7rem); letter-spacing:-.025em; }
+.plan__for{ margin-top:8px; font-weight:300; font-size:.94rem; line-height:1.6; color:var(--grey-2); }
+
+.plan__price{
+  margin-top:clamp(20px,2vw,28px);
+  font-family:var(--display); font-weight:500;
+  font-size:clamp(2.1rem,3.4vw,3rem); letter-spacing:-.035em; line-height:1;
+  font-variant-numeric:tabular-nums;
+}
+.plan--hi .plan__price{ color:var(--cyan); }
+.plan__from{
+  display:block; margin-bottom:8px;
+  font-family:var(--mono); font-size:.62rem; letter-spacing:.09em;
+  text-transform:uppercase; color:var(--grey); font-variant-numeric:normal;
+}
+
+.plan__feat{ list-style:none; margin:clamp(24px,2.4vw,34px) 0 0; border-top:1px solid var(--line); }
+.plan__feat li{
+  padding:13px 0 13px 22px; position:relative; border-bottom:1px solid var(--line);
+  font-weight:300; font-size:.92rem; line-height:1.5; color:var(--grey-2);
+}
+.plan__feat li::before{ content:""; position:absolute; left:0; top:1.15em;
+  width:8px; height:1px; background:var(--cyan); }
+.plan__feat li.base{
+  color:var(--pure); font-family:var(--mono); font-size:.66rem;
+  letter-spacing:.1em; text-transform:uppercase; padding-left:0;
+}
+.plan__feat li.base::before{ display:none; }
+
+.plan__link{
+  margin-top:auto; padding-top:clamp(24px,2.4vw,32px);
+  display:inline-flex; align-items:center; gap:9px;
+  font-family:var(--body); font-size:.86rem; font-weight:500;
+  color:var(--pure); text-decoration:none;
+}
+.plan__link u{ text-decoration:none; border-bottom:1px solid rgba(255,255,255,.25);
+               padding-bottom:2px; transition:border-color .4s, color .4s; }
+.plan__link i{ font-style:normal; transition:transform .6s var(--ease-cine); }
+.plan:hover .plan__link u{ border-color:var(--cyan); color:var(--cyan); }
+.plan:hover .plan__link i{ transform:translateX(5px); }
+.plan__link:focus-visible{ outline:2px solid var(--cyan); outline-offset:5px; }
+
+/* Ce qui est commun aux trois : dit une fois, pas répété dans chaque carte */
+.included{
+  margin-top:clamp(24px,3vh,40px); padding-top:22px; border-top:1px solid var(--line);
+  display:flex; flex-wrap:wrap; align-items:baseline; gap:8px 18px;
+  font-family:var(--mono); font-size:.68rem; letter-spacing:.05em; color:var(--grey);
+}
+.included b{ color:var(--grey-2); font-weight:400; }
+.included .sep{ color:rgba(255,255,255,.2); }
+
+/* ═══════════════ VILLES ═══════════════ */
+.villes{
+  position:relative;
+  padding:clamp(80px,13vh,170px) var(--pad) clamp(70px,11vh,140px);
+  background:
+    radial-gradient(75% 48% at 82% 100%, rgba(74,106,136,.07), transparent 64%),
+    var(--void);
+  border-top:1px solid var(--line);
+}
+
+.wall-label{
+  display:flex; align-items:baseline; gap:10px;
+  font-family:var(--mono); font-size:.68rem; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--grey);
+  padding-bottom:16px; margin-bottom:clamp(22px,3vw,34px);
+  border-bottom:1px solid var(--line);
+}
+.wall-label b{ font-family:var(--display); font-size:1.05rem; font-weight:500;
+               color:var(--cyan); letter-spacing:0; }
+
+/* ── Le mur de communes ──
+   Pas une grille de cartes : un index typographique dense. Survoler un
+   nom éteint tous les autres — on lit la zone d'un coup, puis on choisit. */
+.wall{ display:block; }
+.city{
+  font-family:var(--display); font-weight:700;
+  font-size:clamp(1.65rem,4.3vw,3.5rem); line-height:1.16; letter-spacing:-.038em;
+  color:var(--pure); text-decoration:none;
+  transition:opacity .55s var(--ease-cine), color .4s var(--ease-cine);
+}
+.city::after{ content:"·"; color:var(--cyan); margin:0 .22em 0 .3em; opacity:.55; }
+.city:last-child::after{ display:none; }
+@media (hover:hover){
+  .wall:hover .city{ opacity:.24; }
+  .wall .city:hover{ opacity:1; color:var(--cyan); }
+}
+.city:active{ color:var(--cyan); }
+.city:focus-visible{ outline:2px solid var(--cyan); outline-offset:4px; opacity:1; }
+
+/* Second cercle : plus petit, c'est une hiérarchie, pas une redite */
+.wall--near{ margin-top:clamp(46px,7vh,86px); }
+.wall--near .city{
+  font-size:clamp(1rem,1.85vw,1.5rem); font-weight:500;
+  letter-spacing:-.02em; color:var(--grey-2);
+}
+.wall--near .city:hover{ color:var(--cyan); }
+
+.villes-note{
+  margin-top:clamp(40px,6vh,72px); padding-top:22px; border-top:1px solid var(--line);
+  font-family:var(--mono); font-size:.7rem; letter-spacing:.05em; color:var(--grey);
+}
+.villes-note a{ color:var(--pure); text-decoration:none;
+  border-bottom:1px solid rgba(255,255,255,.25); padding-bottom:2px;
+  transition:color .4s, border-color .4s; }
+.villes-note a:hover{ color:var(--cyan); border-color:var(--cyan); }
+
+/* ═══════════════ À PROPOS ═══════════════ */
+.apropos{
+  position:relative;
+  padding:clamp(80px,13vh,170px) var(--pad) clamp(70px,11vh,140px);
+  background:#08090B; border-top:1px solid var(--line);
+}
+
+.about-grid{
+  display:grid; grid-template-columns:1.15fr .85fr;
+  gap:clamp(36px,6vw,110px); align-items:start;
+}
+
+.about-text p{
+  font-weight:300; font-size:clamp(1rem,1.18vw,1.12rem); line-height:1.75;
+  color:var(--grey-2); margin-top:1.35em; max-width:52ch;
+}
+/* Le premier paragraphe est une déclaration, pas du corps de texte */
+.about-text p:first-child{
+  margin-top:0; max-width:26ch;
+  font-family:var(--display); font-weight:500;
+  font-size:clamp(1.3rem,2.1vw,1.9rem); line-height:1.28; letter-spacing:-.028em;
+  color:var(--pure);
+}
+.about-text b{ color:var(--pure); font-weight:400; }
+
+/* Fiche technique : des faits vérifiables, pas une histoire */
+.spec{ border-top:1px solid var(--line); }
+.spec > div{
+  display:flex; align-items:baseline; justify-content:space-between; gap:18px;
+  padding:13px 0; border-bottom:1px solid var(--line);
+  font-family:var(--mono); font-size:.7rem; letter-spacing:.04em;
+}
+.spec dt{ color:var(--grey); letter-spacing:.08em; text-transform:uppercase; white-space:nowrap; }
+.spec dd{ color:var(--pure); text-align:right; }
+.spec dd em{ font-style:normal; color:var(--cyan); }
+
+/* Dire ce qu'on ne fait pas rassure plus qu'une liste de promesses */
+.nots{
+  margin-top:clamp(46px,7vh,86px);
+  display:grid; grid-template-columns:repeat(3,1fr); gap:clamp(20px,3vw,44px);
+}
+.not{ padding-top:20px; border-top:1px solid var(--line); }
+.not b{
+  display:flex; align-items:center; gap:10px; font-weight:400;
+  font-family:var(--mono); font-size:.66rem; letter-spacing:.09em;
+  text-transform:uppercase; color:var(--pure);
+}
+.not b::before{ content:"✕"; color:rgba(255,255,255,.28); font-size:.85em; }
+.not p{
+  margin-top:11px; font-weight:300; font-size:.93rem; line-height:1.65; color:var(--grey-2);
+}
+
+@media (max-width:900px){
+  .about-grid{ grid-template-columns:1fr; gap:44px; }
+  .nots{ grid-template-columns:1fr; gap:26px; }
+}
+
+/* ═══════════════ RÉALISATIONS ═══════════════ */
+.works-sec{
+  position:relative;
+  padding:clamp(80px,13vh,170px) var(--pad) clamp(40px,6vh,80px);
+  background:
+    radial-gradient(70% 44% at 18% 4%, rgba(201,168,124,.045), transparent 62%),
+    #08090B;
+  border-top:1px solid var(--line);
+}
+
+/* ── Défilement latéral piloté par le scroll vertical ──
+      Le conteneur est très haut, la scène est collée en haut : on convertit
+      la descente en translation horizontale. Sur mobile on rend la main au
+      doigt (scroll natif + accroche) — jamais de détournement tactile. */
+.hscroll{ position:relative; margin-inline:calc(var(--pad) * -1); }
+.hscroll__stage{
+  position:sticky; top:0; height:100svh;
+  display:flex; align-items:center; overflow:hidden;
+}
+
+
+/* ── Le chargement joué en direct ──
+      Squelette tant que le projet n'est pas au centre, puis le contenu
+      apparaît en cascade. L'argument de vente devient littéral. */
+@keyframes shimmer{ from{ transform:translateX(-65%) } to{ transform:translateX(65%) } }
+/* Lien de fin de carte, aligné en bas quelle que soit la longueur du texte */
+.work__link{
+  margin-top:auto; padding-top:clamp(18px,1.8vw,26px);
+  display:inline-flex; align-items:center; gap:9px;
+  font-family:var(--body); font-weight:500; font-size:.86rem;
+  color:var(--pure); text-decoration:none;
+}
+.work__link u{ text-decoration:none; padding-bottom:2px;
+  border-bottom:1px solid rgba(255,255,255,.25); transition:border-color .4s, color .4s; }
+.work__link i{ font-style:normal; transition:transform .6s var(--ease-cine); }
+.work__card:hover .work__link u{ border-color:var(--pacc); color:var(--pacc); }
+.work__card:hover .work__link i{ transform:translateX(5px); }
+.work__link:focus-visible{ outline:2px solid var(--cyan); outline-offset:5px; }
+
+/* ── Maquette navigateur ── */
+/* Le cadre de la capture : format 16/10 fixe, sinon l'image impose sa propre
+   hauteur et les trois fiches n'ont plus le même gabarit. */
+.mock__shot{ position:relative; aspect-ratio:16/10; overflow:hidden; background:#0B0C0E; }
+.mock__shot img{
+  display:block; width:100%; height:100%;
+  object-fit:cover; object-position:50% 0;
+  /* Découverte de haut en bas : la capture se charge comme une page */
+  clip-path:inset(0 0 var(--rv,100%) 0);
+  transition:clip-path 1.1s var(--ease-cine);
+}
+.proj.is-live .mock__shot img{ --rv:0%; }
+
+.mock{
+  border-radius:14px; overflow:hidden; border:0;
+  box-shadow:0 42px 110px rgba(0,0,0,.7), 0 0 0 1px rgba(255,255,255,.08);
+  transition:box-shadow .9s var(--ease-cine), transform .8s var(--ease-cine);
+}
+/* Une fois chargé, le projet éclaire sa propre couleur */
+.work.is-live .mock{
+  box-shadow:0 42px 110px rgba(0,0,0,.7),
+             0 0 100px color-mix(in srgb, var(--pacc) 22%, transparent),
+             0 0 0 1px color-mix(in srgb, var(--pacc) 32%, transparent);
+}
+
+.works-note{
+  margin-top:clamp(30px,4vh,52px); padding-top:22px; border-top:1px solid var(--line);
+  font-family:var(--mono); font-size:.68rem; letter-spacing:.05em; color:var(--grey);
+}
+.works-note b{ color:var(--grey-2); font-weight:400; }
+
+@media (max-width:900px){
+  /* Même principe au doigt : le scroll vertical reste vertical, il pilote
+     juste la translation horizontale. Aucun geste n'est détourné. */
+  .work{ width:min(78vw,420px); }
+    .hs-foot{ bottom:18px; gap:12px; font-size:.6rem; }
+  }
+
+@media (max-width:980px){
+  .plans{ grid-template-columns:1fr; }
+  .plan--hi{ order:-1; }        /* la plus demandée en tête au doigt */
+}
+
+@media (max-width:900px){
+  .sec-head{ grid-template-columns:1fr; align-items:start; }
+      .svc.is-open }
+
+/* ═══════════════ GARDE-FOU DÉBORDEMENT ═══════════════
+   La page ne doit jamais pouvoir se décaler latéralement. On utilise `clip`
+   et pas `hidden` : hidden casserait position:sticky de la carte. */
+html{ overflow-x:clip; }
+body{ width:100%; max-width:100%; }
+canvas, img, svg, video{ max-width:100%; }
+/* Sans min-width:0, un enfant de grille refuse de passer sous la largeur de
+   son contenu et pousse toute la page vers la droite. C'est la cause n°1
+   des décalages latéraux sur mobile. */
+.sec-head > *, .contact-grid > *, .about-grid > *,
+.proj, .proj > *, .svc__head > *, .plan, .foot-grid > *,
+.proj__name, .plan__name, .sec-title, .hero__title, .big-link{
+  overflow-wrap:anywhere;
+}
+
+/* ═══════════════ AFFINAGE PETITS ÉCRANS ═══════════════ */
+@media (max-width:620px){
+  :root{ --pad:20px; }
+
+  /* Zones tactiles : 44px minimum, recommandation WCAG */
+  .foot ul{ gap:4px; }
+  .foot a{ display:inline-block; padding:10px 0; font-size:.92rem; }
+  .city{ padding-block:2px; }
+
+  /* Le titre du hero doit tenir en deux lignes sans déborder */
+  .hero__title{ font-size:clamp(1.85rem, 9.6vw, 3.1rem); letter-spacing:-.03em; }
+  .t-out{ -webkit-text-stroke-width:1px; }
+  .hero__sub{ font-size:.96rem; max-width:30ch; }
+  .hero__eyebrow{ font-size:.62rem; letter-spacing:.09em; }
+      
+  /* Titres de section : 6vw serait minuscule sur 390px */
+  .sec-title{ font-size:clamp(2rem,9vw,3.2rem); }
+  .sec-intro{ font-size:.94rem; }
+  .services,.works-sec,.formules,.villes,.apropos,.contact{
+    padding-block:clamp(56px,9vh,90px);
+  }
+
+  /* Le mur de communes reste dense mais lisible */
+  .city{ font-size:clamp(1.3rem,6.6vw,2rem); }
+  .wall--near .city{ font-size:clamp(.92rem,4vw,1.15rem); }
+
+  /* Formules : la carte respire moins, le texte reste au même corps */
+  .plan{ padding:24px 20px; border-radius:16px; }
+  .plan__price{ font-size:2rem; }
+
+  /* Fiche technique : deux lignes plutôt qu'un écrasement */
+  .spec > div{ flex-direction:column; align-items:flex-start; gap:5px; padding:11px 0; }
+  .spec dd{ text-align:left; }
+
+  /* Formulaire : champs plus hauts, pas de zoom iOS sous 16px */
+  .field input,.field textarea,/* Tant que rien n'est choisi, le libellé reste gris : le visiteur voit qu'il
+   doit se prononcer, au lieu de partir avec la première formule par défaut. */
+.field select:invalid{ color:var(--grey); }
+.field select{ font-size:16px; padding:12px 0; }
+  .submit{ width:100%; justify-content:center; }
+  .big-link{ font-size:clamp(1.35rem,7vw,1.9rem); }
+
+  .foot-grid{ grid-template-columns:1fr; gap:32px; }
+  .foot-bar{ font-size:.6rem; }
+  .foot-bar .sep{ margin:0 5px; }
+}
+
+/* Écrans courts en paysage : la scène collée doit rester utilisable */
+@media (max-height:560px) and (orientation:landscape){
+  .hscroll__stage{ height:100svh; }
+  .panel{ height:44svh; }
+  .hs-foot{ bottom:8px; }
+  .proj__desc,.proj__tags{ display:none; }
+}
+
+@media (prefers-reduced-motion:reduce){
+  .hero__field{ display:none; }
+  .js-fade{ opacity:1!important; }
+  .line__in{ transform:none!important; }
+  .hero__title{ animation:none; }
+  *{ transition-duration:.01ms!important; }
+}
+/* ═══════════════════════════════════════════════════════════
+   2. PRELOADER — couches empilées
+   z100 canvas · z101 flare · z102 flash · z103 white
+═══════════════════════════════════════════════════════════ */
+#preloader{
+  position:fixed; inset:0; z-index:100;
+  background: var(--void);
+  will-change: opacity;
+}
+#preloader.is-done{ pointer-events:none; }
+
+#scene{
+  position:absolute; inset:0;
+  display:block; width:100%; height:100%;
+}
+
+/* Vignette + grain léger : donne du "film" à la scène */
+.pl-vignette{
+  position:absolute; inset:0; z-index:101; pointer-events:none;
+  background:
+    radial-gradient(120% 90% at 50% 50%, transparent 35%, rgba(0,0,0,.55) 100%);
+  mix-blend-mode: multiply;
+}
+
+/* Lens flare : traînée horizontale anamorphique */
+.pl-flare{
+  position:absolute; top:50%; left:50%; z-index:101;
+  width:140vmax; height:2px; pointer-events:none;
+  transform: translate(-50%,-50%) scaleX(0);
+  transform-origin:50% 50%;
+  opacity:0;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(201,168,124,0) 12%,
+    rgba(201,168,124,.5) 38%,
+    rgba(255,255,255,1) 50%,
+    rgba(201,168,124,.5) 62%,
+    rgba(201,168,124,0) 88%,
+    transparent 100%);
+  filter: blur(1.5px) drop-shadow(0 0 14px rgba(201,168,124,.4));
+  will-change: transform, opacity;
+}
+
+/* Flash : noyau lumineux radial qui s'ouvre depuis le centre */
+.pl-flash{
+  position:absolute; inset:-20%; z-index:102; pointer-events:none;
+  opacity:0; transform: scale(.2);
+  background: radial-gradient(circle at 50% 50%,
+    rgba(255,255,255,.86) 0%,
+    rgba(240,248,252,.58) 20%,
+    rgba(200,230,245,.28) 38%,
+    rgba(201,168,124,.10) 56%,
+    rgba(120,90,50,0) 74%);
+  will-change: transform, opacity;
+}
+
+/* Voile blanc plein écran : le "point de bascule" */
+.pl-white{
+  position:absolute; inset:0; z-index:103; pointer-events:none;
+  /* Blanc cassé plutôt que #fff pur : moins agressif à pleine surface */
+  background:#F2F5F8; opacity:0;
+  will-change: opacity;
+}
+
+/* Bouton passer — invisible mais accessible au clavier */
+.pl-skip{
+  position:absolute; bottom:24px; right:24px; z-index:104;
+  padding:10px 16px; border:1px solid rgba(255,255,255,.18);
+  border-radius:999px; background:transparent;
+  color:rgba(255,255,255,.5);
+  font:500 11px/1 var(--body); letter-spacing:.14em; text-transform:uppercase;
+  cursor:pointer; opacity:0; transition:opacity .4s, color .3s, border-color .3s;
+}
+.pl-skip:hover,.pl-skip:focus-visible{ opacity:1; color:#fff; border-color:rgba(201,168,124,.6); }
+.pl-skip:focus-visible{ outline:2px solid var(--cyan); outline-offset:3px; }
+
+/* Verrou de défilement pendant l'intro. Le fond noir et la mise en
+   retrait du contenu évitent tout aperçu de l'index avant l'heure. */
+body.pl-lock{ overflow:hidden; height:100%; background:#050505; }
+body.pl-lock .hero__field,
+body.pl-lock .hero__veil{ opacity:0; }
+@media (prefers-reduced-motion:reduce){ #preloader,.pl-skip{ display:none !important; } }
+
+
+/* ═══════════════ BANDEAU D'INFORMATION ═══════════════
+   Le site ne dépose aucun cookie : ce bandeau informe, il ne demande pas de
+   consentement. Un traceur strictement nécessaire en est dispensé, et un
+   bouton « refuser » n'aurait rien à refuser. */
+.cook{
+  position:fixed; z-index:40; left:var(--pad); right:var(--pad);
+  bottom:clamp(14px,2.4vh,26px);
+  display:flex; align-items:center; gap:clamp(14px,2.4vw,30px); flex-wrap:wrap;
+  max-width:920px; margin-inline:auto;
+  padding:clamp(14px,1.8vw,20px) clamp(16px,2vw,24px);
+  border:1px solid var(--line); border-radius:14px;
+  background:rgba(11,12,14,.92); backdrop-filter:blur(16px);
+  box-shadow:0 24px 70px rgba(0,0,0,.6);
+  transform:translateY(14px); opacity:0;
+  transition:opacity .6s var(--ease-cine), transform .7s var(--ease-cine);
+}
+.cook.is-on{ opacity:1; transform:none; }
+.cook[hidden]{ display:none !important; }
+.cook__txt{
+  flex:1; min-width:230px; font-weight:300; font-size:.84rem; line-height:1.62;
+  color:var(--grey-2);
+}
+.cook__txt b{ color:var(--pure); font-weight:400; }
+.cook__txt a{ color:var(--cyan); text-decoration:none;
+  border-bottom:1px solid rgba(201,168,124,.4); }
+.cook__txt a:hover{ border-color:var(--cyan); }
+.cook__ok{
+  flex:none; padding:10px 22px; cursor:pointer;
+  border:0; border-radius:999px; background:var(--cyan); color:#1A1206;
+  font-family:var(--body); font-weight:500; font-size:.84rem;
+  transition:transform .5s var(--ease-cine), box-shadow .5s var(--ease-cine);
+}
+.cook__ok:hover{ transform:translateY(-1px); box-shadow:0 10px 28px rgba(201,168,124,.3); }
+.cook__ok:focus-visible{ outline:2px solid var(--pure); outline-offset:3px; }
+@media (max-width:620px){
+  .cook{ flex-direction:column; align-items:stretch; gap:12px; }
+  .cook__ok{ width:100%; }
+}
+</style>
+</head>
+<body class="pl-lock" data-preloader="on">
+
+<div id="preloader" role="presentation" aria-hidden="true">
+  <canvas id="scene"></canvas>
+  <div class="pl-vignette"></div>
+  <div class="pl-flare" id="flare"></div>
+  <div class="pl-flash" id="flash"></div>
+  <div class="pl-white" id="white"></div>
+</div>
+<button class="pl-skip" id="skip" type="button">Passer l’intro</button>
+
+<header class="nav" id="nav">
+  <a class="nav__brand" href="#top">Weboost <i>Studio</i></a>
+  <nav class="nav__links" aria-label="Navigation principale">
+    <a href="#formules">Formules</a>
+    <a href="#realisations">Réalisations</a>
+    <a href="#villes">Communes</a>
+    <a href="#a-propos">À propos</a>
+  </nav>
+  <a class="nav__tel" href="tel:+33669371667">
+    <span aria-hidden="true">●</span> 06 69 37 16 67
+  </a>
+  <button class="nav__burger" id="nav-burger" type="button"
+          aria-expanded="false" aria-controls="nav-menu" aria-label="Ouvrir le menu">
+    <span></span><span></span>
+  </button>
+</header>
+
+<div class="navmenu" id="nav-menu" hidden>
+  <a href="#formules">Formules</a>
+  <a href="#realisations">Réalisations</a>
+  <a href="#villes">Communes</a>
+  <a href="#a-propos">À propos</a>
+  <a href="#contact">Contact</a>
+  <a class="navmenu__tel" href="tel:+33669371667">06 69 37 16 67</a>
+</div>
+
+<header class="hero" id="hero">
+  <div class="hero__bg" id="bg" aria-hidden="true"></div>
+  <canvas class="hero__field" id="field" aria-hidden="true"></canvas>
+  <div class="hero__veil" aria-hidden="true"></div>
+
+  <div class="hero__top">
+    <a class="brand js-fade" href="index.html">Weboost <i>Studio</i></a>
+    <p class="hero__place js-fade">Cavalaire <span>· Golfe de Saint-Tropez</span></p>
+  </div>
+
+  <div class="hero__body">
+    <p class="hero__eyebrow js-fade">Développeur web freelance — Golfe de Saint-Tropez, Var 83</p>
+
+    <h1 class="hero__title">
+      <span class="line"><span class="line__in">Création de</span></span>
+      <span class="line"><span class="line__in t-acc">sites web</span></span>
+      <span class="line"><span class="line__in">sur-mesure</span></span>
+      <span class="line"><span class="line__in t-out">Saint-Tropez</span></span>
+    </h1>
+
+    <p class="hero__sub js-fade">
+      Vos clients vous cherchent sur Google. S’ils ne vous trouvent pas, ils
+      appellent le concurrent d’à côté. Sites vitrines et référencement local
+      pour les entreprises du Var — <b>en ligne en 7 jours, devis gratuit sous
+      24 h.</b>
+    </p>
+  </div>
+
+  <p class="landmark js-fade"><b>Saint-Tropez</b> · Clocher de la Paroisse</p>
+</header>
+
+<section class="services" id="services">
+  <div class="sec-head">
+    <div>
+      <p class="sec-eyebrow" data-reveal>Services</p>
+      <h2 class="sec-title">
+        <span class="line"><span class="line__in">Être trouvé.</span></span>
+        <span class="line"><span class="line__in"><em>Puis être choisi.</em></span></span>
+      </h2>
+    </div>
+    <p class="sec-intro" data-reveal>
+      Un site qui s’affiche en moins d’une seconde, qui sort sur le nom de
+      votre commune, et que vous faites modifier d’un appel.
+      <b>Développé sur mesure</b> : aucun thème acheté, aucun traceur tiers.
+    </p>
+  </div>
+
+  <div class="col" id="col">
+    <article class="cl" data-reveal>
+      <svg class="cl__fig" viewBox="0 0 160 148" aria-hidden="true" fill="none"><rect x="14" y="14" width="132" height="22" rx="3"/><rect x="14" y="46" width="84" height="10" rx="2"/><rect x="14" y="66" width="108" height="10" rx="2"/><rect x="14" y="92" width="60" height="42" rx="3"/><rect x="86" y="92" width="60" height="42" rx="3"/></svg>
+      <div class="cl__txt">
+        <p class="cl__n">01 — Création</p>
+        <h3 class="cl__t">Site vitrine</h3>
+        <p class="cl__d">Un site complet, prêt à recevoir des clients dès la mise en ligne : arborescence, textes, photos, formulaire et pages légales. <b>Vous n’avez rien à faire ensuite.</b></p>
+        <ul class="cl__tags"><li>Sur mesure</li><li>Mobile d’abord</li><li>RGPD</li></ul>
+      </div>
+    </article>
+    <article class="cl" data-reveal>
+      <svg class="cl__fig" viewBox="0 0 160 148" aria-hidden="true" fill="none"><rect x="8" y="40" width="54" height="68" rx="3"/><rect x="98" y="28" width="54" height="92" rx="3"/><path d="M70 74h20m-6-6 6 6-6 6"/></svg>
+      <div class="cl__txt">
+        <p class="cl__n">02 — Reprise</p>
+        <h3 class="cl__t">Refonte</h3>
+        <p class="cl__d">Votre site est lent, daté ou illisible sur téléphone — et vos concurrents passent devant. Reconstruction complète <b>sans perdre une seule position acquise</b>.</p>
+        <ul class="cl__tags"><li>Redirections 301</li><li>SEO préservé</li><li>Migration</li></ul>
+      </div>
+    </article>
+    <article class="cl" data-reveal>
+      <svg class="cl__fig" viewBox="0 0 160 148" aria-hidden="true" fill="none"><circle cx="80" cy="74" r="14"/><circle cx="80" cy="74" r="34"/><circle cx="80" cy="74" r="54"/><path d="M80 20v-12M80 140v-12M20 74H8M152 74h-12"/></svg>
+      <div class="cl__txt">
+        <p class="cl__n">03 — Visibilité</p>
+        <h3 class="cl__t">Référencement local</h3>
+        <p class="cl__d">Être le premier nom qui s’affiche quand un habitant cherche votre métier dans votre commune. Pages par ville, données structurées, suivi mensuel des positions. <b>Les chiffres vous sont montrés.</b></p>
+        <ul class="cl__tags"><li>Pages villes</li><li>Search Console</li><li>Schema.org</li></ul>
+      </div>
+    </article>
+    <article class="cl" data-reveal>
+      <svg class="cl__fig" viewBox="0 0 160 148" aria-hidden="true" fill="none"><path d="M80 44a20 20 0 0 1 20 20c0 15-20 40-20 40S60 79 60 64a20 20 0 0 1 20-20z"/><circle cx="80" cy="64" r="7"/><path d="M14 118h132M14 30h40M106 30h40"/></svg>
+      <div class="cl__txt">
+        <p class="cl__n">04 — Présence</p>
+        <h3 class="cl__t">Fiche Google</h3>
+        <p class="cl__d">Sur mobile, elle s’affiche avant votre site et décroche l’appel. Création ou reprise complète : catégories, photos, horaires, avis. <b>Le levier le plus rentable du référencement local.</b></p>
+        <ul class="cl__tags"><li>Avis</li><li>Photos</li><li>Horaires</li></ul>
+      </div>
+    </article>
+    <article class="cl" data-reveal>
+      <svg class="cl__fig" viewBox="0 0 160 148" aria-hidden="true" fill="none"><path d="M14 120C40 118 52 40 80 36s58 8 66 6"/><path d="M14 120h132"/><path d="M14 120V22"/><circle cx="80" cy="36" r="4"/></svg>
+      <div class="cl__txt">
+        <p class="cl__n">05 — Vitesse</p>
+        <h3 class="cl__t">Performance</h3>
+        <p class="cl__d">Une seconde d’attente en plus, c’est un visiteur sur cinq qui part. Images modernes, code sans dépendance inutile, cache serveur : <b>la page s’affiche sous la seconde</b>, même en 4G.</p>
+        <ul class="cl__tags"><li>Lighthouse</li><li>LCP</li><li>Cache serveur</li></ul>
+      </div>
+    </article>
+    <article class="cl" data-reveal>
+      <svg class="cl__fig" viewBox="0 0 160 148" aria-hidden="true" fill="none"><path d="M124 74a44 44 0 1 1-13-31"/><path d="M111 16v28h-28"/><circle cx="80" cy="74" r="16"/></svg>
+      <div class="cl__txt">
+        <p class="cl__n">06 — Suite</p>
+        <h3 class="cl__t">Maintenance</h3>
+        <p class="cl__d">Un horaire à changer un dimanche de juillet ? C’est fait dans l’heure. Sauvegardes, certificat SSL, mises à jour et modifications au fil de l’eau — <b>sans ticket ni hotline</b>.</p>
+        <ul class="cl__tags"><li>Sauvegardes</li><li>SSL</li><li>Support direct</li></ul>
+      </div>
+    </article>
+  </div>
+
+  <p class="svc-note" data-reveal>
+    Également : <b>création de logo</b>, campagnes <b>Google Ads</b>, rédaction de contenus.
+  </p>
+</section>
+
+<section class="film" id="film" aria-label="Le golfe de Saint-Tropez">
+  <div class="film__media">
+    <video id="film-v" class="film__v" muted loop playsinline preload="none"
+           data-poster="assets/img/golfe-poster.webp"
+           width="854" height="480" aria-hidden="true"></video>
+  </div>
+  <p class="film__ia">Vidéo générée par IA</p>
+  <div class="film__txt">
+    <p class="film__lab">Golfe de Saint-Tropez</p>
+    <p class="film__line">Ils cherchent déjà votre métier.<br>Reste à savoir qui ils trouvent.</p>
+  </div>
+</section>
+
+<section class="formules" id="formules">
+  <div class="sec-head">
+    <div>
+      <p class="sec-eyebrow" data-reveal>Formules</p>
+      <h2 class="sec-title">
+        <span class="line"><span class="line__in">Trois formules.</span></span>
+        <span class="line"><span class="line__in"><em>Une seule exigence.</em></span></span>
+      </h2>
+    </div>
+    <p class="sec-intro" data-reveal>
+      Prix affichés, périmètre écrit, délai tenu. <b>Aucun devis surprise, aucun
+      abonnement caché</b> — et la même exigence de réalisation sur les trois.
+    </p>
+  </div>
+
+  <div class="plans">
+
+    <article class="plan" data-reveal>
+        <div class="plan__scope" aria-hidden="true"><span class="on"></span><span></span><span></span></div>
+        <h3 class="plan__name">Starter</h3>
+        <p class="plan__for">Essentielle</p>
+        <p class="plan__price"><span class="plan__from">à partir de</span><b data-count="600" data-fmt="eur">0</b></p>
+        <ul class="plan__feat">
+          <li>Site vitrine 3 pages</li><li>Design moderne responsive</li><li>Optimisation SEO de base</li><li>Formulaire de contact</li><li>Livraison en 7 jours</li>
+        </ul>
+        <a class="plan__link" href="#contact"><u>Parler du projet</u><i aria-hidden="true">→</i></a>
+      </article>
+
+    <article class="plan" data-reveal>
+        <div class="plan__scope" aria-hidden="true"><span class="on"></span><span class="on"></span><span></span></div>
+        <h3 class="plan__name">Business</h3>
+        <p class="plan__for">Professionnelle</p>
+        <p class="plan__price"><span class="plan__from">à partir de</span><b data-count="1300" data-fmt="eur">0</b></p>
+        <ul class="plan__feat">
+          <li>Site vitrine 5 pages</li><li>Design premium sur-mesure</li><li>Optimisation SEO avancée</li><li>Galerie photos / Portfolio</li><li>Formulaire avancé</li><li>Livraison en 10 jours</li>
+        </ul>
+        <a class="plan__link" href="#contact"><u>Parler du projet</u><i aria-hidden="true">→</i></a>
+      </article>
+
+    <article class="plan" data-reveal>
+        <div class="plan__scope" aria-hidden="true"><span class="on"></span><span class="on"></span><span class="on"></span></div>
+        <h3 class="plan__name">Premium</h3>
+        <p class="plan__for">Sur-mesure</p>
+        <p class="plan__price"><b class="plan__quote">Sur devis</b></p>
+        <ul class="plan__feat">
+          <li>Pages illimitées</li><li>Animations &amp; interactions</li><li>Multilingue (FR / EN / IT)</li><li>Performance maximale</li><li>Support prioritaire</li><li>Révisions illimitées</li>
+        </ul>
+        <a class="plan__link" href="#contact"><u>Parler du projet</u><i aria-hidden="true">→</i></a>
+      </article>
+
+  </div>
+
+  <p class="plans-note" data-reveal>
+    Tarifs indiqués hors nom de domaine et hébergement.
+    <b>Le choix de l’hébergeur revient au client et reste à sa charge</b> —
+    la mise en place et le paramétrage sont compris dans la prestation.
+  </p>
+
+  <p class="included" data-reveal>
+    <span>Compris dans les trois</span><span class="sep">/</span>
+    <b>Nom de domaine paramétré</b><span class="sep">·</span>
+    <b>Certificat SSL</b><span class="sep">·</span>
+    <b>Zéro cookie tiers</b><span class="sep">·</span>
+    <b>Prise en main en visio</b><span class="sep">·</span>
+    <b>Mentions légales rédigées</b>
+  </p>
+</section>
+
+<section class="works-sec" id="realisations">
+  <div class="sec-head">
+    <div>
+      <p class="sec-eyebrow" data-reveal>Réalisations</p>
+      <h2 class="sec-title">
+        <span class="line"><span class="line__in">Chaque métier,</span></span>
+        <span class="line"><span class="line__in"><em>son propre site.</em></span></span>
+      </h2>
+    </div>
+    <p class="sec-intro" data-reveal>
+      Réserver une table n’a rien à voir avec demander un devis de chantier.
+      Trois sites, trois métiers, trois logiques —
+      <b>et la même exigence de réalisation</b>.
+    </p>
+  </div>
+
+  <div class="hscroll" id="hscroll">
+    <div class="hscroll__stage">
+      <div class="mapwrap">
+        <canvas class="mapc" id="mapc" aria-hidden="true"></canvas>
+        <p class="hs-foot">
+          <span class="hs-count"><b>01</b> / 03</span>
+          <span class="hs-rail"><i></i></span>
+        </p>
+      </div>
+      <div class="panel">
+    <article class="proj" data-i style="--pacc:#0E8FB5">
+      <div class="proj__view">
+        <div class="mock">          <div class="mock__shot"><img src="assets/img/shot-mdz-piscine-900.webp" srcset="assets/img/shot-mdz-piscine-900.webp 900w, assets/img/shot-mdz-piscine-600.webp 600w" sizes="(max-width:760px) 100vw, 50vw" alt="Aperçu du site Mdz Piscine" width="900" height="426" loading="lazy" decoding="async"></div>
+        </div>
+      </div>
+      <div class="proj__info">
+        <p class="proj__where">Artisan · piscines</p>
+        <h3 class="proj__name">MDZ Piscine <span class="proj__badge">Démonstration</span></h3>
+        <p class="proj__desc">Construction et entretien de piscines. Une seule page, pensée pour un devis demandé depuis le téléphone, au bord du bassin d’un voisin.</p>
+        <ul class="proj__tags"><li>Page unique</li><li>Formulaire devis</li><li>Avant / après</li></ul>
+        <a class="proj__link" href="https://fvccrew.github.io/mdz-piscine/" target="_blank" rel="noopener"><span>Consulter le site</span><i aria-hidden="true">→</i></a>
+      </div>
+    </article>
+    <article class="proj" data-i style="--pacc:#C4A265">
+      <div class="proj__view">
+        <div class="mock">          <div class="mock__shot"><img src="assets/img/shot-st-prestige-900.webp" srcset="assets/img/shot-st-prestige-900.webp 900w, assets/img/shot-st-prestige-600.webp 600w" sizes="(max-width:760px) 100vw, 50vw" alt="Aperçu du site St Prestige" width="900" height="427" loading="lazy" decoding="async"></div>
+        </div>
+      </div>
+      <div class="proj__info">
+        <p class="proj__where">Conciergerie de luxe</p>
+        <h3 class="proj__name">ST Prestige <span class="proj__badge">Démonstration</span></h3>
+        <p class="proj__desc">Conciergerie de luxe en français, anglais et italien. 42 pages, arborescence complète et bascule de langue sans rechargement.</p>
+        <ul class="proj__tags"><li>Trilingue</li><li>42 pages</li><li>Or sur noir</li></ul>
+        <a class="proj__link" href="https://fvccrew.github.io/st-prestige/" target="_blank" rel="noopener"><span>Consulter le site</span><i aria-hidden="true">→</i></a>
+      </div>
+    </article>
+    <article class="proj" data-i style="--pacc:#C63B2F">
+      <div class="proj__view">
+        <div class="mock">          <div class="mock__shot"><img src="assets/img/shot-da-enzo-900.webp" srcset="assets/img/shot-da-enzo-900.webp 900w, assets/img/shot-da-enzo-600.webp 600w" sizes="(max-width:760px) 100vw, 50vw" alt="Aperçu du site Da Enzo" width="900" height="427" loading="lazy" decoding="async"></div>
+        </div>
+      </div>
+      <div class="proj__info">
+        <p class="proj__where">Restaurant</p>
+        <h3 class="proj__name">Da Enzo <span class="proj__badge">Démonstration</span></h3>
+        <p class="proj__desc">Trattoria italienne. Carte, horaires et itinéraire en trois clics maximum — la seule chose que cherche vraiment quelqu’un qui a faim.</p>
+        <ul class="proj__tags"><li>Carte</li><li>Itinéraire</li><li>Horaires</li></ul>
+        <a class="proj__link" href="https://fvccrew.github.io/da-enzo/" target="_blank" rel="noopener"><span>Consulter le site</span><i aria-hidden="true">→</i></a>
+      </div>
+    </article>
+      </div>
+    </div>
+  </div>
+
+
+  <p class="works-note" data-reveal>
+    <b>Les trois projets présentés sont des démonstrations</b>, développées pour
+    des entreprises fictives du golfe. Ils illustrent le travail réel —
+    architecture, code, référencement local. Les réalisations clientes seront
+    publiées au fur et à mesure, avec l’accord des intéressés.
+  </p>
+</section>
+
+<section class="villes" id="villes">
+  <div class="sec-head">
+    <div>
+      <p class="sec-eyebrow" data-reveal>Zone d’intervention</p>
+      <h2 class="sec-title">
+        <span class="line"><span class="line__in">Le golfe,</span></span>
+        <span class="line"><span class="line__in"><em>commune par commune.</em></span></span>
+      </h2>
+    </div>
+    <p class="sec-intro" data-reveal>
+      Vos clients ne cherchent pas « site internet » : ils cherchent votre
+      métier <b>dans leur commune</b>. C’est exactement ce que vise chacune de
+      ces pages. Premier rendez-vous sur site dans le golfe.
+    </p>
+  </div>
+
+  <div class="golfe" id="golfe">
+    <svg class="golfe__svg" viewBox="0 0 1000 1193" fill="none"><a class="cm" style="--i:0" href="creation-site-internet-sainte-maxime.html" data-h="/creation-site-internet-sainte-maxime.html" data-n="Sainte-Maxime" data-p="Deuxième pôle commercial du golfe, avec une clientèle à l’année." aria-label="Sainte-Maxime"><path class="cm__fill" d="M499.4,232.9 500.2,227.1 494.9,216.9 495.5,210.8 499.0,204.2 496.4,195.0 501.9,191.2 504.1,175.8 501.8,170.2 496.4,166.2 500.7,152.0 498.5,145.8 502.2,141.2 513.2,144.4 522.3,150.9 532.4,151.5 540.3,155.0 604.4,134.9 615.8,127.3 615.0,120.7 608.5,119.6 607.2,112.2 603.7,107.7 592.6,81.3 631.1,44.2 649.3,63.2 661.6,71.2 669.7,72.2 682.9,77.2 713.3,98.5 746.5,107.9 750.0,120.0 755.2,126.3 766.8,131.5 775.9,146.4 776.4,151.4 788.8,160.3 801.1,186.0 809.0,190.5 813.8,188.8 815.7,199.7 822.3,203.6 826.9,213.9 823.5,221.0 825.8,227.0 832.3,232.9 830.0,239.6 830.0,249.2 841.1,258.6 845.2,258.6 857.1,263.7 861.4,279.0 861.9,289.5 856.4,301.3 851.1,307.3 848.6,315.5 853.0,321.5 850.5,341.5 851.7,358.6 859.0,362.6 870.8,362.2 879.3,365.6 886.9,361.1 904.8,360.1 912.5,361.5 916.9,371.3 910.5,374.1 903.1,382.3 886.4,392.3 883.9,398.1 876.4,407.1 875.2,425.7 870.8,433.9 866.8,435.7 865.8,443.6 868.6,464.4 884.5,487.4 875.1,488.2 859.0,483.7 855.6,481.1 848.6,482.1 822.4,501.0 818.4,506.5 805.9,514.5 797.4,515.5 790.1,513.3 788.0,508.0 776.4,508.3 766.8,519.6 759.4,519.2 752.1,526.2 747.7,540.2 747.1,551.6 733.8,555.7 726.6,547.0 715.8,541.6 697.0,535.7 685.1,527.3 680.2,525.8 664.2,496.2 637.6,504.0 615.4,506.4 608.3,509.7 595.6,526.2 586.5,529.9 583.3,529.2 575.7,517.8 575.2,490.3 588.1,490.8 591.1,468.2 587.9,461.6 589.5,445.8 604.0,429.6 617.4,417.7 612.8,407.0 619.0,394.0 628.8,395.3 637.8,385.4 649.4,364.6 648.3,356.3 636.8,334.1 634.5,325.3 625.9,313.8 625.5,307.5 620.6,298.8 596.0,286.6 589.6,285.4 586.0,287.6 571.9,283.2 561.2,274.8 571.9,264.5 572.6,258.3 582.1,252.3 559.2,250.2 553.4,251.4 547.1,255.9 536.8,249.8 529.8,237.3 518.4,238.3 499.4,232.9Z"/><path class="cm__line" d="M499.4,232.9 500.2,227.1 494.9,216.9 495.5,210.8 499.0,204.2 496.4,195.0 501.9,191.2 504.1,175.8 501.8,170.2 496.4,166.2 500.7,152.0 498.5,145.8 502.2,141.2 513.2,144.4 522.3,150.9 532.4,151.5 540.3,155.0 604.4,134.9 615.8,127.3 615.0,120.7 608.5,119.6 607.2,112.2 603.7,107.7 592.6,81.3 631.1,44.2 649.3,63.2 661.6,71.2 669.7,72.2 682.9,77.2 713.3,98.5 746.5,107.9 750.0,120.0 755.2,126.3 766.8,131.5 775.9,146.4 776.4,151.4 788.8,160.3 801.1,186.0 809.0,190.5 813.8,188.8 815.7,199.7 822.3,203.6 826.9,213.9 823.5,221.0 825.8,227.0 832.3,232.9 830.0,239.6 830.0,249.2 841.1,258.6 845.2,258.6 857.1,263.7 861.4,279.0 861.9,289.5 856.4,301.3 851.1,307.3 848.6,315.5 853.0,321.5 850.5,341.5 851.7,358.6 859.0,362.6 870.8,362.2 879.3,365.6 886.9,361.1 904.8,360.1 912.5,361.5 916.9,371.3 910.5,374.1 903.1,382.3 886.4,392.3 883.9,398.1 876.4,407.1 875.2,425.7 870.8,433.9 866.8,435.7 865.8,443.6 868.6,464.4 884.5,487.4 875.1,488.2 859.0,483.7 855.6,481.1 848.6,482.1 822.4,501.0 818.4,506.5 805.9,514.5 797.4,515.5 790.1,513.3 788.0,508.0 776.4,508.3 766.8,519.6 759.4,519.2 752.1,526.2 747.7,540.2 747.1,551.6 733.8,555.7 726.6,547.0 715.8,541.6 697.0,535.7 685.1,527.3 680.2,525.8 664.2,496.2 637.6,504.0 615.4,506.4 608.3,509.7 595.6,526.2 586.5,529.9 583.3,529.2 575.7,517.8 575.2,490.3 588.1,490.8 591.1,468.2 587.9,461.6 589.5,445.8 604.0,429.6 617.4,417.7 612.8,407.0 619.0,394.0 628.8,395.3 637.8,385.4 649.4,364.6 648.3,356.3 636.8,334.1 634.5,325.3 625.9,313.8 625.5,307.5 620.6,298.8 596.0,286.6 589.6,285.4 586.0,287.6 571.9,283.2 561.2,274.8 571.9,264.5 572.6,258.3 582.1,252.3 559.2,250.2 553.4,251.4 547.1,255.9 536.8,249.8 529.8,237.3 518.4,238.3 499.4,232.9Z"/></a><g class="cm cm--off" style="--i:1" data-h="" data-n="Le Plan-de-la-Tour" data-p="Arrière-pays : artisans, vignerons et résidents. Peu de concurrence." aria-label="Le Plan-de-la-Tour"><path class="cm__fill" d="M448.5,517.2 466.0,507.2 467.8,502.8 474.2,496.2 460.1,486.4 447.7,472.6 447.8,458.1 437.6,442.5 432.9,440.0 416.9,439.8 408.2,431.2 388.7,427.4 382.0,417.3 378.2,404.2 374.0,397.7 373.8,387.9 379.7,378.7 391.9,371.0 402.3,369.1 423.4,360.9 439.9,339.4 433.0,309.7 435.2,308.3 441.0,291.4 440.2,285.8 434.1,270.6 416.4,254.1 424.7,245.8 436.9,241.6 444.6,245.1 456.9,246.7 479.8,239.0 484.6,230.1 518.4,238.3 529.8,237.3 536.8,249.8 547.1,255.9 553.4,251.4 559.2,250.2 582.1,252.3 572.6,258.3 571.9,264.5 561.2,274.8 571.9,283.2 586.0,287.6 589.6,285.4 596.0,286.6 620.6,298.8 625.5,307.5 625.9,313.8 634.5,325.3 636.8,334.1 643.1,343.8 648.3,356.3 649.4,364.6 637.8,385.4 628.8,395.3 619.0,394.0 612.8,407.0 617.4,417.7 604.0,429.6 589.5,445.8 587.9,461.6 591.1,468.2 588.1,490.8 575.2,490.3 574.7,504.5 575.7,517.8 583.3,529.2 586.5,529.9 570.1,534.6 551.2,543.7 544.3,538.9 539.7,539.0 528.9,532.9 506.5,533.2 463.1,522.4 448.5,517.2Z"/><path class="cm__line" d="M448.5,517.2 466.0,507.2 467.8,502.8 474.2,496.2 460.1,486.4 447.7,472.6 447.8,458.1 437.6,442.5 432.9,440.0 416.9,439.8 408.2,431.2 388.7,427.4 382.0,417.3 378.2,404.2 374.0,397.7 373.8,387.9 379.7,378.7 391.9,371.0 402.3,369.1 423.4,360.9 439.9,339.4 433.0,309.7 435.2,308.3 441.0,291.4 440.2,285.8 434.1,270.6 416.4,254.1 424.7,245.8 436.9,241.6 444.6,245.1 456.9,246.7 479.8,239.0 484.6,230.1 518.4,238.3 529.8,237.3 536.8,249.8 547.1,255.9 553.4,251.4 559.2,250.2 582.1,252.3 572.6,258.3 571.9,264.5 561.2,274.8 571.9,283.2 586.0,287.6 589.6,285.4 596.0,286.6 620.6,298.8 625.5,307.5 625.9,313.8 634.5,325.3 636.8,334.1 643.1,343.8 648.3,356.3 649.4,364.6 637.8,385.4 628.8,395.3 619.0,394.0 612.8,407.0 617.4,417.7 604.0,429.6 589.5,445.8 587.9,461.6 591.1,468.2 588.1,490.8 575.2,490.3 574.7,504.5 575.7,517.8 583.3,529.2 586.5,529.9 570.1,534.6 551.2,543.7 544.3,538.9 539.7,539.0 528.9,532.9 506.5,533.2 463.1,522.4 448.5,517.2Z"/></g><g class="cm cm--off" style="--i:2" data-h="" data-n="La Garde-Freinet" data-p="Massif des Maures : commerces de village et tourisme vert." aria-label="La Garde-Freinet"><path class="cm__fill" d="M40.3,578.9 50.4,574.7 72.3,559.8 79.1,547.8 85.2,542.0 91.8,543.1 103.4,550.7 105.7,545.9 120.5,540.1 125.3,534.8 129.2,527.1 149.1,530.2 155.9,532.9 163.8,529.8 179.2,536.8 184.5,537.2 184.5,527.1 181.9,521.0 187.0,507.1 183.8,489.4 181.0,487.4 180.2,477.8 182.6,472.7 167.8,448.6 157.5,442.0 159.0,429.2 153.8,423.9 150.5,416.8 153.5,402.1 151.0,394.8 153.1,371.1 164.1,360.2 161.5,353.3 166.4,336.9 159.8,332.3 158.2,328.6 158.3,314.8 162.0,318.8 185.9,307.7 202.7,298.7 226.5,282.8 291.6,228.8 295.2,222.8 309.4,219.4 340.4,223.2 374.2,214.4 382.0,210.0 390.4,213.9 398.5,214.3 403.9,217.2 411.6,224.8 420.0,229.3 428.6,230.3 436.9,238.5 436.9,241.6 424.7,245.8 416.4,254.1 434.1,270.6 440.2,285.8 441.0,291.4 435.2,308.3 433.0,309.7 439.9,339.4 423.4,360.9 402.3,369.1 391.9,371.0 379.7,378.7 373.8,387.9 374.0,397.7 378.2,404.2 382.0,417.3 388.7,427.4 408.2,431.2 416.9,439.8 432.9,440.0 437.6,442.5 447.8,458.1 447.7,472.6 460.1,486.4 474.2,496.2 467.8,502.8 466.0,507.2 448.5,517.2 442.3,518.7 435.3,525.6 411.4,539.3 402.2,546.9 398.4,554.7 370.3,581.2 362.8,582.5 353.4,581.0 348.5,584.3 337.8,586.8 329.6,593.5 261.8,614.3 257.5,616.1 249.0,624.7 234.1,625.0 218.9,630.0 207.1,628.7 201.7,631.0 164.3,628.6 158.4,632.1 149.2,629.1 130.3,634.8 123.3,640.4 109.0,638.2 91.8,640.1 84.1,645.5 72.4,662.7 51.4,662.7 51.3,652.9 41.0,642.2 39.8,637.0 42.0,612.0 44.4,605.2 37.0,594.9 40.3,578.9Z"/><path class="cm__line" d="M40.3,578.9 50.4,574.7 72.3,559.8 79.1,547.8 85.2,542.0 91.8,543.1 103.4,550.7 105.7,545.9 120.5,540.1 125.3,534.8 129.2,527.1 149.1,530.2 155.9,532.9 163.8,529.8 179.2,536.8 184.5,537.2 184.5,527.1 181.9,521.0 187.0,507.1 183.8,489.4 181.0,487.4 180.2,477.8 182.6,472.7 167.8,448.6 157.5,442.0 159.0,429.2 153.8,423.9 150.5,416.8 153.5,402.1 151.0,394.8 153.1,371.1 164.1,360.2 161.5,353.3 166.4,336.9 159.8,332.3 158.2,328.6 158.3,314.8 162.0,318.8 185.9,307.7 202.7,298.7 226.5,282.8 291.6,228.8 295.2,222.8 309.4,219.4 340.4,223.2 374.2,214.4 382.0,210.0 390.4,213.9 398.5,214.3 403.9,217.2 411.6,224.8 420.0,229.3 428.6,230.3 436.9,238.5 436.9,241.6 424.7,245.8 416.4,254.1 434.1,270.6 440.2,285.8 441.0,291.4 435.2,308.3 433.0,309.7 439.9,339.4 423.4,360.9 402.3,369.1 391.9,371.0 379.7,378.7 373.8,387.9 374.0,397.7 378.2,404.2 382.0,417.3 388.7,427.4 408.2,431.2 416.9,439.8 432.9,440.0 437.6,442.5 447.8,458.1 447.7,472.6 460.1,486.4 474.2,496.2 467.8,502.8 466.0,507.2 448.5,517.2 442.3,518.7 435.3,525.6 411.4,539.3 402.2,546.9 398.4,554.7 370.3,581.2 362.8,582.5 353.4,581.0 348.5,584.3 337.8,586.8 329.6,593.5 261.8,614.3 257.5,616.1 249.0,624.7 234.1,625.0 218.9,630.0 207.1,628.7 201.7,631.0 164.3,628.6 158.4,632.1 149.2,629.1 130.3,634.8 123.3,640.4 109.0,638.2 91.8,640.1 84.1,645.5 72.4,662.7 51.4,662.7 51.3,652.9 41.0,642.2 39.8,637.0 42.0,612.0 44.4,605.2 37.0,594.9 40.3,578.9Z"/></g><a class="cm" style="--i:3" href="creation-site-internet-grimaud.html" data-h="/creation-site-internet-grimaud.html" data-n="Grimaud" data-p="Village médiéval et Port-Grimaud : location saisonnière et nautisme." aria-label="Grimaud"><path class="cm__fill" d="M72.4,662.7 84.1,645.5 91.8,640.1 109.0,638.2 123.3,640.4 130.3,634.8 149.2,629.1 158.4,632.1 164.3,628.6 201.7,631.0 207.1,628.7 218.9,630.0 234.1,625.0 249.0,624.7 257.5,616.1 261.8,614.3 329.6,593.5 337.8,586.8 348.5,584.3 353.4,581.0 362.8,582.5 370.3,581.2 398.4,554.7 402.2,546.9 411.4,539.3 435.3,525.6 442.3,518.7 448.5,517.2 463.1,522.4 506.5,533.2 528.9,532.9 539.7,539.0 544.3,538.9 551.2,543.7 570.1,534.6 575.8,534.0 595.6,526.2 608.3,509.7 615.4,506.4 637.6,504.0 664.2,496.2 680.2,525.8 685.1,527.3 697.0,535.7 715.8,541.6 726.6,547.0 733.8,555.7 725.9,561.0 715.9,564.7 710.2,572.9 701.9,575.6 696.5,582.4 677.1,594.4 675.3,600.2 666.8,603.8 657.8,603.7 654.0,607.1 642.2,610.9 628.0,622.9 624.0,631.9 626.5,648.8 629.4,653.0 629.0,659.8 632.4,665.0 617.0,665.4 593.8,673.7 588.8,670.8 590.5,665.2 581.8,666.8 576.5,677.0 572.2,679.2 571.8,686.2 565.5,691.9 563.5,697.4 566.8,704.7 564.3,707.9 547.4,716.1 543.4,722.3 538.6,724.7 521.0,726.9 486.4,726.8 483.3,721.5 477.6,718.4 465.1,715.7 463.4,708.1 459.1,706.2 455.8,699.9 448.8,700.0 444.1,695.1 443.6,685.9 438.1,686.0 430.4,681.7 426.5,683.2 419.5,676.7 410.2,673.8 405.8,667.3 398.7,666.3 385.9,653.8 378.0,655.8 367.3,651.2 361.5,656.4 352.4,650.2 345.2,648.4 326.7,651.3 313.8,658.2 303.3,658.4 292.9,664.4 286.6,672.7 269.5,658.0 263.9,657.0 250.4,658.9 242.6,656.3 235.6,657.4 232.1,660.8 225.3,661.4 217.0,658.9 213.1,662.4 197.2,654.4 171.7,659.6 165.7,655.3 155.8,665.4 155.9,670.4 145.4,668.4 143.9,657.1 136.4,660.8 111.0,661.4 106.1,664.6 102.0,676.2 99.4,677.9 90.4,673.3 86.9,685.4 79.5,677.9 78.1,672.1 72.4,662.7Z"/><path class="cm__line" d="M72.4,662.7 84.1,645.5 91.8,640.1 109.0,638.2 123.3,640.4 130.3,634.8 149.2,629.1 158.4,632.1 164.3,628.6 201.7,631.0 207.1,628.7 218.9,630.0 234.1,625.0 249.0,624.7 257.5,616.1 261.8,614.3 329.6,593.5 337.8,586.8 348.5,584.3 353.4,581.0 362.8,582.5 370.3,581.2 398.4,554.7 402.2,546.9 411.4,539.3 435.3,525.6 442.3,518.7 448.5,517.2 463.1,522.4 506.5,533.2 528.9,532.9 539.7,539.0 544.3,538.9 551.2,543.7 570.1,534.6 575.8,534.0 595.6,526.2 608.3,509.7 615.4,506.4 637.6,504.0 664.2,496.2 680.2,525.8 685.1,527.3 697.0,535.7 715.8,541.6 726.6,547.0 733.8,555.7 725.9,561.0 715.9,564.7 710.2,572.9 701.9,575.6 696.5,582.4 677.1,594.4 675.3,600.2 666.8,603.8 657.8,603.7 654.0,607.1 642.2,610.9 628.0,622.9 624.0,631.9 626.5,648.8 629.4,653.0 629.0,659.8 632.4,665.0 617.0,665.4 593.8,673.7 588.8,670.8 590.5,665.2 581.8,666.8 576.5,677.0 572.2,679.2 571.8,686.2 565.5,691.9 563.5,697.4 566.8,704.7 564.3,707.9 547.4,716.1 543.4,722.3 538.6,724.7 521.0,726.9 486.4,726.8 483.3,721.5 477.6,718.4 465.1,715.7 463.4,708.1 459.1,706.2 455.8,699.9 448.8,700.0 444.1,695.1 443.6,685.9 438.1,686.0 430.4,681.7 426.5,683.2 419.5,676.7 410.2,673.8 405.8,667.3 398.7,666.3 385.9,653.8 378.0,655.8 367.3,651.2 361.5,656.4 352.4,650.2 345.2,648.4 326.7,651.3 313.8,658.2 303.3,658.4 292.9,664.4 286.6,672.7 269.5,658.0 263.9,657.0 250.4,658.9 242.6,656.3 235.6,657.4 232.1,660.8 225.3,661.4 217.0,658.9 213.1,662.4 197.2,654.4 171.7,659.6 165.7,655.3 155.8,665.4 155.9,670.4 145.4,668.4 143.9,657.1 136.4,660.8 111.0,661.4 106.1,664.6 102.0,676.2 99.4,677.9 90.4,673.3 86.9,685.4 79.5,677.9 78.1,672.1 72.4,662.7Z"/></a><a class="cm cm--done" style="--i:4" href="creation-site-internet-cogolin.html" data-h="/creation-site-internet-cogolin.html" data-n="Cogolin" data-p="Artisanat, BTP et zones d’activité. La commune qui travaille douze mois." aria-label="Cogolin"><path class="cm__fill" d="M464.7,915.4 446.8,915.9 444.1,897.8 439.7,885.9 432.7,878.9 421.4,862.8 410.4,838.0 411.9,833.5 407.1,827.5 393.1,816.8 376.9,810.3 362.4,785.0 362.8,780.8 358.8,774.7 329.5,747.8 317.3,732.2 308.8,732.7 286.6,702.6 289.1,700.2 286.6,672.7 292.9,664.4 303.3,658.4 313.8,658.2 326.7,651.3 345.2,648.4 352.4,650.2 361.5,656.4 367.3,651.2 378.0,655.8 385.9,653.8 398.7,666.3 405.8,667.3 410.2,673.8 419.5,676.7 426.5,683.2 430.4,681.7 438.1,686.0 443.6,685.9 444.1,695.1 448.8,700.0 455.8,699.9 459.1,706.2 463.4,708.1 465.1,715.7 477.6,718.4 483.3,721.5 486.4,726.8 521.0,726.9 538.6,724.7 543.4,722.3 547.4,716.1 564.3,707.9 566.8,704.7 563.5,697.4 565.5,691.9 571.8,686.2 572.2,679.2 576.5,677.0 581.8,666.8 590.5,665.2 588.8,670.8 593.8,673.7 617.0,665.4 632.4,665.0 631.9,670.9 622.9,668.7 618.5,672.2 628.4,679.9 630.6,686.6 637.0,687.9 639.5,684.5 652.6,693.5 649.3,696.8 638.6,689.4 633.3,690.6 624.9,688.3 623.8,691.8 607.9,687.8 599.2,689.7 584.0,700.0 589.6,706.1 575.4,712.3 569.8,718.1 565.2,736.6 558.9,749.9 558.8,755.1 554.4,763.8 554.7,774.3 548.0,785.7 550.3,787.7 550.3,798.4 536.8,821.2 531.0,827.7 524.4,831.7 518.7,829.7 512.6,838.6 496.5,844.8 489.9,851.0 481.3,863.2 475.4,880.8 480.7,884.6 464.7,915.4Z"/><path class="cm__line" d="M464.7,915.4 446.8,915.9 444.1,897.8 439.7,885.9 432.7,878.9 421.4,862.8 410.4,838.0 411.9,833.5 407.1,827.5 393.1,816.8 376.9,810.3 362.4,785.0 362.8,780.8 358.8,774.7 329.5,747.8 317.3,732.2 308.8,732.7 286.6,702.6 289.1,700.2 286.6,672.7 292.9,664.4 303.3,658.4 313.8,658.2 326.7,651.3 345.2,648.4 352.4,650.2 361.5,656.4 367.3,651.2 378.0,655.8 385.9,653.8 398.7,666.3 405.8,667.3 410.2,673.8 419.5,676.7 426.5,683.2 430.4,681.7 438.1,686.0 443.6,685.9 444.1,695.1 448.8,700.0 455.8,699.9 459.1,706.2 463.4,708.1 465.1,715.7 477.6,718.4 483.3,721.5 486.4,726.8 521.0,726.9 538.6,724.7 543.4,722.3 547.4,716.1 564.3,707.9 566.8,704.7 563.5,697.4 565.5,691.9 571.8,686.2 572.2,679.2 576.5,677.0 581.8,666.8 590.5,665.2 588.8,670.8 593.8,673.7 617.0,665.4 632.4,665.0 631.9,670.9 622.9,668.7 618.5,672.2 628.4,679.9 630.6,686.6 637.0,687.9 639.5,684.5 652.6,693.5 649.3,696.8 638.6,689.4 633.3,690.6 624.9,688.3 623.8,691.8 607.9,687.8 599.2,689.7 584.0,700.0 589.6,706.1 575.4,712.3 569.8,718.1 565.2,736.6 558.9,749.9 558.8,755.1 554.4,763.8 554.7,774.3 548.0,785.7 550.3,787.7 550.3,798.4 536.8,821.2 531.0,827.7 524.4,831.7 518.7,829.7 512.6,838.6 496.5,844.8 489.9,851.0 481.3,863.2 475.4,880.8 480.7,884.6 464.7,915.4Z"/></a><a class="cm cm--done" style="--i:5" href="creation-site-internet-saint-tropez.html" data-h="/creation-site-internet-saint-tropez.html" data-n="Saint-Tropez" data-p="Boutiques, restauration et services haut de gamme. Clientèle internationale." aria-label="Saint-Tropez"><path class="cm__fill" d="M780.4,723.8 774.2,716.7 767.1,712.2 755.0,697.3 744.1,691.3 742.5,680.9 746.7,672.9 753.1,674.6 768.2,665.8 778.8,652.7 783.7,657.0 787.5,654.4 784.6,646.7 791.8,644.0 794.6,645.9 803.4,645.1 809.6,646.7 813.6,652.1 814.5,658.8 825.0,661.6 831.7,660.8 841.0,672.2 857.2,682.6 866.4,682.7 874.7,676.2 879.2,668.1 878.2,636.9 883.8,633.5 892.8,631.4 897.9,627.1 906.2,627.0 917.6,643.6 925.5,649.4 937.6,652.2 956.1,674.7 963.0,676.3 960.5,688.7 956.9,696.8 951.7,698.5 940.9,721.9 943.4,734.0 939.6,736.8 924.8,739.0 920.2,742.4 915.7,749.9 912.3,749.7 900.2,765.0 900.1,744.9 897.6,741.0 888.8,739.2 882.5,741.2 849.3,738.7 839.6,731.3 825.4,732.1 811.7,724.6 797.3,727.9 786.8,734.5 782.6,730.6 780.4,723.8Z"/><path class="cm__line" d="M780.4,723.8 774.2,716.7 767.1,712.2 755.0,697.3 744.1,691.3 742.5,680.9 746.7,672.9 753.1,674.6 768.2,665.8 778.8,652.7 783.7,657.0 787.5,654.4 784.6,646.7 791.8,644.0 794.6,645.9 803.4,645.1 809.6,646.7 813.6,652.1 814.5,658.8 825.0,661.6 831.7,660.8 841.0,672.2 857.2,682.6 866.4,682.7 874.7,676.2 879.2,668.1 878.2,636.9 883.8,633.5 892.8,631.4 897.9,627.1 906.2,627.0 917.6,643.6 925.5,649.4 937.6,652.2 956.1,674.7 963.0,676.3 960.5,688.7 956.9,696.8 951.7,698.5 940.9,721.9 943.4,734.0 939.6,736.8 924.8,739.0 920.2,742.4 915.7,749.9 912.3,749.7 900.2,765.0 900.1,744.9 897.6,741.0 888.8,739.2 882.5,741.2 849.3,738.7 839.6,731.3 825.4,732.1 811.7,724.6 797.3,727.9 786.8,734.5 782.6,730.6 780.4,723.8Z"/></a><g class="cm cm--off" style="--i:6" data-h="" data-n="Gassin" data-p="Village classé : restaurants panoramiques, golf et domaines." aria-label="Gassin"><path class="cm__fill" d="M489.9,851.0 496.5,844.8 512.6,838.6 518.7,829.7 524.4,831.7 531.0,827.7 536.8,821.2 550.3,798.4 550.3,787.7 548.0,785.7 554.7,774.3 554.4,763.8 565.2,736.6 569.8,718.1 575.4,712.3 589.6,706.1 584.0,700.0 599.2,689.7 607.9,687.8 623.8,691.8 624.9,688.3 633.3,690.6 638.6,689.4 649.3,696.8 652.6,693.5 662.2,691.4 664.8,688.8 674.0,689.1 681.9,691.8 692.8,687.6 701.3,688.1 708.8,685.0 718.4,687.2 733.8,685.5 742.5,680.9 744.1,691.3 755.0,697.3 767.1,712.2 774.2,716.7 780.4,723.8 753.4,740.1 744.8,735.4 745.4,743.8 740.5,748.6 733.5,749.9 729.9,753.4 724.0,753.7 699.8,779.5 700.9,786.6 691.3,806.7 690.1,833.0 684.4,851.0 685.5,855.3 679.1,857.7 675.5,881.1 670.2,876.3 663.9,874.8 643.1,883.6 633.4,885.2 623.1,882.0 616.2,884.9 610.8,892.9 598.3,900.2 593.8,899.1 581.8,888.4 582.9,883.7 572.5,884.1 566.6,888.4 560.0,896.9 547.9,885.9 537.0,893.9 539.2,884.7 534.5,879.6 520.5,877.8 515.0,874.6 503.1,872.6 493.8,865.1 489.9,851.0Z"/><path class="cm__line" d="M489.9,851.0 496.5,844.8 512.6,838.6 518.7,829.7 524.4,831.7 531.0,827.7 536.8,821.2 550.3,798.4 550.3,787.7 548.0,785.7 554.7,774.3 554.4,763.8 565.2,736.6 569.8,718.1 575.4,712.3 589.6,706.1 584.0,700.0 599.2,689.7 607.9,687.8 623.8,691.8 624.9,688.3 633.3,690.6 638.6,689.4 649.3,696.8 652.6,693.5 662.2,691.4 664.8,688.8 674.0,689.1 681.9,691.8 692.8,687.6 701.3,688.1 708.8,685.0 718.4,687.2 733.8,685.5 742.5,680.9 744.1,691.3 755.0,697.3 767.1,712.2 774.2,716.7 780.4,723.8 753.4,740.1 744.8,735.4 745.4,743.8 740.5,748.6 733.5,749.9 729.9,753.4 724.0,753.7 699.8,779.5 700.9,786.6 691.3,806.7 690.1,833.0 684.4,851.0 685.5,855.3 679.1,857.7 675.5,881.1 670.2,876.3 663.9,874.8 643.1,883.6 633.4,885.2 623.1,882.0 616.2,884.9 610.8,892.9 598.3,900.2 593.8,899.1 581.8,888.4 582.9,883.7 572.5,884.1 566.6,888.4 560.0,896.9 547.9,885.9 537.0,893.9 539.2,884.7 534.5,879.6 520.5,877.8 515.0,874.6 503.1,872.6 493.8,865.1 489.9,851.0Z"/></g><g class="cm cm--off" style="--i:7" data-h="" data-n="Ramatuelle" data-p="Pampelonne, villas et domaines. Toute l’année se joue en dix semaines." aria-label="Ramatuelle"><path class="cm__fill" d="M780.4,723.8 782.6,730.6 786.8,734.5 797.3,727.9 811.7,724.6 825.4,732.1 839.6,731.3 849.3,738.7 882.5,741.2 888.8,739.2 897.6,741.0 900.1,744.9 900.2,765.0 896.7,765.7 881.5,761.2 876.4,761.9 867.2,771.9 864.0,779.1 861.5,792.6 858.0,842.4 858.8,876.4 863.6,899.9 866.5,904.5 876.3,907.2 878.5,910.1 874.0,916.1 880.0,924.0 900.2,933.2 905.8,942.5 913.7,949.1 901.3,957.6 901.4,964.0 896.4,967.5 893.2,962.7 881.7,962.4 879.9,967.0 863.2,970.3 850.8,963.8 847.2,967.3 840.7,968.5 835.6,976.4 829.1,980.9 825.4,988.1 820.9,989.7 811.2,998.9 800.3,1001.1 797.2,1005.6 801.1,1017.8 793.5,1022.4 792.2,1030.4 794.0,1049.7 790.5,1056.0 791.2,1060.4 803.2,1064.8 811.5,1074.4 810.9,1080.1 801.3,1067.1 788.6,1059.3 786.2,1053.0 775.6,1044.4 772.3,1036.8 751.5,1025.1 755.2,1017.8 748.4,999.8 742.2,990.3 728.8,980.2 719.2,977.3 713.0,978.1 702.6,974.3 699.5,971.3 696.6,959.9 683.7,939.5 680.7,911.4 682.1,901.2 678.8,895.8 675.5,881.1 679.1,857.7 685.5,855.3 684.4,851.0 690.1,833.0 691.3,806.7 700.9,786.6 699.8,779.5 724.0,753.7 729.9,753.4 733.5,749.9 740.5,748.6 745.4,743.8 744.8,735.4 753.4,740.1 780.4,723.8Z"/><path class="cm__line" d="M780.4,723.8 782.6,730.6 786.8,734.5 797.3,727.9 811.7,724.6 825.4,732.1 839.6,731.3 849.3,738.7 882.5,741.2 888.8,739.2 897.6,741.0 900.1,744.9 900.2,765.0 896.7,765.7 881.5,761.2 876.4,761.9 867.2,771.9 864.0,779.1 861.5,792.6 858.0,842.4 858.8,876.4 863.6,899.9 866.5,904.5 876.3,907.2 878.5,910.1 874.0,916.1 880.0,924.0 900.2,933.2 905.8,942.5 913.7,949.1 901.3,957.6 901.4,964.0 896.4,967.5 893.2,962.7 881.7,962.4 879.9,967.0 863.2,970.3 850.8,963.8 847.2,967.3 840.7,968.5 835.6,976.4 829.1,980.9 825.4,988.1 820.9,989.7 811.2,998.9 800.3,1001.1 797.2,1005.6 801.1,1017.8 793.5,1022.4 792.2,1030.4 794.0,1049.7 790.5,1056.0 791.2,1060.4 803.2,1064.8 811.5,1074.4 810.9,1080.1 801.3,1067.1 788.6,1059.3 786.2,1053.0 775.6,1044.4 772.3,1036.8 751.5,1025.1 755.2,1017.8 748.4,999.8 742.2,990.3 728.8,980.2 719.2,977.3 713.0,978.1 702.6,974.3 699.5,971.3 696.6,959.9 683.7,939.5 680.7,911.4 682.1,901.2 678.8,895.8 675.5,881.1 679.1,857.7 685.5,855.3 684.4,851.0 690.1,833.0 691.3,806.7 700.9,786.6 699.8,779.5 724.0,753.7 729.9,753.4 733.5,749.9 740.5,748.6 745.4,743.8 744.8,735.4 753.4,740.1 780.4,723.8Z"/></g><a class="cm" style="--i:8" href="creation-site-internet-la-croix-valmer.html" data-h="/creation-site-internet-la-croix-valmer.html" data-n="La Croix-Valmer" data-p="Domaines viticoles, plages de Gigaro et résidentiel. Clientèle mixte." aria-label="La Croix-Valmer"><path class="cm__fill" d="M464.7,915.4 480.7,884.6 475.4,880.8 481.3,863.2 489.9,851.0 493.8,865.1 503.1,872.6 515.0,874.6 520.5,877.8 534.5,879.6 539.2,884.7 537.0,893.9 547.9,885.9 560.0,896.9 566.6,888.4 572.5,884.1 582.9,883.7 581.8,888.4 593.8,899.1 598.3,900.2 610.8,892.9 616.2,884.9 623.1,882.0 633.4,885.2 643.1,883.6 663.9,874.8 670.2,876.3 675.5,881.1 678.8,895.8 682.1,901.2 680.7,911.4 683.7,939.5 696.6,959.9 699.5,971.3 702.6,974.3 713.0,978.1 719.2,977.3 728.8,980.2 742.2,990.3 748.4,999.8 755.2,1017.8 751.5,1025.1 772.3,1036.8 775.6,1044.4 786.2,1053.0 788.6,1059.3 801.3,1067.1 810.9,1080.1 805.5,1080.9 801.3,1077.5 794.6,1066.2 788.0,1062.3 773.7,1061.6 763.8,1067.5 761.2,1073.1 754.0,1077.1 751.7,1085.1 738.1,1093.8 735.8,1102.3 739.2,1108.1 734.4,1115.0 726.6,1114.4 725.6,1104.6 714.5,1089.4 701.2,1086.0 702.9,1079.9 696.2,1069.6 697.6,1063.8 692.8,1058.4 682.5,1057.3 680.2,1054.1 685.4,1048.6 680.7,1037.1 680.4,1028.8 677.2,1021.6 663.8,1012.6 644.5,1006.4 626.9,1006.1 615.4,1003.3 606.1,1006.7 597.7,998.9 581.5,1002.5 574.7,998.6 569.6,1000.2 558.9,993.0 529.9,999.8 526.4,985.4 516.6,966.7 520.5,954.0 515.6,944.7 510.5,941.9 507.8,935.8 483.7,912.4 473.6,915.8 464.7,915.4Z"/><path class="cm__line" d="M464.7,915.4 480.7,884.6 475.4,880.8 481.3,863.2 489.9,851.0 493.8,865.1 503.1,872.6 515.0,874.6 520.5,877.8 534.5,879.6 539.2,884.7 537.0,893.9 547.9,885.9 560.0,896.9 566.6,888.4 572.5,884.1 582.9,883.7 581.8,888.4 593.8,899.1 598.3,900.2 610.8,892.9 616.2,884.9 623.1,882.0 633.4,885.2 643.1,883.6 663.9,874.8 670.2,876.3 675.5,881.1 678.8,895.8 682.1,901.2 680.7,911.4 683.7,939.5 696.6,959.9 699.5,971.3 702.6,974.3 713.0,978.1 719.2,977.3 728.8,980.2 742.2,990.3 748.4,999.8 755.2,1017.8 751.5,1025.1 772.3,1036.8 775.6,1044.4 786.2,1053.0 788.6,1059.3 801.3,1067.1 810.9,1080.1 805.5,1080.9 801.3,1077.5 794.6,1066.2 788.0,1062.3 773.7,1061.6 763.8,1067.5 761.2,1073.1 754.0,1077.1 751.7,1085.1 738.1,1093.8 735.8,1102.3 739.2,1108.1 734.4,1115.0 726.6,1114.4 725.6,1104.6 714.5,1089.4 701.2,1086.0 702.9,1079.9 696.2,1069.6 697.6,1063.8 692.8,1058.4 682.5,1057.3 680.2,1054.1 685.4,1048.6 680.7,1037.1 680.4,1028.8 677.2,1021.6 663.8,1012.6 644.5,1006.4 626.9,1006.1 615.4,1003.3 606.1,1006.7 597.7,998.9 581.5,1002.5 574.7,998.6 569.6,1000.2 558.9,993.0 529.9,999.8 526.4,985.4 516.6,966.7 520.5,954.0 515.6,944.7 510.5,941.9 507.8,935.8 483.7,912.4 473.6,915.8 464.7,915.4Z"/></a><g class="cm cm--off" style="--i:9" data-h="" data-n="La Môle" data-p="Aéroport du golfe, domaines et artisans. Commune de passage." aria-label="La Môle"><path class="cm__fill" d="M231.5,1062.8 213.0,1035.1 208.3,1025.3 208.2,1013.4 221.5,993.1 224.1,978.7 234.7,973.4 237.3,969.5 234.2,952.2 234.5,944.1 227.8,937.2 230.0,932.2 228.5,917.1 207.4,862.8 201.9,836.0 202.8,821.8 205.1,815.6 221.8,797.4 229.9,750.1 213.0,702.2 213.1,662.4 217.0,658.9 225.3,661.4 232.1,660.8 235.6,657.4 242.6,656.3 250.4,658.9 263.9,657.0 269.5,658.0 286.6,672.7 289.1,700.2 286.6,702.6 308.8,732.7 317.3,732.2 329.5,747.8 358.8,774.7 362.8,780.8 362.4,785.0 376.9,810.3 393.1,816.8 407.1,827.5 411.9,833.5 410.4,838.0 421.4,862.8 432.7,878.9 439.7,885.9 444.1,897.8 446.8,915.9 441.1,921.1 427.0,927.5 422.6,934.4 421.0,943.9 406.8,965.8 399.9,990.2 378.8,986.1 375.6,988.6 377.6,1000.4 371.8,1005.6 372.9,1020.6 376.8,1023.9 367.8,1030.0 362.4,1037.6 355.8,1042.9 311.9,1058.9 309.4,1076.0 272.5,1069.3 263.8,1070.3 254.4,1063.7 245.4,1060.5 231.5,1062.8Z"/><path class="cm__line" d="M231.5,1062.8 213.0,1035.1 208.3,1025.3 208.2,1013.4 221.5,993.1 224.1,978.7 234.7,973.4 237.3,969.5 234.2,952.2 234.5,944.1 227.8,937.2 230.0,932.2 228.5,917.1 207.4,862.8 201.9,836.0 202.8,821.8 205.1,815.6 221.8,797.4 229.9,750.1 213.0,702.2 213.1,662.4 217.0,658.9 225.3,661.4 232.1,660.8 235.6,657.4 242.6,656.3 250.4,658.9 263.9,657.0 269.5,658.0 286.6,672.7 289.1,700.2 286.6,702.6 308.8,732.7 317.3,732.2 329.5,747.8 358.8,774.7 362.8,780.8 362.4,785.0 376.9,810.3 393.1,816.8 407.1,827.5 411.9,833.5 410.4,838.0 421.4,862.8 432.7,878.9 439.7,885.9 444.1,897.8 446.8,915.9 441.1,921.1 427.0,927.5 422.6,934.4 421.0,943.9 406.8,965.8 399.9,990.2 378.8,986.1 375.6,988.6 377.6,1000.4 371.8,1005.6 372.9,1020.6 376.8,1023.9 367.8,1030.0 362.4,1037.6 355.8,1042.9 311.9,1058.9 309.4,1076.0 272.5,1069.3 263.8,1070.3 254.4,1063.7 245.4,1060.5 231.5,1062.8Z"/></g><a class="cm cm--done" style="--i:10" href="creation-site-internet-cavalaire.html" data-h="/creation-site-internet-cavalaire.html" data-n="Cavalaire-sur-Mer" data-p="Station balnéaire familiale : restaurants, campings et commerces qui ferment l’hiver." aria-label="Cavalaire-sur-Mer"><path class="cm__fill" d="M376.8,1023.9 372.9,1020.6 371.8,1005.6 377.6,1000.4 375.6,988.6 378.8,986.1 399.9,990.2 406.8,965.8 421.0,943.9 422.6,934.4 427.0,927.5 441.1,921.1 446.8,915.9 473.6,915.8 483.7,912.4 507.8,935.8 510.5,941.9 515.6,944.7 520.5,954.0 516.6,966.7 526.4,985.4 529.9,999.8 518.4,1005.5 497.5,1020.6 484.1,1035.0 477.4,1046.9 475.7,1059.7 478.5,1065.0 493.3,1070.6 492.8,1076.3 478.7,1087.4 483.2,1092.9 477.2,1098.4 462.9,1090.1 457.3,1094.2 447.5,1087.6 435.9,1092.1 431.0,1096.5 429.4,1103.8 419.5,1107.2 410.6,1116.9 402.7,1117.6 399.2,1132.0 383.2,1128.8 377.7,1130.2 376.8,1136.1 369.4,1136.9 364.3,1140.2 364.1,1148.1 349.4,1148.5 346.1,1140.8 348.0,1128.8 351.9,1113.5 355.1,1108.5 360.8,1083.5 367.1,1071.3 368.2,1063.5 364.0,1052.5 365.5,1043.1 376.8,1023.9Z"/><path class="cm__line" d="M376.8,1023.9 372.9,1020.6 371.8,1005.6 377.6,1000.4 375.6,988.6 378.8,986.1 399.9,990.2 406.8,965.8 421.0,943.9 422.6,934.4 427.0,927.5 441.1,921.1 446.8,915.9 473.6,915.8 483.7,912.4 507.8,935.8 510.5,941.9 515.6,944.7 520.5,954.0 516.6,966.7 526.4,985.4 529.9,999.8 518.4,1005.5 497.5,1020.6 484.1,1035.0 477.4,1046.9 475.7,1059.7 478.5,1065.0 493.3,1070.6 492.8,1076.3 478.7,1087.4 483.2,1092.9 477.2,1098.4 462.9,1090.1 457.3,1094.2 447.5,1087.6 435.9,1092.1 431.0,1096.5 429.4,1103.8 419.5,1107.2 410.6,1116.9 402.7,1117.6 399.2,1132.0 383.2,1128.8 377.7,1130.2 376.8,1136.1 369.4,1136.9 364.3,1140.2 364.1,1148.1 349.4,1148.5 346.1,1140.8 348.0,1128.8 351.9,1113.5 355.1,1108.5 360.8,1083.5 367.1,1071.3 368.2,1063.5 364.0,1052.5 365.5,1043.1 376.8,1023.9Z"/></a><g class="cm cm--off" style="--i:11" data-h="" data-n="Rayol-Canadel-sur-Mer" data-p="Domaine du Rayol, hôtellerie et résidences. Quasi aucune concurrence." aria-label="Rayol-Canadel-sur-Mer"><path class="cm__fill" d="M231.5,1062.8 245.4,1060.5 254.4,1063.7 263.8,1070.3 272.5,1069.3 309.4,1076.0 311.9,1058.9 355.8,1042.9 362.4,1037.6 367.8,1030.0 376.8,1023.9 365.5,1043.1 364.0,1052.5 368.2,1063.5 367.1,1071.3 357.7,1093.2 346.1,1140.8 334.7,1144.7 312.6,1133.5 307.5,1128.1 297.9,1129.6 291.4,1136.3 279.3,1134.5 278.2,1127.9 267.3,1122.1 259.1,1124.0 242.3,1134.4 235.3,1131.2 219.9,1142.1 219.1,1131.7 225.6,1124.3 232.8,1097.7 234.2,1069.0 231.5,1062.8Z"/><path class="cm__line" d="M231.5,1062.8 245.4,1060.5 254.4,1063.7 263.8,1070.3 272.5,1069.3 309.4,1076.0 311.9,1058.9 355.8,1042.9 362.4,1037.6 367.8,1030.0 376.8,1023.9 365.5,1043.1 364.0,1052.5 368.2,1063.5 367.1,1071.3 357.7,1093.2 346.1,1140.8 334.7,1144.7 312.6,1133.5 307.5,1128.1 297.9,1129.6 291.4,1136.3 279.3,1134.5 278.2,1127.9 267.3,1122.1 259.1,1124.0 242.3,1134.4 235.3,1131.2 219.9,1142.1 219.1,1131.7 225.6,1124.3 232.8,1097.7 234.2,1069.0 231.5,1062.8Z"/></g></svg>
+    <span class="cm__lab" style="--x:706.7;--y:307.6;--i:0">Sainte-Maxime</span><span class="cm__lab" style="--x:516.3;--y:381.4;--i:1">Le Plan-de-la-Tour</span><span class="cm__lab" style="--x:275.8;--y:442.6;--i:2">La Garde-Freinet</span><span class="cm__lab" style="--x:473.0;--y:611.8;--i:3">Grimaud</span><span class="cm__lab cm__lab--done" style="--x:437.0;--y:757.1;--i:4">Cogolin</span><span class="cm__lab cm__lab--done" style="--x:861.1;--y:693.3;--i:5">Saint-Tropez</span><span class="cm__lab" style="--x:629.7;--y:786.4;--i:6">Gassin</span><span class="cm__lab" style="--x:783.0;--y:871.9;--i:7">Ramatuelle</span><span class="cm__lab" style="--x:629.9;--y:966.9;--i:8">La Croix-Valmer</span><span class="cm__lab" style="--x:303.7;--y:882.8;--i:9">La Môle</span><span class="cm__lab cm__lab--done" style="--x:436.5;--y:1022.4;--i:10">Cavalaire-sur-Mer</span><span class="cm__lab" style="--x:300.1;--y:1095.4;--i:11">Rayol-Canadel-sur-Mer</span>
+  </div>
+
+  <p class="varmap-legend" data-reveal>
+    <span><em class="e1" aria-hidden="true"></em> Commune couverte</span>
+    <span><em class="e2" aria-hidden="true"></em> Projet de démonstration en ligne</span>
+    <span><em class="e1" aria-hidden="true"></em> Page dédiée : cliquez sur la commune</span>
+  </p>
+
+  <div class="wall-cap" id="cap">
+    <p class="wall-cap__name" id="cap-n">Cavalaire-sur-Mer</p>
+    <p class="wall-cap__txt" id="cap-p">Station balnéaire familiale : restaurants, campings et commerces qui ferment l’hiver.</p>
+    <a class="wall-cap__go" id="cap-go" href="creation-site-internet-cavalaire.html">
+      <u>Voir la page</u><i aria-hidden="true">→</i></a>
+  </div>
+
+  <p class="villes-far" aria-label="Communes couvertes autour du golfe"><span>Le Lavandou</span><span>Bormes-les-Mimosas</span><span>Hyères</span><span>Roquebrune-sur-Argens</span><span>Fréjus</span><span>Saint-Raphaël</span><span>Le Muy</span><span>Draguignan</span></p>
+
+  <div class="remote" data-reveal>
+    <p class="remote__tag">À distance</p>
+    <p class="remote__txt">
+      Ailleurs dans le Var et sur le reste du territoire, les échanges se
+      tiennent en visioconférence. <b>Prestation et délais identiques</b> ;
+      seule la forme du premier rendez-vous change.
+    </p>
+    <a class="remote__go" href="developpeur-web-var.html"><u>Tout le Var</u><i aria-hidden="true">→</i></a>
+  </div>
+
+  <p class="villes-note" data-reveal>
+    Contours communaux réels du golfe de Saint-Tropez.
+    <b>Votre commune n’est pas là ? Elle peut y être</b> — dites-moi laquelle.
+  </p>
+</section>
+
+<section class="apropos" id="a-propos">
+  <div class="sec-head">
+    <div>
+      <p class="sec-eyebrow" data-reveal>À propos</p>
+      <h2 class="sec-title">
+        <span class="line"><span class="line__in">Un interlocuteur,</span></span>
+        <span class="line"><span class="line__in"><em>du devis à la maintenance.</em></span></span>
+      </h2>
+    </div>
+    <p class="sec-intro" data-reveal>
+      Pas de commercial, pas de chef de projet, pas de hotline.
+      <b>Vous parlez à la personne qui écrit le code</b>, du premier appel à la
+      dixième modification.
+    </p>
+  </div>
+
+  <div class="about-grid">
+    <figure class="portrait" id="portrait">
+        <div class="portrait__box">
+          <img class="portrait__img" src="assets/img/portrait-540.webp" srcset="assets/img/portrait-540.webp 540w, assets/img/portrait-360.webp 360w" sizes="(max-width:760px) 60vw, 300px" alt="Le développeur web de Weboost Studio, à Cavalaire-sur-Mer" width="540" height="693" loading="lazy" decoding="async">
+          <span class="portrait__scan" aria-hidden="true"></span>
+          <span class="portrait__grid" aria-hidden="true"></span>
+        </div>
+        <figcaption>Weboost Studio<span>Cavalaire-sur-Mer (83)</span></figcaption>
+      </figure>
+
+      <div class="about-text" data-reveal>
+      <p>Un interlocuteur unique, à dix minutes de chez vous, qui répond quand
+        vous appelez.</p>
+      <p>Weboost Studio est une activité indépendante établie à
+        Cavalaire-sur-Mer, intervenant dans le golfe de Saint-Tropez et dans
+        le Var.</p>
+      <p>Chaque site est développé sur mesure, sans thème acheté ni constructeur
+        de pages. Rien d’inutile n’est embarqué : c’est ce qui permet d’obtenir
+        <b>des temps d’affichage inférieurs à la seconde</b> sur mobile.</p>
+      <p>L’interlocuteur reste le même sur toute la durée du projet — cadrage,
+        développement, mise en ligne, puis maintenance. Les demandes de
+        modification sont traitées en direct, sans ticket ni plateforme
+        intermédiaire.</p>
+      <p>Le cadrage débute par une visite sur site pour les entreprises du golfe :
+        nature de l’activité, clientèle, saisonnalité, concurrence locale. La
+        conception s’appuie sur ces éléments, non sur un gabarit.</p>
+    </div>
+
+    <dl class="spec" data-reveal>
+      <div><dt>Statut</dt><dd>Développeur web indépendant</dd></div>
+      <div><dt>SIREN</dt><dd>102 226 404</dd></div>
+      <div><dt>Basé à</dt><dd>Cavalaire-sur-Mer (83)</dd></div>
+      <div><dt>Zone</dt><dd>Golfe de Saint-Tropez &amp; Var</dd></div>
+      <div><dt>Hébergement</dt><dd>Au choix du client</dd></div>
+      <div><dt>Technologies</dt><dd>HTML · CSS · JavaScript</dd></div>
+      <div><dt>Traceurs</dt><dd><em>Aucun</em></dd></div>
+      <div><dt>Délai moyen</dt><dd>7 à 10 jours</dd></div>
+    </dl>
+  </div>
+
+  <div class="nots">
+    <div class="not" data-reveal>
+      <b>Le commerce en ligne</b>
+      <p>La vente en ligne n’entre pas dans le périmètre des prestations. Une
+        orientation vers un prestataire spécialisé est proposée le cas échéant.</p>
+    </div>
+    <div class="not" data-reveal>
+      <b>Les thèmes préconçus</b>
+      <p>Un thème acheté embarque un volume de code très supérieur au besoin
+        réel. C’est la première cause de lenteur d’un site vitrine.</p>
+    </div>
+    <div class="not" data-reveal>
+      <b>Les garanties de position</b>
+      <p>Aucune position n’est garantie sur Google : personne n’est en mesure de
+        le faire. Le travail réalisé est en revanche documenté, et les résultats
+        mesurés dans la Search Console.</p>
+    </div>
+  </div>
+</section>
+
+<section class="contact" id="contact">
+  <div class="sec-head">
+    <div>
+      <p class="sec-eyebrow" data-reveal>Contact</p>
+      <h2 class="sec-title">
+        <span class="line"><span class="line__in">Le premier</span></span>
+        <span class="line"><span class="line__in"><em>rendez-vous est chez vous.</em></span></span>
+      </h2>
+    </div>
+    <p class="sec-intro" data-reveal>
+      Un appel, un rendez-vous chez vous, un devis chiffré sous 24 heures.
+      <b>Gratuit, sans engagement, et sans relance commerciale</b> si vous ne
+      donnez pas suite.
+    </p>
+  </div>
+
+  <div class="contact-grid">
+    <div class="contact-side" data-reveal>
+      <a class="big-link" href="tel:+33669371667">
+        <small>Par téléphone</small>06 69 37 16 67</a>
+      <a class="big-link" href="mailto:contact@weboost-studio.fr">
+        <small>Par email</small>contact@weboost-studio.fr</a>
+
+      <dl class="spec">
+        <div><dt>Zone</dt><dd>Golfe de Saint-Tropez &amp; Var</dd></div>
+        <div><dt>Réponse</dt><dd>Sous 24 h ouvrées</dd></div>
+        <div><dt>Déplacement</dt><dd><em>Gratuit</em></dd></div>
+        <div><dt>Devis</dt><dd>Sans engagement</dd></div>
+      </dl>
+    </div>
+
+    <form class="form" id="form" method="post" action="contact.php" data-reveal>
+      <p class="hp" aria-hidden="true">
+        <label for="f-web">Ne pas remplir</label>
+        <input id="f-web" name="website" type="text" tabindex="-1" autocomplete="off">
+      </p>
+
+      <div class="field">
+        <label for="f-nom">Votre nom</label>
+        <input id="f-nom" name="name" type="text" autocomplete="name" placeholder="Jean Dupont" required>
+      </div>
+      <div class="field">
+        <label for="f-ville">Votre commune</label>
+        <input id="f-ville" name="ville" type="text" placeholder="Cavalaire-sur-Mer" required>
+      </div>
+      <div class="field">
+        <label for="f-tel">Téléphone</label>
+        <input id="f-tel" name="phone" type="tel" autocomplete="tel" placeholder="06 12 34 56 78" required>
+      </div>
+      <div class="field">
+        <label for="f-mail">Email</label>
+        <input id="f-mail" name="email" type="email" autocomplete="email" placeholder="jean@exemple.fr" required>
+      </div>
+      <div class="field field--full">
+        <label for="f-sujet">Ce qui vous intéresse</label>
+        <select id="f-sujet" name="project" required>
+          <option value="" disabled selected>Sélectionner…</option>
+          <option value="starter">Site Starter — 3 pages, 600 €</option>
+          <option value="business">Site Business — 5 pages, 1 300 €</option>
+          <option value="premium">Site Premium — sur mesure</option>
+          <option value="seo">Référencement local</option>
+          <option value="maintenance">Maintenance d’un site existant</option>
+          <option value="autre">Autre demande</option>
+        </select>
+      </div>
+      <div class="field field--full">
+        <label for="f-msg">Votre projet</label>
+        <textarea id="f-msg" name="message" placeholder="Votre activité, ce que vous vendez, et ce que le site doit vous apporter." required></textarea>
+      </div>
+
+      <label class="consent" for="f-rgpd">
+        <input id="f-rgpd" name="consentement" type="checkbox" required>
+        <span>J’accepte que ces informations soient utilisées pour me recontacter.
+          Elles ne sont ni revendues ni transmises à un tiers, et sont
+          supprimées un an après le dernier échange.</span>
+      </label>
+
+      <button class="submit" type="submit">Envoyer <i aria-hidden="true">→</i></button>
+      <p class="form-status" id="form-status" role="status" hidden></p>
+      <p class="form-note">Aucun cookie, aucun traceur, aucun service tiers : le message
+        part directement vers la boîte mail du studio.</p>
+    </form>
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="foot-grid">
+    <div class="foot-brand">
+      Weboost <i>Studio</i>
+      <p>Développeur web indépendant dans le golfe de Saint-Tropez.
+        Sites conçus sur mesure, sans cookie tiers.</p>
+    </div>
+
+    <div>
+      <h4>Services</h4>
+      <ul>
+        <li><a href="index.html#services">Site vitrine</a></li>
+        <li><a href="index.html#services">Refonte</a></li>
+        <li><a href="index.html#services">Référencement local</a></li>
+        <li><a href="index.html#services">Fiche Google</a></li>
+        <li><a href="index.html#services">Maintenance</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <h4>Communes</h4>
+      <ul>
+        <li><a href="creation-site-internet-cavalaire.html">Cavalaire-sur-Mer</a></li>
+        <li><a href="creation-site-internet-sainte-maxime.html">Sainte-Maxime</a></li>
+        <li><a href="creation-site-internet-cogolin.html">Cogolin</a></li>
+        <li><a href="creation-site-internet-saint-tropez.html">Saint-Tropez</a></li>
+        <li><a href="creation-site-internet-grimaud.html">Grimaud</a></li>
+        <li><a href="creation-site-internet-la-croix-valmer.html">La Croix-Valmer</a></li>
+        <li><a href="developpeur-web-var.html">Tout le Var</a></li>
+      </ul>
+    </div>
+
+    <div>
+      <h4>Weboost</h4>
+      <ul>
+        <li><a href="#realisations">Réalisations</a></li>
+        <li><a href="#formules">Formules</a></li>
+        <li><a href="#a-propos">À propos</a></li>
+        <li><a href="mentions-legales.html">Mentions légales</a></li>
+        <li><a href="mentions-legales.html#conditions-generales-de-vente">Conditions générales</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="foot-bar">
+    <p>© 2026 Weboost Studio<span class="sep">·</span>SIREN 102 226 404<span class="sep">·</span>Cavalaire-sur-Mer (83)</p>
+    <p><em>Ce site n’utilise aucun cookie</em><span class="sep">·</span>Hébergé en France</p>
+  </div>
+</footer>
+
+<script src="assets/js/gsap.min.js" defer></script>
+<script src="assets/js/preloader.js" defer></script>
+<script src="assets/js/site.js" defer></script>
+<aside class="cook" id="cook" hidden>
+  <p class="cook__txt">
+    <b>Ce site ne dépose aucun cookie.</b> Ni traceur publicitaire, ni mesure
+    d’audience, ni bouton de réseau social. Seul un marqueur technique, effacé
+    à la fermeture de l’onglet, évite de rejouer l’animation d’accueil.
+    <a href="politique-confidentialite.html">En savoir plus</a>
+  </p>
+  <button class="cook__ok" id="cook-ok" type="button">J’ai compris</button>
+</aside>
+
+<script>
+/* ───────── BANDEAU D'INFORMATION ─────────
+   Affiché une fois, puis mémorisé. Le choix est conservé dans le stockage
+   local — c'est la seule donnée du site, et elle ne sert qu'à ça. */
+(() => {
+  const el = document.getElementById('cook');
+  const ok = document.getElementById('cook-ok');
+  if (!el || !ok) return;
+  let vu = false;
+  try { vu = localStorage.getItem('wb_info') === '1'; } catch {}
+  if (vu) return;
+  /* Après l'intro, pour ne pas encombrer l'arrivée */
+  setTimeout(() => {
+    el.hidden = false;
+    requestAnimationFrame(() => el.classList.add('is-on'));
+  }, 1200);
+  ok.addEventListener('click', () => {
+    el.classList.remove('is-on');
+    setTimeout(() => { el.hidden = true; }, 600);
+    try { localStorage.setItem('wb_info', '1'); } catch {}
+  });
+})();
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "ProfessionalService",
+      "@id": "https://www.weboost-studio.fr/#studio",
+      "name": "Weboost Studio",
+      "description": "Développeur web indépendant dans le golfe de Saint-Tropez. Création de sites internet et référencement local.",
+      "url": "https://www.weboost-studio.fr/",
+      "telephone": "+33669371667",
+      "email": "contact@weboost-studio.fr",
+      "priceRange": "€€",
+      "image": "https://www.weboost-studio.fr/assets/img/hero-golfe-1100.webp",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Cavalaire-sur-Mer",
+        "postalCode": "83240",
+        "addressRegion": "Var",
+        "addressCountry": "FR"
+      },
+      "areaServed": [
+        {
+          "@type": "City",
+          "name": "Saint-Tropez"
+        },
+        {
+          "@type": "City",
+          "name": "Cavalaire-sur-Mer"
+        },
+        {
+          "@type": "City",
+          "name": "Sainte-Maxime"
+        },
+        {
+          "@type": "City",
+          "name": "Cogolin"
+        },
+        {
+          "@type": "City",
+          "name": "Grimaud"
+        },
+        {
+          "@type": "City",
+          "name": "La Croix-Valmer"
+        }
+      ],
+      "knowsLanguage": [
+        "fr",
+        "en"
+      ],
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Formules",
+        "itemListElement": [
+          {
+            "@type": "Offer",
+            "name": "Starter — site vitrine 3 pages",
+            "price": "600",
+            "priceCurrency": "EUR"
+          },
+          {
+            "@type": "Offer",
+            "name": "Business — site vitrine 5 pages",
+            "price": "1300",
+            "priceCurrency": "EUR"
+          },
+          {
+            "@type": "Offer",
+            "name": "Premium — sur mesure"
+          }
+        ]
+      }
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://www.weboost-studio.fr/#site",
+      "url": "https://www.weboost-studio.fr/",
+      "name": "Weboost Studio",
+      "inLanguage": "fr-FR",
+      "publisher": {
+        "@id": "https://www.weboost-studio.fr/#studio"
+      }
+    },
+    {
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "Combien coûte un site internet dans le golfe de Saint-Tropez ?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "À partir de 600 € pour un site vitrine de trois pages, 1 300 € pour un site de cinq pages avec référencement local, et sur devis pour un projet sur mesure."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "En combien de temps le site est-il en ligne ?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Sept jours pour un site Starter, dix pour un Business, à compter du premier rendez-vous."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Dans quelles communes intervenez-vous ?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Sur place dans tout le golfe de Saint-Tropez depuis Cavalaire-sur-Mer, et en visioconférence dans le reste du Var et en France."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "L'hébergement est-il compris ?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "La mise en place et le paramétrage sont compris dans la prestation. Le choix de l'hébergeur revient au client et reste à sa charge."
+          }
+        }
+      ]
+    }
+  ]
+}
+</script>
+</body>
+</html>

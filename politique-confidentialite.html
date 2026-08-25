@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#08080A">
+<link rel="icon" href="favicon.ico" sizes="32x32">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
+<link rel="manifest" href="site.webmanifest">
+<meta name="robots" content="index,follow">
+
+<title>Politique de confidentialité — Weboost Studio</title>
+<meta name="description" content="Politique de confidentialité de Weboost Studio : données collectées, finalités, durées de conservation, droits RGPD. Aucun cookie, aucun traceur.">
+<link rel="canonical" href="https://www.weboost-studio.fr/politique-confidentialite.html">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Politique de confidentialité — Weboost Studio">
+<meta property="og:url" content="https://www.weboost-studio.fr/politique-confidentialite.html">
+<meta property="og:locale" content="fr_FR">
+
+<link rel="preload" href="assets/fonts/space-grotesk-700.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/inter-300.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+/* Polices auto-hébergées, réduites aux 125 glyphes du site. Aucune requête
+   vers un tiers. font-display:swap affiche le texte immédiatement. */
+@font-face{font-family:'Space Grotesk';font-style:normal;font-weight:500;font-display:swap;src:url(assets/fonts/space-grotesk-500.woff2) format('woff2')}
+@font-face{font-family:'Space Grotesk';font-style:normal;font-weight:700;font-display:swap;src:url(assets/fonts/space-grotesk-700.woff2) format('woff2')}
+@font-face{font-family:'Inter';font-style:normal;font-weight:300;font-display:swap;src:url(assets/fonts/inter-300.woff2) format('woff2')}
+@font-face{font-family:'Inter';font-style:normal;font-weight:400;font-display:swap;src:url(assets/fonts/inter-400.woff2) format('woff2')}
+@font-face{font-family:'IBM Plex Mono';font-style:normal;font-weight:400;font-display:swap;src:url(assets/fonts/ibm-plex-mono-400.woff2) format('woff2')}
+</style>
+
+<link rel="preload" href="assets/fonts/space-grotesk-700.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="assets/fonts/inter-300.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+/* Polices auto-hébergées, réduites aux 125 glyphes du site. Aucune requête
+   vers un tiers. font-display:swap affiche le texte immédiatement. */
+@font-face{font-family:'Space Grotesk';font-style:normal;font-weight:500;font-display:swap;src:url(assets/fonts/space-grotesk-500.woff2) format('woff2')}
+@font-face{font-family:'Space Grotesk';font-style:normal;font-weight:700;font-display:swap;src:url(assets/fonts/space-grotesk-700.woff2) format('woff2')}
+@font-face{font-family:'Inter';font-style:normal;font-weight:300;font-display:swap;src:url(assets/fonts/inter-300.woff2) format('woff2')}
+@font-face{font-family:'Inter';font-style:normal;font-weight:400;font-display:swap;src:url(assets/fonts/inter-400.woff2) format('woff2')}
+@font-face{font-family:'IBM Plex Mono';font-style:normal;font-weight:400;font-display:swap;src:url(assets/fonts/ibm-plex-mono-400.woff2) format('woff2')}
+</style>
+<link rel="stylesheet" href="assets/css/site.css">
+<style>
+/* ═══════════════ PAGE LÉGALE ═══════════════ */
+.legal{ padding:clamp(40px,6vh,70px) var(--pad) clamp(60px,9vh,110px); }
+.legal__wrap{ max-width:78ch; }
+.legal h1{
+  font-family:var(--display); font-weight:700;
+  font-size:clamp(2rem,5vw,3.6rem); line-height:1.02; letter-spacing:-.04em;
+}
+.legal__date{
+  margin-top:14px; font-family:var(--mono); font-size:.66rem;
+  letter-spacing:.08em; text-transform:uppercase; color:var(--grey);
+}
+.legal h2{
+  margin-top:clamp(44px,6vh,72px); padding-top:22px; border-top:1px solid var(--line);
+  font-family:var(--display); font-weight:700;
+  font-size:clamp(1.3rem,2.4vw,1.9rem); letter-spacing:-.035em; max-width:none;
+}
+.legal h3{
+  margin-top:clamp(26px,3.4vh,38px);
+  font-family:var(--display); font-weight:500;
+  font-size:clamp(1rem,1.5vw,1.16rem); letter-spacing:-.02em;
+}
+.legal p, .legal li{
+  margin-top:14px; font-weight:300; font-size:clamp(.94rem,1.05vw,1rem);
+  line-height:1.75; color:var(--grey-2);
+}
+.legal b{ color:var(--pure); font-weight:400; }
+.legal a{ color:var(--pure); border-bottom:1px solid rgba(255,255,255,.25);
+          text-decoration:none; transition:color .35s, border-color .35s; }
+.legal a:hover{ color:var(--cyan); border-color:var(--cyan); }
+.legal ul{ list-style:none; margin-top:8px; }
+.legal li{ position:relative; padding-left:20px; }
+.legal li::before{ content:""; position:absolute; left:0; top:.95em;
+  width:8px; height:1px; background:var(--cyan); }
+
+/* Bloc d'identité : les mentions obligatoires, lisibles d'un coup */
+.legal__card{
+  margin-top:22px; padding:clamp(20px,2.4vw,30px);
+  border:1px solid var(--line); border-radius:14px; background:rgba(255,255,255,.016);
+}
+.legal__card dl{ display:grid; gap:0; }
+.legal__card dl > div{
+  display:flex; align-items:baseline; justify-content:space-between; gap:18px;
+  padding:11px 0; border-bottom:1px solid var(--line);
+  font-family:var(--mono); font-size:.72rem;
+}
+.legal__card dl > div:last-child{ border-bottom:0; }
+.legal__card dt{ color:var(--grey); letter-spacing:.1em; text-transform:uppercase; white-space:nowrap; }
+.legal__card dd{ color:var(--pure); text-align:right; }
+.legal__card dd a{ border-bottom:0; }
+
+.legal__toc{ display:flex; flex-wrap:wrap; gap:8px; margin-top:clamp(28px,4vh,44px); }
+.legal__toc a{
+  padding:8px 14px; border:1px solid var(--line); border-radius:999px; border-bottom-width:1px;
+  font-family:var(--body); font-weight:300; font-size:.82rem; color:var(--grey-2);
+}
+.legal__toc a:hover{ border-color:var(--cyan); color:var(--cyan); }
+
+/* Ces pages n'ont pas de filigrane : le pied reprend le fond général */
+footer{ background:var(--void); position:relative; z-index:2; }
+
+@media (max-width:620px){
+  .legal__card dl > div{ flex-direction:column; align-items:flex-start; gap:5px; }
+  .legal__card dd{ text-align:left; }
+}
+</style>
+</head>
+<body>
+
+<div class="page">
+
+<header class="nav is-on" id="nav">
+  <a class="nav__brand" href="index.html">Weboost <i>Studio</i></a>
+  <nav class="nav__links" aria-label="Navigation principale">
+    <a href="index.html#formules">Formules</a>
+    <a href="index.html#realisations">Réalisations</a>
+    <a href="index.html#villes">Communes</a>
+    <a href="index.html#a-propos">À propos</a>
+  </nav>
+  <a class="nav__tel" href="tel:+33669371667">
+    <span aria-hidden="true">●</span> 06 69 37 16 67
+  </a>
+  <button class="nav__burger" id="nav-burger" type="button"
+          aria-expanded="false" aria-controls="nav-menu" aria-label="Ouvrir le menu">
+    <span></span><span></span>
+  </button>
+</header>
+
+<div class="navmenu" id="nav-menu" hidden>
+  <a href="index.html#formules">Formules</a>
+  <a href="index.html#realisations">Réalisations</a>
+  <a href="index.html#villes">Communes</a>
+  <a href="index.html#a-propos">À propos</a>
+  <a href="index.html#contact">Contact</a>
+  <a class="navmenu__tel" href="tel:+33669371667">06 69 37 16 67</a>
+</div>
+
+<p class="crumb">
+  <a href="index.html">Accueil</a><span>›</span>
+  Politique de confidentialité
+</p>
+
+<div class="legal">
+  <div class="legal__wrap">
+    <h1>Politique de confidentialité</h1>
+    <p class="legal__date">Dernière mise à jour : août 2026</p>
+
+    <nav class="legal__toc" aria-label="Sommaire"><a href="#responsable-du-traitement">1. Responsable du traitement</a><a href="#donnees-collectees">2. Données collectées</a><a href="#finalites-et-base-legale">3. Finalités et base légale</a><a href="#destinataires">4. Destinataires</a><a href="#duree-de-conservation">5. Durée de conservation</a><a href="#vos-droits">6. Vos droits</a><a href="#cookies-et-traceurs">7. Cookies et traceurs</a><a href="#ressources-externes">8. Ressources externes</a><a href="#securite-et-localisation">9. Sécurité et localisation</a><a href="#modifications">10. Modifications</a><a href="#contact">11. Contact</a></nav>
+
+  <h2 id="responsable-du-traitement">1. Responsable du traitement</h2>
+
+  <p>Weboost Studio attache de l’importance à la protection de vos données. Cette
+    politique décrit quelles données sont collectées, pourquoi, combien de temps elles
+    sont conservées, et quels droits vous pouvez exercer.</p>
+
+  <div class="legal__card">
+    <dl>
+      <div><dt>Responsable</dt><dd>Stéphane Miliziano — Weboost Studio</dd></div>
+      <div><dt>SIREN</dt><dd>102 226 404</dd></div>
+      <div><dt>SIRET</dt><dd>102 226 404 00014</dd></div>
+      <div><dt>Email</dt><dd><a href="mailto:contact@weboost-studio.fr">contact@weboost-studio.fr</a></dd></div>
+      <div><dt>Téléphone</dt><dd><a href="tel:+33669371667">06 69 37 16 67</a></dd></div>
+      <div><dt>Siège</dt><dd>Golfe de Saint-Tropez, Var, France</dd></div>
+    </dl>
+  </div>
+
+  <h2 id="donnees-collectees">2. Données collectées</h2>
+
+  <p>Une seule source de collecte : le <b>formulaire de contact</b>. Aucune donnée
+    n’est recueillie à votre insu au cours de la navigation.</p>
+  <ul>
+    <li>Nom</li>
+    <li>Commune</li>
+    <li>Téléphone</li>
+    <li>Adresse email</li>
+    <li>Nature du projet</li>
+    <li>Message</li>
+  </ul>
+  <p>À l’envoi, ces informations sont transmises par un script hébergé sur le
+    serveur du site, qui les expédie par email au studio. <b>Elles ne transitent
+    par aucun service tiers</b> et ne sont pas enregistrées dans une base de
+    données : elles n’existent que dans la boîte mail de destination.</p>
+  <p>L’adresse IP à l’origine de l’envoi figure dans l’email reçu, à seule fin de
+    caractériser un envoi abusif. Elle n’est ni exploitée, ni recoupée, ni
+    conservée ailleurs.</p>
+  <p>Rien d’autre n’est enregistré : ni historique de navigation, ni empreinte de
+    navigateur, ni profilage.</p>
+
+  
+  <h2 id="finalites-et-base-legale">3. Finalités et base légale</h2>
+
+  <p>Vos données servent exclusivement à :</p>
+  <ul>
+    <li>répondre à votre demande ;</li>
+    <li>établir un devis ;</li>
+    <li>assurer le suivi du projet s’il se concrétise.</li>
+  </ul>
+  <p>La base légale est votre <b>consentement</b>, donné par l’envoi du formulaire, et
+    l’intérêt légitime à répondre aux demandes reçues. La case de consentement est
+    obligatoire et non pré-cochée.</p>
+
+  <h2 id="destinataires">4. Destinataires</h2>
+
+  <p>Vos données sont destinées à Weboost Studio seul. <b>Elles ne sont ni vendues, ni
+    louées, ni transmises à un tiers</b>, sauf obligation légale. Aucun sous-traitant
+    n’y a accès : ni service d’emailing, ni outil de gestion commerciale, ni plateforme
+    de formulaires externe.</p>
+
+  <h2 id="duree-de-conservation">5. Durée de conservation</h2>
+
+  <ul>
+    <li><b>Demande sans suite</b> — un an à compter du dernier échange, puis suppression.</li>
+    <li><b>Projet réalisé</b> — durée du projet, puis cinq ans au titre des obligations
+      comptables et fiscales.</li>
+    <li><b>Marqueur technique</b> — le temps de la session de navigation.</li>
+  </ul>
+
+  <h2 id="vos-droits">6. Vos droits</h2>
+
+  <p>Le RGPD vous ouvre les droits suivants :</p>
+  <ul>
+    <li><b>Accès</b> — obtenir une copie des données vous concernant.</li>
+    <li><b>Rectification</b> — corriger une donnée inexacte.</li>
+    <li><b>Effacement</b> — demander la suppression de vos données.</li>
+    <li><b>Opposition</b> — vous opposer au traitement.</li>
+    <li><b>Portabilité</b> — récupérer vos données dans un format lisible.</li>
+    <li><b>Limitation</b> — demander la suspension du traitement.</li>
+  </ul>
+  <p>Pour les exercer, écrivez à
+    <a href="mailto:contact@weboost-studio.fr">contact@weboost-studio.fr</a> ou appelez
+    le <a href="tel:+33669371667">06 69 37 16 67</a>. Une réponse vous est apportée
+    sous un mois.</p>
+  <p>Vous pouvez également introduire une réclamation auprès de la
+    <a href="https://www.cnil.fr" target="_blank" rel="noopener">CNIL</a>.</p>
+
+  <h2 id="cookies-et-traceurs">7. Cookies et traceurs</h2>
+
+  <p><b>Ce site ne dépose aucun cookie.</b> Ni Google Analytics, ni pixel publicitaire,
+    ni bouton de réseau social, ni outil de mesure d’audience.</p>
+  <p>Deux marqueurs techniques seulement sont écrits dans le stockage de votre
+    navigateur :</p>
+  <ul>
+    <li>l’un retient que l’animation d’accueil a déjà été jouée, pour ne pas la
+      rejouer d’une page à l’autre — <b>il disparaît à la fermeture de
+      l’onglet</b> ;</li>
+    <li>l’autre retient que vous avez fermé le bandeau d’information, pour ne
+      pas vous le présenter à chaque visite.</li>
+  </ul>
+  <p>Ni l’un ni l’autre ne contient de donnée personnelle, n’est accessible à un
+    tiers, ni ne permet de vous identifier ou de vous suivre. Ce sont des
+    marqueurs strictement nécessaires au fonctionnement du site, dispensés de
+    consentement préalable.</p>
+  <p>C’est pour cette raison qu’aucune bannière de consentement ne vous est présentée :
+    <b>il n’y a rien à consentir</b>.</p>
+
+  <h2 id="ressources-externes">8. Ressources externes</h2>
+
+  <p><b>Ce site ne charge aucune ressource depuis un serveur tiers.</b> Tout est
+    servi depuis le domaine weboost-studio.fr :</p>
+  <ul>
+    <li>les polices de caractères sont hébergées localement, sans passer par
+      Google Fonts ;</li>
+    <li>les bibliothèques d’animation sont servies depuis le site, sans réseau
+      de distribution externe ;</li>
+    <li>aucune carte interactive, vidéo intégrée ou bouton de réseau social
+      n’est chargé.</li>
+  </ul>
+  <p>Concrètement, <b>votre adresse IP n’est transmise à personne d’autre</b> que
+    l’hébergeur du site pendant votre visite.</p>
+  <p>Deux exceptions, sur action volontaire de votre part : les liens vers les
+    projets de démonstration mènent à GitHub Pages, et le lien vers la CNIL mène
+    à son site. Vous ne les suivez que si vous cliquez dessus.</p>
+
+  
+  <h2 id="securite-et-localisation">9. Sécurité et localisation</h2>
+
+  <ul>
+    <li>Connexion chiffrée en HTTPS sur l’ensemble du site.</li>
+    <li>Données conservées en France, sans transfert hors Union européenne.</li>
+    <li>Accès limité au seul responsable du traitement.</li>
+    <li>Aucune ressource tierce chargée, donc aucune fuite d’adresse IP.</li>
+  </ul>
+  <p>Les trois projets de démonstration présentés dans le portfolio sont hébergés par
+    GitHub Pages, aux États-Unis. <b>Ils ne collectent aucune donnée</b> : ni
+    formulaire, ni compte, ni traceur.</p>
+
+  <h2 id="modifications">10. Modifications</h2>
+
+  <p>Cette politique peut être modifiée. La version en vigueur est toujours celle
+    publiée sur cette page, avec sa date de mise à jour en tête de document.</p>
+
+  <h2 id="contact">11. Contact</h2>
+
+  <div class="legal__card">
+    <dl>
+      <div><dt>Email</dt><dd><a href="mailto:contact@weboost-studio.fr">contact@weboost-studio.fr</a></dd></div>
+      <div><dt>Téléphone</dt><dd><a href="tel:+33669371667">06 69 37 16 67</a></dd></div>
+      <div><dt>Zone</dt><dd>Golfe de Saint-Tropez, Var, France</dd></div>
+      <div><dt>Mentions légales</dt><dd><a href="mentions-legales.html">Les consulter</a></dd></div>
+    </dl>
+  </div>
+
+  </div>
+</div>
+
+<footer>
+  <p>© 2026 Weboost Studio<span class="sep">·</span>SIREN 102 226 404<span class="sep">·</span>Cavalaire-sur-Mer (83)</p>
+  <p><a href="mentions-legales.html">Mentions légales</a><span class="sep">·</span><a href="politique-confidentialite.html">Confidentialité</a><span class="sep">·</span>Aucun cookie</p>
+</footer>
+
+</div><!-- /.page -->
+
+<aside class="cook" id="cook" hidden>
+  <p class="cook__txt">
+    <b>Ce site ne dépose aucun cookie.</b> Ni traceur publicitaire, ni mesure
+    d’audience, ni bouton de réseau social. Seul un marqueur technique, effacé
+    à la fermeture de l’onglet, évite de rejouer l’animation d’accueil.
+    <a href="politique-confidentialite.html">En savoir plus</a>
+  </p>
+  <button class="cook__ok" id="cook-ok" type="button">J’ai compris</button>
+</aside>
+<script>
+/* ───────── MENU (pages intérieures) ─────────
+   La barre est déjà visible : seul le menu au doigt a besoin d'un script. */
+(() => {
+  const burger = document.getElementById('nav-burger');
+  const menu = document.getElementById('nav-menu');
+  if (!burger || !menu) return;
+  let ouvert = false;
+  const bascule = etat => {
+    ouvert = etat;
+    burger.setAttribute('aria-expanded', etat ? 'true' : 'false');
+    burger.setAttribute('aria-label', etat ? 'Fermer le menu' : 'Ouvrir le menu');
+    document.body.style.overflow = etat ? 'hidden' : '';
+    if (etat){ menu.hidden = false; requestAnimationFrame(() => menu.classList.add('is-on')); }
+    else { menu.classList.remove('is-on'); setTimeout(() => { if (!ouvert) menu.hidden = true; }, 400); }
+  };
+  burger.addEventListener('click', () => bascule(!ouvert));
+  menu.addEventListener('click', e => { if (e.target.tagName === 'A') bascule(false); });
+  addEventListener('keydown', e => { if (e.key === 'Escape' && ouvert) bascule(false); });
+})();
+
+/* ───────── BANDEAU D'INFORMATION ─────────
+   Affiché une fois, puis mémorisé. Le choix est conservé dans le stockage
+   local — c'est la seule donnée du site, et elle ne sert qu'à ça. */
+(() => {
+  const el = document.getElementById('cook');
+  const ok = document.getElementById('cook-ok');
+  if (!el || !ok) return;
+  let vu = false;
+  try { vu = localStorage.getItem('wb_info') === '1'; } catch {}
+  if (vu) return;
+  /* Après l'intro, pour ne pas encombrer l'arrivée */
+  setTimeout(() => {
+    el.hidden = false;
+    requestAnimationFrame(() => el.classList.add('is-on'));
+  }, 1200);
+  ok.addEventListener('click', () => {
+    el.classList.remove('is-on');
+    setTimeout(() => { el.hidden = true; }, 600);
+    try { localStorage.setItem('wb_info', '1'); } catch {}
+  });
+})();
+</script>
+</body>
+</html>

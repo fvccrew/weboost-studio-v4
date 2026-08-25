@@ -1,0 +1,457 @@
+/* ═══════════════ TOKENS — identiques à l'index ═══════════════
+   En production, sortir ce bloc dans /assets/css/tokens.css et le
+   partager entre l'index et les 20 pages villes. */
+:root{
+  --void:#08080A; --pure:#fff; --cyan:#C9A87C; --blue:#4A6A88;
+  --grey:#7A8189; --grey-2:#AEB5BC; --line:rgba(255,255,255,.10);
+  --display:'Space Grotesk',system-ui,sans-serif;
+  --body:'Inter',system-ui,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,monospace;
+  --ease-cine:cubic-bezier(.16,1,.3,1);
+  --pad:clamp(20px,4.5vw,80px);
+}
+*,*::before,*::after{ box-sizing:border-box; margin:0; padding:0; }
+/* color-scheme évite que le navigateur applique ses défauts clairs aux
+   contrôles de formulaire et à la barre de défilement */
+html{ overflow-x:clip; scroll-behavior:smooth; background:#08080A; color-scheme:dark; }
+body{ background:var(--void); color:var(--pure); font-family:var(--body);
+      -webkit-font-smoothing:antialiased; width:100%; max-width:100%;
+      min-height:100dvh; }
+/* Le fond est porté par la page ET par chaque bloc : certains contextes
+   d'affichage n'appliquent pas le fond du <body>, on ne s'y fie pas. */
+.page{ background:var(--void); min-height:100dvh; }
+.top, .crumb, .vhero, section, footer{ background:var(--void); }
+::selection{ background:var(--cyan); color:#1A1206; }
+canvas,img,svg{ max-width:100%; }
+a{ color:inherit; }
+
+/* ═══════════════ BARRE HAUTE ═══════════════ */
+.top{
+  display:flex; align-items:center; justify-content:space-between; gap:20px;
+  padding:clamp(18px,3vw,32px) var(--pad);
+  border-bottom:1px solid var(--line);
+}
+.brand{ font-family:var(--display); font-weight:700; font-size:1rem;
+        letter-spacing:-.02em; text-decoration:none; }
+.brand i{ font-style:normal; color:var(--grey); }
+.top nav{ display:flex; gap:clamp(14px,2.4vw,30px);
+  font-family:var(--mono); font-size:.66rem; letter-spacing:.08em; text-transform:uppercase; }
+.top nav a{ color:var(--grey-2); text-decoration:none; transition:color .35s; }
+.top nav a:hover{ color:var(--cyan); }
+
+/* ═══════════════ FIL D'ARIANE ═══════════════ */
+.crumb{
+  padding:16px var(--pad) 0;
+  font-family:var(--mono); font-size:.63rem; letter-spacing:.06em; color:var(--grey);
+}
+.crumb a{ color:var(--grey-2); text-decoration:none; }
+.crumb a:hover{ color:var(--cyan); }
+.crumb span{ margin:0 8px; opacity:.4; }
+
+/* ═══════════════ HERO ═══════════════ */
+.vhero{
+  padding:clamp(40px,7vh,90px) var(--pad) clamp(34px,5vh,60px);
+  background:radial-gradient(70% 50% at 78% 40%, rgba(201,168,124,.06), transparent 66%);
+}
+.eyebrow{
+  display:flex; align-items:center; gap:14px;
+  font-family:var(--mono); font-size:.68rem; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--grey-2); margin-bottom:clamp(18px,2.6vh,28px);
+}
+.eyebrow::before{ content:""; width:34px; height:1px; background:var(--cyan); }
+
+h1{
+  font-family:var(--display); font-weight:700;
+  font-size:clamp(2.1rem, min(5.6vw, 8vh), 4.6rem);
+  line-height:1.02; letter-spacing:-.04em; max-width:16ch;
+}
+h1 em{ font-style:normal; color:var(--cyan); }
+.vhero__sub{
+  max-width:52ch; margin-top:clamp(20px,3vh,30px);
+  font-weight:300; font-size:clamp(1rem,1.2vw,1.14rem); line-height:1.72; color:var(--grey-2);
+}
+.vhero__sub b{ color:var(--pure); font-weight:400; }
+.facts{
+  display:flex; flex-wrap:wrap; gap:8px 20px; margin-top:clamp(22px,3vh,32px);
+  padding-top:20px; border-top:1px solid var(--line);
+  font-family:var(--mono); font-size:.67rem; letter-spacing:.04em; color:var(--grey);
+}
+.facts b{ color:var(--pure); font-weight:400; }
+.facts .sep{ opacity:.3; }
+
+/* ── La bande photo, pleine largeur, sous le texte ──
+   Placée en colonne latérale, l'image ne tenait jamais entièrement dans
+   l'écran : on ne voyait ni le remplissage ni l'ouverture. En bande à
+   hauteur maîtrisée, elle est visible d'un seul tenant. */
+.vshape{
+  padding:0 var(--pad) clamp(40px,7vh,90px);
+  border-bottom:1px solid var(--line);
+}
+.vshape .shape svg{
+  width:100%; height:clamp(240px,56svh,580px);
+  display:block; overflow:visible;
+}
+@media (max-width:760px){
+  .vshape .shape svg{ height:clamp(200px,42svh,340px); }
+}
+
+/* Le contour réel de la commune, rempli par sa propre photo.
+   La forme n'est pas décorative : c'est la frontière communale, découpée
+   au vrai tracé. Le trait se dessine d'abord, la photo apparaît dedans. */
+.shape{ position:relative; }
+.shape__edge{ fill:var(--cyan); opacity:0; transition:opacity .5s ease; }
+/* Le cadre complet : invisible tant que la commune n'est pas remplie */
+.shape__full{ opacity:0; }
+/* Le contour reste tracé par-dessus la photo ouverte */
+.shape__line{ pointer-events:none; }
+.shape.is-filling .shape__edge{ opacity:.85; }
+.shape__line{
+  fill:none; stroke:var(--cyan); stroke-width:1.4;
+  stroke-linejoin:round; vector-effect:non-scaling-stroke;
+}
+.shape.is-armed .shape__line{ stroke-dasharray:var(--len); stroke-dashoffset:var(--len); }
+.shape.is-armed.is-on .shape__line{ animation:drawSt 2.4s var(--ease-cine) forwards; }
+@keyframes drawSt{ to{ stroke-dashoffset:0 } }
+/* Voile intérieur : la photo doit rester sous le texte, pas rivaliser */
+.shape__veil{ fill:url(#stVeil); pointer-events:none; }
+.shape figcaption{
+  margin-top:14px; font-family:var(--mono); font-size:.62rem;
+  letter-spacing:.08em; text-transform:uppercase; color:var(--grey); text-align:center;
+}
+
+/* ═══════════════ SECTIONS ═══════════════ */
+section{ padding:clamp(56px,9vh,110px) var(--pad); border-bottom:1px solid var(--line); }
+.sec-eyebrow{
+  display:flex; align-items:center; gap:12px; margin-bottom:clamp(16px,2.4vh,24px);
+  font-family:var(--mono); font-size:.66rem; letter-spacing:.11em;
+  text-transform:uppercase; color:var(--grey-2);
+}
+.sec-eyebrow::before{ content:""; width:28px; height:1px; background:var(--cyan); }
+h2{
+  font-family:var(--display); font-weight:700;
+  font-size:clamp(1.7rem,3.6vw,3rem); line-height:1.02; letter-spacing:-.04em;
+  max-width:20ch;
+}
+.lede{
+  max-width:56ch; margin-top:18px;
+  font-weight:300; font-size:clamp(.98rem,1.1vw,1.06rem); line-height:1.75; color:var(--grey-2);
+}
+.lede b{ color:var(--pure); font-weight:400; }
+
+/* Points de contexte */
+.pts{
+  display:grid; grid-template-columns:repeat(2,1fr);
+  gap:clamp(22px,3vw,50px); margin-top:clamp(34px,5vh,60px);
+}
+.pt-item{ padding-top:22px; border-top:1px solid var(--line); }
+.pt-item h3{
+  font-family:var(--display); font-weight:500; font-size:clamp(1.05rem,1.5vw,1.32rem);
+  letter-spacing:-.025em; margin-bottom:12px;
+}
+.pt-item p{ font-weight:300; font-size:.95rem; line-height:1.7; color:var(--grey-2); }
+.pt-item span{
+  display:block; margin-bottom:14px;
+  font-family:var(--mono); font-size:.6rem; letter-spacing:.12em;
+  text-transform:uppercase; color:var(--cyan);
+}
+
+/* Livrables */
+.deliv{ list-style:none; margin-top:clamp(30px,4.5vh,52px); border-top:1px solid var(--line); }
+.deliv li{
+  /* Colonne de titres à largeur fixe : avec `auto`, elle s'adaptait au plus
+     long libellé de chaque ligne et les paragraphes ne démarraient jamais
+     au même endroit. */
+  display:grid; grid-template-columns:clamp(150px,17vw,230px) 1fr;
+  gap:clamp(16px,3vw,44px);
+  padding:20px 0; border-bottom:1px solid var(--line); align-items:baseline;
+}
+.deliv b{
+  font-family:var(--display); font-weight:500; font-size:clamp(1rem,1.4vw,1.2rem);
+  letter-spacing:-.02em;
+  /* Plus de nowrap : à largeur fixe, un libellé long doit pouvoir passer
+     à la ligne plutôt que déborder sur le paragraphe. */
+  overflow-wrap:anywhere;
+}
+@media (max-width:700px){
+  /* Trop étroit pour deux colonnes : le titre passe au-dessus. */
+  .deliv li{ grid-template-columns:1fr; gap:7px; }
+}
+.deliv p{ font-weight:300; font-size:.94rem; line-height:1.68; color:var(--grey-2); max-width:62ch; }
+
+.qz-lab{
+  display:flex; align-items:center; gap:12px; margin-top:clamp(34px,5vh,54px);
+  font-family:var(--mono); font-size:.62rem; letter-spacing:.09em;
+  text-transform:uppercase; color:var(--grey);
+}
+.qz-lab::after{ content:""; flex:1; height:1px; background:var(--line); }
+
+/* Secteurs */
+.tags{ display:flex; flex-wrap:wrap; gap:9px; margin-top:clamp(28px,4vh,44px); }
+.tags li{
+  list-style:none; padding:9px 16px; border:1px solid var(--line); border-radius:999px;
+  font-weight:300; font-size:.88rem; color:var(--grey-2);
+}
+
+/* FAQ */
+.faq{ margin-top:clamp(30px,4.5vh,52px); border-top:1px solid var(--line); }
+.faq details{ border-bottom:1px solid var(--line); }
+.faq summary{
+  display:flex; align-items:baseline; justify-content:space-between; gap:20px;
+  padding:22px 0; cursor:pointer; list-style:none;
+  font-family:var(--display); font-weight:500; font-size:clamp(1rem,1.45vw,1.24rem);
+  letter-spacing:-.02em; transition:color .35s;
+}
+.faq summary::-webkit-details-marker{ display:none; }
+.faq summary::after{
+  content:"+"; font-family:var(--mono); font-size:1.1rem; color:var(--cyan);
+  transition:transform .5s var(--ease-cine); flex:0 0 auto;
+}
+.faq details[open] summary::after{ transform:rotate(45deg); }
+.faq summary:hover{ color:var(--cyan); }
+.faq p{
+  padding:0 0 24px; max-width:64ch;
+  font-weight:300; font-size:.95rem; line-height:1.75; color:var(--grey-2);
+}
+
+/* Communes voisines */
+.near{ display:flex; flex-wrap:wrap; gap:9px; margin-top:clamp(26px,4vh,42px); }
+.near a{
+  padding:9px 16px; border:1px solid var(--line); border-radius:999px;
+  font-weight:300; font-size:.86rem; color:var(--grey-2); text-decoration:none;
+  transition:border-color .35s, color .35s;
+}
+.near a:hover{ border-color:var(--cyan); color:var(--cyan); }
+/* Communes couvertes dont la page n'est pas encore publiée : mentionnées,
+   jamais liées — un lien vers une 404 coûte plus qu'il ne rapporte. */
+.near__soon{
+  padding:9px 4px; font-family:var(--mono); font-size:.66rem;
+  letter-spacing:.04em; color:var(--grey); align-self:center;
+}
+
+/* Appel final */
+.cta{
+  display:grid; grid-template-columns:1.1fr .9fr; gap:clamp(26px,4vw,70px);
+  align-items:center; background:#0B0C0E !important;
+}
+.cta h2{ max-width:14ch; }
+.cta__side{ display:flex; flex-direction:column; gap:clamp(14px,2vw,22px); }
+.big-link{
+  font-family:var(--display); font-weight:700; font-size:clamp(1.3rem,2.4vw,2rem);
+  letter-spacing:-.03em; text-decoration:none; transition:color .35s;
+}
+.big-link:hover{ color:var(--cyan); }
+.big-link small{
+  display:block; margin-bottom:6px;
+  font-family:var(--mono); font-size:.62rem; font-weight:400;
+  letter-spacing:.11em; text-transform:uppercase; color:var(--grey);
+}
+
+/* Pied */
+footer{
+  display:flex; flex-wrap:wrap; gap:12px 20px;
+  justify-content:space-between; padding:26px var(--pad);
+  font-family:var(--mono); font-size:.64rem; letter-spacing:.04em; color:var(--grey);
+}
+footer a{ color:var(--grey-2); text-decoration:none; }
+footer a:hover{ color:var(--cyan); }
+footer .sep{ opacity:.3; margin:0 6px; }
+
+
+/* ═══════════════ FILIGRANE DE COMMUNE ═══════════════
+   Le nom, monumental et évidé, reste fixe derrière le contenu et se remplit
+   de laiton au fil de la lecture.
+   Le débordement en fin de page est évité par la HAUTEUR : le nom tient
+   entièrement dans la fenêtre, donc il ne peut pas dépasser du conteneur.
+   `overflow:clip` sur le conteneur ferme le dernier millimètre. */
+.wmwrap{ position:relative; overflow:clip; }
+
+.wm{
+  position:absolute; inset:0; z-index:0; pointer-events:none;
+  display:grid; place-items:center;
+}
+.wm b{
+  position:fixed; top:50svh; left:50%; transform:translate(-50%,-50%);
+  font-family:var(--display); font-weight:700;
+  /* Plafonné en vh autant qu'en vw : c'est la hauteur qui débordait. */
+  font-size:min(var(--wmv, 13vw), 17vh); line-height:1;
+  letter-spacing:-.045em; text-transform:uppercase; white-space:nowrap;
+  color:transparent;
+  -webkit-text-stroke:1px rgba(255,255,255,.09);
+  background-image:linear-gradient(0deg,
+    rgba(201,168,124,.22) var(--p,0%), rgba(201,168,124,0) var(--p,0%));
+  -webkit-background-clip:text; background-clip:text;
+}
+
+/* Le contenu passe devant ; le pied et l'appel final sont hors du conteneur. */
+.top,.crumb,.vhero,section,footer{ position:relative; z-index:1; }
+.vhero,section{ background:transparent; }
+.top,footer{ background:var(--void); }
+
+/* Rappel de lecture : la barre laiton en haut reprend la progression. */
+/* Le rail de progression, en haut de l'écran */
+.wm-rail{
+  position:fixed; top:0; left:0; height:2px; z-index:20;
+  width:var(--p,0%); background:var(--cyan); pointer-events:none;
+  box-shadow:0 0 12px rgba(201,168,124,.5);
+}
+
+/* Le contenu passe devant, et les sections deviennent transparentes pour
+   laisser voir le filigrane. Le fond reste porté par .page. */
+.top,.crumb,.vhero,section,footer{ position:relative; z-index:1; }
+.vhero,section{ background:transparent; }
+.top,footer{ background:var(--void); }
+
+/* Révélation — le contenu ne dépend jamais du JavaScript pour exister.
+   L'état masqué est armé par le script lui-même, juste avant l'observation. */
+[data-reveal].is-armed{
+  opacity:0; transform:translateY(18px);
+  transition:opacity .9s var(--ease-cine), transform .9s var(--ease-cine);
+}
+[data-reveal].is-armed.is-in{ opacity:1; transform:none; }
+
+@media (max-width:900px){
+  .vhero{ grid-template-columns:1fr; }
+  .shape{ max-width:340px; }
+  .pts{ grid-template-columns:1fr; }
+  .cta{ grid-template-columns:1fr; }
+  .top nav{ display:none; }
+}
+@media (max-width:620px){
+  :root{ --pad:20px; }
+  .deliv li{ grid-template-columns:1fr; gap:8px; }
+  h1{ max-width:none; }
+}
+@media (prefers-reduced-motion:reduce){
+  html{ scroll-behavior:auto; }
+  [data-reveal]{ opacity:1; transform:none; }
+  .shape path{ stroke-dashoffset:0; animation:none; }
+  *{ transition-duration:.01ms !important; }
+}
+
+/* ── Fin de page ──
+   Le filigrane est fixe et centré à l'écran : arrivé en bas, le haut du nom
+   dépassait derrière l'appel final et le pied de page, tous deux transparents.
+   Ces deux blocs reprennent un fond opaque et passent devant. */
+.cta{ background:#0B0C0E !important; position:relative; z-index:2; }
+footer{ background:var(--void) !important; position:relative; z-index:2; }
+
+/* ═══════════════ NAVIGATION ═══════════════
+   Absente sur le hero — il doit rester entier — puis elle descend dès qu'on
+   quitte la première image, et se rétracte quand on redescend. */
+.nav{
+  position:fixed; top:0; left:0; right:0; z-index:30;
+  display:flex; align-items:center; gap:clamp(16px,3vw,44px);
+  padding:14px var(--pad);
+  background:rgba(8,8,10,.82); backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line);
+  transform:translateY(-100%);
+  transition:transform .6s var(--ease-cine);
+}
+/* Sur les pages intérieures, pas de hero à préserver : la barre est là
+   dès l'arrivée et ne se rétracte pas. */
+.nav.is-on{ transform:none; }
+.nav.is-on{ transform:none; }
+.nav__brand{
+  font-family:var(--display); font-weight:700; font-size:.95rem;
+  letter-spacing:-.02em; text-decoration:none; color:var(--pure); white-space:nowrap;
+}
+.nav__brand i{ font-style:normal; color:var(--grey); }
+.nav__links{ display:flex; gap:clamp(14px,2.2vw,30px); margin-left:auto; }
+.nav__links a{
+  font-family:var(--mono); font-size:.66rem; letter-spacing:.08em;
+  text-transform:uppercase; color:var(--grey-2); text-decoration:none;
+  padding:6px 0; position:relative; transition:color .35s;
+}
+.nav__links a::after{
+  content:""; position:absolute; left:0; right:0; bottom:0; height:1px;
+  background:var(--cyan); transform:scaleX(0); transform-origin:0 50%;
+  transition:transform .5s var(--ease-cine);
+}
+.nav__links a:hover{ color:var(--pure); }
+.nav__links a:hover::after,.nav__links a.is-here::after{ transform:scaleX(1); }
+.nav__links a.is-here{ color:var(--pure); }
+.nav__tel{
+  display:inline-flex; align-items:center; gap:8px; white-space:nowrap;
+  padding:9px 18px; border-radius:999px; background:var(--cyan); color:#1A1206;
+  font-family:var(--body); font-weight:500; font-size:.8rem; text-decoration:none;
+  transition:transform .5s var(--ease-cine), box-shadow .5s var(--ease-cine);
+}
+.nav__tel span{ font-size:.6em; }
+.nav__tel:hover{ transform:translateY(-1px); box-shadow:0 8px 26px rgba(201,168,124,.3); }
+.nav a:focus-visible,.nav button:focus-visible{ outline:2px solid var(--cyan); outline-offset:3px; }
+
+/* ── Menu au doigt ── */
+.nav__burger{
+  display:none; width:38px; height:32px; margin-left:auto; padding:0;
+  border:1px solid var(--line); border-radius:9px; background:transparent; cursor:pointer;
+  flex-direction:column; align-items:center; justify-content:center; gap:5px;
+}
+.nav__burger span{ display:block; width:15px; height:1px; background:var(--pure);
+  transition:transform .4s var(--ease-cine), opacity .3s; }
+.nav__burger[aria-expanded="true"] span:first-child{ transform:translateY(3px) rotate(45deg); }
+.nav__burger[aria-expanded="true"] span:last-child{ transform:translateY(-3px) rotate(-45deg); }
+
+.navmenu{
+  position:fixed; inset:0; z-index:29; display:grid; align-content:center;
+  gap:6px; padding:0 var(--pad); background:rgba(8,8,10,.97);
+  backdrop-filter:blur(20px);
+  opacity:0; transition:opacity .4s var(--ease-cine);
+}
+.navmenu.is-on{ opacity:1; }
+.navmenu[hidden]{ display:none !important; }
+.navmenu a{
+  padding:14px 0; border-bottom:1px solid var(--line); text-decoration:none;
+  font-family:var(--display); font-weight:500; font-size:1.6rem;
+  letter-spacing:-.03em; color:var(--pure);
+}
+.navmenu__tel{ color:var(--cyan) !important; border-bottom:0 !important; }
+
+@media (max-width:900px){
+  .nav__links,.nav__tel{ display:none; }
+  .nav__burger{ display:flex; }
+}
+@media (prefers-reduced-motion:reduce){
+  .nav{ transition:none; }
+}
+
+/* Le contenu descend sous la barre fixe */
+.page{ padding-top:60px; }
+
+/* ═══════════════ BANDEAU D'INFORMATION ═══════════════
+   Le site ne dépose aucun cookie : ce bandeau informe, il ne demande pas de
+   consentement. Un traceur strictement nécessaire en est dispensé, et un
+   bouton « refuser » n'aurait rien à refuser. */
+.cook{
+  position:fixed; z-index:40; left:var(--pad); right:var(--pad);
+  bottom:clamp(14px,2.4vh,26px);
+  display:flex; align-items:center; gap:clamp(14px,2.4vw,30px); flex-wrap:wrap;
+  max-width:920px; margin-inline:auto;
+  padding:clamp(14px,1.8vw,20px) clamp(16px,2vw,24px);
+  border:1px solid var(--line); border-radius:14px;
+  background:rgba(11,12,14,.92); backdrop-filter:blur(16px);
+  box-shadow:0 24px 70px rgba(0,0,0,.6);
+  transform:translateY(14px); opacity:0;
+  transition:opacity .6s var(--ease-cine), transform .7s var(--ease-cine);
+}
+.cook.is-on{ opacity:1; transform:none; }
+.cook[hidden]{ display:none !important; }
+.cook__txt{
+  flex:1; min-width:230px; font-weight:300; font-size:.84rem; line-height:1.62;
+  color:var(--grey-2);
+}
+.cook__txt b{ color:var(--pure); font-weight:400; }
+.cook__txt a{ color:var(--cyan); text-decoration:none;
+  border-bottom:1px solid rgba(201,168,124,.4); }
+.cook__txt a:hover{ border-color:var(--cyan); }
+.cook__ok{
+  flex:none; padding:10px 22px; cursor:pointer;
+  border:0; border-radius:999px; background:var(--cyan); color:#1A1206;
+  font-family:var(--body); font-weight:500; font-size:.84rem;
+  transition:transform .5s var(--ease-cine), box-shadow .5s var(--ease-cine);
+}
+.cook__ok:hover{ transform:translateY(-1px); box-shadow:0 10px 28px rgba(201,168,124,.3); }
+.cook__ok:focus-visible{ outline:2px solid var(--pure); outline-offset:3px; }
+@media (max-width:620px){
+  .cook{ flex-direction:column; align-items:stretch; gap:12px; }
+  .cook__ok{ width:100%; }
+}
