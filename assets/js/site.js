@@ -228,324 +228,70 @@ function reveal(){
   document.querySelectorAll('.sec-title').forEach(el => io.observe(el));
 }
 
-/* ───────── LA CARTE DU GOLFE ─────────
-   Un littoral stylisé tracé en courbes lumineuses. Le scroll vertical fait
-   voyager la caméra d'ouest en est. Chaque commune est un point ; celles où
-   un site a été livré s'allument et déplient leur fiche.
+/* ───────── RÉALISATIONS — L'EMPILEMENT ─────────
+   Un projet occupe un écran, épinglé le temps qu'on le lise. Descendre fait
+   descendre la page dans sa fenêtre : le geste et le mouvement vont dans le
+   même sens, ce que le balayage latéral de l'ancienne carte contredisait.
+   Le projet suivant monte ensuite par-dessus.
 
-   Rendu : des courbes décalées de part et d'autre du trait de côte, comme
-   les isobathes d'une carte marine. Aucune image, tout est calculé. */
-function golfMap(){
-  const wrap = document.getElementById('hscroll');
-  const cv   = document.getElementById('mapc');
-  if (!wrap || !cv) return;
+   Chaque créneau (.slot) est plus haut qu'un écran et son contenu y est
+   collé : la hauteur en trop est la durée de lecture du projet. */
+function worksStack(){
+  const stack = document.getElementById('stack');
+  if (!stack) return;
+  const slots = Array.from(stack.querySelectorAll('.slot'));
+  if (!slots.length) return;
 
-  const stage = wrap.querySelector('.hscroll__stage');
-  const rail  = wrap.querySelector('.hs-rail i');
-  const cnt   = wrap.querySelector('.hs-count b');
-  const panel  = wrap.querySelector('.panel');
-  const panels = Array.from(wrap.querySelectorAll('.proj'));
-  const frames = panels.map(el => el.querySelector('.frame'));
-  const strips = panels.map(el => el.querySelector('.frame__strip'));
-  const travel  = frames.map(() => 0);    // course utile de chaque pellicule
-  const anchors = frames.map(() => null); // point d'accroche du fil, en repère scène
-  const ctx   = cv.getContext('2d', { alpha:true, desynchronized:true });
+  const pins   = slots.map(s => s.querySelector('.slot__pin'));
+  const strips = slots.map(s => s.querySelector('.frame__strip'));
+  const frames = slots.map(s => s.querySelector('.frame'));
+  const runs   = slots.map(() => 1);   // scroll passé sur le projet, en pixels
+  const travel = slots.map(() => 0);   // course utile de la pellicule
 
-  const WORLD_W = 4200, WORLD_H = 900;
+  /* La page ne défile jamais beaucoup plus vite que le doigt : au-delà on ne
+     lit plus rien. Quand la capture est trop longue pour la durée du créneau,
+     la fenêtre en montre le haut, posément, plutôt que tout d'un trait. */
+  const MAX_RATIO = 2;
 
-  /* Trait de côte stylisé : baie de Cavalaire, presqu'île qui avance vers
-     le sud, puis le golfe qui remonte vers Sainte-Maxime. */
-  const SHORE = [
-    [-200,470],[0,455],[220,470],[430,500],[620,472],[800,415],[960,432],
-    [1150,486],[1360,545],[1580,580],[1800,565],[1980,505],[2140,432],
-    [2280,372],[2460,338],[2680,322],[2900,318],[3120,332],[3330,368],
-    [3520,420],[3720,470],[3940,505],[4200,530],[4400,545]
-  ];
-
-  /* Communes. Les cinq premières portent un projet (leur ordre suit celui
-     des fiches), les autres marquent la zone d'intervention. */
-  /* Les repères portent le métier, pas la commune : un site de voyage ou une
-     activité sans ancrage local doit pouvoir s'ajouter ici. Les entrées sans
-     projet dessinent les métiers couverts. */
-  const PLACES = [
-    { x:620,  n:'Commerce',      job:false },
-    { x:900,  n:'Artisan',       job:true  },
-    { x:1400, n:'Hôtellerie',    job:false },
-    { x:1750, n:'Immobilier',    job:false },
-    { x:2240, n:'Conciergerie',  job:true  },
-    { x:2560, n:'Santé',         job:false },
-    { x:2820, n:'Restaurant',    job:true  },
-    { x:3120, n:'Tourisme',      job:false },
-    { x:3430, n:'Nautisme',      job:false }
-  ];
-  const jobs = PLACES.filter(p => p.job);
-
-  /* Catmull-Rom → polyligne dense, calculée une seule fois */
-  const PATH = (() => {
-    const out = [];
-    for (let i = 1; i < SHORE.length - 2; i++){
-      const [x0,y0]=SHORE[i-1], [x1,y1]=SHORE[i], [x2,y2]=SHORE[i+1], [x3,y3]=SHORE[i+2];
-      for (let t = 0; t < 1; t += 0.05){
-        const t2=t*t, t3=t2*t;
-        out.push([
-          .5*((2*x1)+(-x0+x2)*t+(2*x0-5*x1+4*x2-x3)*t2+(-x0+3*x1-3*x2+x3)*t3),
-          .5*((2*y1)+(-y0+y2)*t+(2*y0-5*y1+4*y2-y3)*t2+(-y0+3*y1-3*y2+y3)*t3)
-        ]);
-      }
-    }
-    return out;
-  })();
-  const yAtX = x => {                       // altitude du trait de côte
-    let lo = 0, hi = PATH.length - 1;
-    while (hi - lo > 1){ const m = (lo+hi) >> 1; if (PATH[m][0] < x) lo = m; else hi = m; }
-    const [x0,y0] = PATH[lo], [x1,y1] = PATH[hi];
-    const t = x1 === x0 ? 0 : (x - x0) / (x1 - x0);
-    return y0 + (y1 - y0) * t;
-  };
-
-  const glow = (() => {                     // pastille lumineuse pré-calculée
-    const c = document.createElement('canvas'); c.width = c.height = 64;
-    const g = c.getContext('2d');
-    const gr = g.createRadialGradient(32,32,0,32,32,32);
-    gr.addColorStop(0,'rgba(255,246,232,1)');
-    gr.addColorStop(.2,'rgba(201,168,124,.7)');
-    gr.addColorStop(1,'rgba(160,120,70,0)');
-    g.fillStyle = gr; g.fillRect(0,0,64,64);
-    return c;
-  })();
-
-  let W=0, H=0, dpr=1, scale=1, camMax=0, dist=0, t=0, ticking=false, active=-1;
-  let span=0;   // demi-largeur de la zone d'un projet, en pixels écran
-  let VEX=1, baseY=0, small=false;
-
-  /* Course de la pellicule et point d'accroche du fil (coin bas-gauche de la
-     fenêtre). Mesurés après mise en page : jamais dans la boucle de rendu,
-     où une lecture de géométrie coûterait un recalcul à chaque image.
-
-     Les repères ne sont pas espacés régulièrement sur la côte : le premier
-     est déjà presque au centre quand la scène se colle, sa zone est donc
-     bien plus courte que les autres. Sans garde-fou, sa page défilerait
-     treize fois plus vite que le doigt. On plafonne le rapport : la fenêtre
-     montre alors le haut du site, posément, plutôt que tout le site en un
-     éclair. */
-  const MAX_RATIO = 3;
-  /* Écart, en pixels écran, entre l'entrée et la sortie effectives du repère.
-     Bornée par ±span, mais aussi par les positions extrêmes de la caméra :
-     un repère déjà visible au départ n'entre jamais par la droite. */
-  const reach = jx => ({
-    hi: Math.min(span,  jx * scale - W/2),            // caméra au début
-    lo: Math.max(-span, (jx - camMax) * scale - W/2)  // caméra au bout
-  });
-
-  const measureFrames = () => {
-    const sr = stage.getBoundingClientRect();
-    frames.forEach((f, i) => {
-      if (!f) return;
-      const st = strips[i];
-      const full = st ? Math.max(0, st.offsetHeight - f.clientHeight) : 0;
-      const { hi, lo } = reach(jobs[i] ? jobs[i].x : 0);
-      // Scroll de page réellement passé sur ce projet, en pixels
-      const run = (camMax && scale && hi > lo)
-        ? Math.max(1, (hi - lo) * dist / (scale * camMax)) : 1;
-      travel[i] = Math.min(full, run * MAX_RATIO);
-      const r = f.getBoundingClientRect();
-      anchors[i] = { x: r.left - sr.left, y: r.bottom - sr.top };
+  const measure = () => {
+    slots.forEach((slot, i) => {
+      const pin = pins[i], st = strips[i], fr = frames[i];
+      if (!pin || !st || !fr) return;
+      runs[i]   = Math.max(1, slot.offsetHeight - pin.offsetHeight);
+      travel[i] = Math.min(Math.max(0, st.offsetHeight - fr.clientHeight),
+                           runs[i] * MAX_RATIO);
     });
   };
 
-  /* Cadrage : on décide d'abord COMBIEN de côte doit tenir à l'écran, puis
-     on en déduit l'échelle. Calculer à partir de la hauteur donnait, sur
-     téléphone, une tranche de 400 unités sur 4200 — illisible.
-     VEX exagère le relief vertical quand l'échelle est faible, sinon la
-     côte devient un trait plat. */
-  const resize = () => {
-    const box = cv.parentElement;
-    W = box.clientWidth; H = box.clientHeight;
-    small = W < 700;
-    dpr = Math.min(devicePixelRatio || 1, small ? 2 : 1.5);
-    cv.width = Math.round(W*dpr); cv.height = Math.round(H*dpr);
-
-    const VIEW_W = small ? 1050 : (W < 1150 ? 1350 : 1650);
-    scale  = W / VIEW_W;
-    VEX    = small ? 2.15 : (W < 1150 ? 1.45 : 1);
-    baseY  = H * (small ? 0.36 : 0.44);
-    camMax = Math.max(1, WORLD_W - VIEW_W);
-    dist   = camMax * scale * (small ? 2.0 : 1.25);   // course de scroll
-    /* Zone d'un projet. Exprimée en fraction de l'écran, elle couvrait sur
-       téléphone une tranche de côte deux fois plus étroite que sur ordinateur
-       — d'où de longues plages de carte nue entre deux repères. */
-    span   = W * (small ? 0.30 : 0.20);
-    wrap.style.height = (stage.clientHeight + dist) + 'px';
-    measureFrames();
-  };
-
-  const SY = wy => (wy - 450) * scale * VEX + baseY;
-
-  /* Trace la côte décalée verticalement de `off` unités monde */
-  const strokeShore = (camX, off, width, alpha, col) => {
-    ctx.beginPath();
-    let started = false;
-    for (let i = 0; i < PATH.length; i++){
-      const sx = (PATH[i][0] - camX) * scale;
-      if (sx < -80 || sx > W + 80) { started = false; continue; }
-      const sy = SY(PATH[i][1] + off);
-      if (!started){ ctx.moveTo(sx, sy); started = true; } else ctx.lineTo(sx, sy);
-    }
-    ctx.strokeStyle = col; ctx.globalAlpha = alpha; ctx.lineWidth = width;
-    ctx.stroke();
-  };
-
-  const draw = (camX) => {
-    ctx.setTransform(dpr,0,0,dpr,0,0);
-    ctx.clearRect(0,0,W,H);
-    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-    ctx.globalCompositeOperation = 'lighter';
-
-    // Isobathes : la mer en dessous, les courbes de niveau au-dessus
-    for (let k = 1; k <= 7; k++)
-      strokeShore(camX,  k*46, 1, .085 - k*.010, 'rgba(140,160,180,1)');
-    for (let k = 1; k <= 4; k++)
-      strokeShore(camX, -k*54, 1, .06 - k*.012, 'rgba(175,170,160,1)');
-
-    // Le trait de côte lui-même : trois passes, du halo au cœur
-    strokeShore(camX, 0, 9, .05, 'rgba(201,168,124,1)');
-    strokeShore(camX, 0, 3, .18, 'rgba(214,198,172,1)');
-    strokeShore(camX, 0, 1.1, .92, 'rgba(250,246,238,1)');
-
-    // Impulsion lumineuse qui remonte la côte en boucle
-    const head = ((t*0.06) % 1.35 - 0.15) * WORLD_W;
-    for (let i = 0; i < PATH.length; i++){
-      const d = PATH[i][0] - head;
-      if (d < -260 || d > 40) continue;
-      const sx = (PATH[i][0] - camX) * scale;
-      if (sx < -40 || sx > W + 40) continue;
-      const f = 1 - Math.abs(d + 110) / 150;
-      if (f <= 0) continue;
-      const r = 3 + f*9;
-      ctx.globalAlpha = f * .5;
-      ctx.drawImage(glow, sx - r, SY(PATH[i][1]) - r, r*2, r*2);
-    }
-
-    /* Le fil qui suspend la fenêtre à son repère. Tracé ici et pas en CSS :
-       seul le canevas connaît l'altitude du point sur la côte, qui bouge à
-       chaque image. Dégradé vers le haut : la lumière vient de la côte. */
-    const anc = active >= 0 ? anchors[active] : null;
-    if (anc){
-      const j = jobs[active];
-      const jx = (j.x - camX) * scale, jy = SY(yAtX(j.x));
-      ctx.globalCompositeOperation = 'source-over';
-      const grad = ctx.createLinearGradient(jx, jy, anc.x, anc.y);
-      grad.addColorStop(0, 'rgba(201,168,124,.55)');
-      grad.addColorStop(1, 'rgba(201,168,124,0)');
-      ctx.strokeStyle = grad; ctx.lineWidth = 1; ctx.globalAlpha = 1;
-      ctx.beginPath(); ctx.moveTo(jx, jy); ctx.lineTo(anc.x, anc.y); ctx.stroke();
-    }
-
-    // Les communes
-    ctx.globalCompositeOperation = 'lighter';
-    for (const pl of PLACES){
-      const sx = (pl.x - camX) * scale;
-      if (sx < -140 || sx > W + 140) continue;
-      const sy = SY(yAtX(pl.x));
-      const near = 1 - clamp(Math.abs(sx - W/2) / (W*.42), 0, 1);
-
-      if (pl.job){
-        const pulse = .55 + .45*Math.sin(t*2 + pl.x);
-        const r = (7 + near*9) * (1 + pulse*.25);
-        ctx.globalAlpha = .25 + near*.55;
-        ctx.drawImage(glow, sx-r*2.2, sy-r*2.2, r*4.4, r*4.4);
-        // Tige verticale vers la fiche
-        ctx.globalAlpha = (.1 + near*.5);
-        ctx.strokeStyle = 'rgba(201,168,124,1)'; ctx.lineWidth = 1;
-        ctx.beginPath(); ctx.moveTo(sx, sy); ctx.lineTo(sx, sy - (26 + near*54)); ctx.stroke();
-        ctx.globalAlpha = .9;
-        ctx.fillStyle = '#FBF5EA';
-        ctx.beginPath(); ctx.arc(sx, sy, 2.6, 0, TAU2); ctx.fill();
-      } else {
-        ctx.globalAlpha = .18 + near*.3;
-        ctx.fillStyle = 'rgba(190,186,178,1)';
-        ctx.beginPath(); ctx.arc(sx, sy, 1.9, 0, TAU2); ctx.fill();
-      }
-
-      /* Décombrement : sur téléphone on n'écrit que ce qui approche du
-         centre, sinon les noms se recouvrent. */
-      const seuil = pl.job ? (small ? .18 : .05) : (small ? .62 : .22);
-      if (near > seuil){
-        ctx.globalCompositeOperation = 'source-over';
-        ctx.globalAlpha = pl.job ? (.45 + near*.55) : (.2 + near*.3);
-        ctx.fillStyle = pl.job ? '#E6D4B6' : '#8E8A84';
-        ctx.font = `${pl.job ? (small ? 12 : 11) : (small ? 10.5 : 9.5)}px "IBM Plex Mono", monospace`;
-        ctx.textAlign = 'center';
-        ctx.fillText(pl.n.toUpperCase(), sx, sy - (pl.job ? 36 + near*54 : 14));
-        ctx.globalCompositeOperation = 'lighter';
-      }
-    }
-
-    ctx.globalAlpha = 1; ctx.globalCompositeOperation = 'source-over';
-  };
-
+  let ticking = false;
   const update = () => {
     ticking = false;
-    const p = clamp(-wrap.getBoundingClientRect().top / (dist || 1), 0, 1);
-    const camX = p * camMax;
-
-    /* Le repère le plus proche du centre. On garde l'écart signé : il donne
-       le sens de la traversée, dont on tire le défilement de la page. */
-    let best = -1, bd = 1e9, off = 0;
-    jobs.forEach((j,i) => {
-      const d = (j.x - camX) * scale - W/2;
-      if (Math.abs(d) < bd){ bd = Math.abs(d); off = d; best = i; }
+    slots.forEach((slot, i) => {
+      const fr = frames[i];
+      if (!fr) return;
+      const q = clamp(-slot.getBoundingClientRect().top / runs[i], 0, 1);
+      fr.style.setProperty('--y', (q * travel[i]).toFixed(1));
+      fr.style.setProperty('--q', q.toFixed(4));
     });
-    /* Le descriptif n'apparaît qu'en traversant la commune. Entre deux
-       points, la carte reste nue — c'est ce qui rend l'arrivée lisible. */
-    if (bd > span) best = -1;
-
-    if (best !== active){
-      active = best;
-      panels.forEach((el,i) => el.classList.toggle('is-on', i === active));
-      if (panel) panel.classList.toggle('is-open', active >= 0);
-      if (active >= 0){
-        panels[active].classList.add('is-live');   // le volet s'ouvre
-        if (cnt) cnt.textContent = String(active+1).padStart(2,'0');
-      }
-    }
-
-    /* Le repère entre par la droite, passe au centre, sort par la gauche :
-       cette course devient celle de la page dans sa fenêtre. On la normalise
-       sur l'écart réellement atteignable, et pas sur ±span : le premier
-       repère est déjà près du centre quand la scène se colle, sa page se
-       serait ouverte au milieu au lieu du haut. */
-    if (active >= 0 && frames[active]){
-      const { hi, lo } = reach(jobs[active].x);
-      const local = hi > lo ? clamp((hi - off) / (hi - lo), 0, 1) : 0;
-      frames[active].style.setProperty('--y', (local * travel[active]).toFixed(1));
-    }
-
-    draw(camX);
-    if (rail) rail.style.width = (p*100).toFixed(1) + '%';
   };
-
   const onScroll = () => { if (!ticking){ ticking = true; requestAnimationFrame(update); } };
 
-  // Boucle lente pour les pulsations, indépendante du scroll
-  let last = performance.now(), visible = true;
-  const tick = now => {
-    requestAnimationFrame(tick);
-    if (!visible) return;
-    t += Math.min((now-last)/1000, .05); last = now;
-    update();
-  };
-  new IntersectionObserver(([e]) => { visible = e.isIntersecting; }).observe(stage);
+  /* Le volet ne s'ouvre qu'à l'arrivée du projet : la capture se découvre de
+     haut en bas, comme une page qui se charge. */
+  const io = new IntersectionObserver(es => {
+    es.forEach(e => {
+      if (e.isIntersecting){ e.target.classList.add('is-live'); io.unobserve(e.target); }
+    });
+  }, { threshold:.15 });
+  slots.forEach(s => io.observe(s));
 
   addEventListener('scroll', onScroll, { passive:true });
-  addEventListener('resize', () => { resize(); onScroll(); }, { passive:true });
-  if (document.fonts) document.fonts.ready.then(() => { resize(); onScroll(); });
+  addEventListener('resize', () => { measure(); onScroll(); }, { passive:true });
   strips.forEach(st => {
-    if (st && !st.complete) st.addEventListener('load', () => { measureFrames(); onScroll(); }, { once:true });
+    if (st && !st.complete) st.addEventListener('load', () => { measure(); onScroll(); }, { once:true });
   });
-  resize(); requestAnimationFrame(tick);
+  measure(); update();
 }
-const TAU2 = Math.PI * 2;
 
 
 
@@ -914,7 +660,7 @@ function init(){
        jamais dans la frame de l'arrivée. */
     /* Le reste part sur un temps mort du processeur : rien de tout cela
        n'est visible tant qu'on n'a pas commencé à descendre. */
-    const later = () => { reveal(); portrait(); golfMap(); golfeMap(); aboutRead(); };
+    const later = () => { reveal(); portrait(); worksStack(); golfeMap(); aboutRead(); };
     if ('requestIdleCallback' in window) requestIdleCallback(later, { timeout:1400 });
     else setTimeout(later, 700);
   };
