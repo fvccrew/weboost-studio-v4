@@ -980,7 +980,17 @@ body{ background:var(--void); color:var(--pure); font-family:var(--body);
   .nots{ grid-template-columns:1fr; gap:26px; }
 }
 
-/* ═══════════════ RÉALISATIONS — LA CARTE DU GOLFE ═══════════════ */
+/* ═══════════════ RÉALISATIONS — LA FENÊTRE SUR LE GOLFE ═══════════════
+   La carte reste la scène : on longe la côte, et chaque métier traversé
+   décroche son site de son repère. Plus de vignette dans une bande basse —
+   une fenêtre suspendue au point de la côte, dans laquelle la page défile
+   pendant qu'on traverse sa zone. Le fil de suspension est tracé dans le
+   canevas : lui seul connaît la position exacte du repère.
+
+   Ce qui défile est une capture réelle de la page entière, pas une iframe.
+   Les deux sites mobiles s'ouvrent sur une porte d'entrée (« Découvrir »,
+   « Entrer ») qu'aucune URL ne permet de franchir — une fenêtre embarquée
+   n'aurait affiché qu'un logo et un bouton. */
 .works-sec{
   position:relative;
   padding:clamp(80px,13vh,170px) var(--pad) clamp(40px,6vh,80px);
@@ -988,72 +998,84 @@ body{ background:var(--void); color:var(--pure); font-family:var(--body);
   border-top:1px solid var(--line);
 }
 
-/* La carte occupe toute la scène collée. Le descriptif vient en bande
-   basse, fondu dans le noir : il est sous la carte sans la rogner. */
 .hscroll{ position:relative; margin-inline:calc(var(--pad) * -1); }
 .hscroll__stage{ position:sticky; top:0; height:100svh; overflow:hidden; }
 .mapwrap{ position:absolute; inset:0; }
 .mapc{ position:absolute; inset:0; width:100%; height:100%; display:block; }
 
-/* ── Panneau descriptif, sous la carte ──
-      Les cinq fiches sont superposées ; seule celle de la commune traversée
-      est visible. Le fondu est court : on doit sentir la bascule. */
+/* ── Compteur et rail de progression ──
+      Ils n'avaient aucune règle de base, seulement des surcharges `bottom`
+      dans les media queries : sans `position`, elles ne s'appliquaient pas
+      et le compteur se posait en haut à gauche de la carte. */
+.hs-foot{
+  position:absolute; left:var(--pad); right:var(--pad); bottom:20px; z-index:4;
+  display:flex; align-items:center; gap:16px; margin:0; pointer-events:none;
+  font-family:var(--mono); font-size:.62rem; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--grey);
+}
+.hs-count{ flex:none; }
+.hs-count b{ color:var(--cyan); font-weight:400; }
+.hs-rail{ flex:1; height:1px; background:var(--line); }
+.hs-rail i{ display:block; height:100%; width:0; background:var(--cyan); }
+
+/* ── Le panneau occupe toute la scène ──
+      L'ancienne bande de 300 px plafonnait la maquette à 340 px de large :
+      on montrait un timbre-poste. Ici le texte tient la colonne gauche et
+      la fenêtre la droite, en pleine hauteur. */
 .panel{
-  position:absolute; left:0; right:0; bottom:0; z-index:2;
-  height:clamp(224px,33svh,332px);
-  background:linear-gradient(180deg,
-    transparent 0%, rgba(5,5,5,.72) 26%, rgba(5,5,5,.94) 56%, #050505 100%);
-  opacity:0; transition:opacity .55s var(--ease-cine);
+  position:absolute; inset:0; z-index:2;
+  opacity:0; transition:opacity .5s var(--ease-cine);
 }
 .panel.is-open{ opacity:1; }
+/* Voile asymétrique : il assombrit la gauche pour que le texte porte sur la
+   côte, et laisse la droite dégagée pour la fenêtre et son fil. */
+.panel::before{
+  content:""; position:absolute; inset:0; pointer-events:none;
+  background:linear-gradient(101deg,
+    rgba(5,5,6,.95) 0%, rgba(5,5,6,.88) 24%, rgba(5,5,6,.46) 46%, rgba(5,5,6,0) 64%);
+}
 .proj{
   position:absolute; inset:0;
-  display:grid; grid-template-columns:minmax(0,.78fr) minmax(0,1.22fr);
-  gap:clamp(18px,3vw,48px); align-items:center;
-  padding:clamp(30px,4.5vh,50px) var(--pad) clamp(44px,6vh,62px);
-  align-content:end;
-  opacity:0; visibility:hidden; transform:translateY(16px);
-  transition:opacity .5s var(--ease-cine), transform .7s var(--ease-cine), visibility .5s;
+  display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);
+  align-items:center; gap:clamp(24px,4vw,60px);
+  padding:clamp(40px,6vh,84px) var(--pad) clamp(56px,8vh,96px);
+  opacity:0; visibility:hidden;
+  transition:opacity .5s var(--ease-cine), visibility .5s;
 }
-.proj.is-on{ opacity:1; visibility:visible; transform:none; }
-/* Largeur plafonnée pour que la maquette tienne dans le panneau sans
-   qu'on touche à ses proportions. */
-.proj__view{ max-height:100%; max-width:min(100%, 340px); }
+.proj.is-on{ opacity:1; visibility:visible; }
+.proj__info{ position:relative; z-index:1; max-width:44ch; }
 
 .proj__where{
-  display:flex; align-items:center; gap:9px; margin-bottom:10px;
+  display:flex; align-items:center; gap:9px; margin-bottom:12px;
   font-family:var(--mono); font-size:.63rem; letter-spacing:.1em;
   text-transform:uppercase; color:var(--cyan);
 }
 .proj__where::before{
-  content:""; width:6px; height:6px; border-radius:50%;
-  background:var(--cyan);
+  content:""; width:6px; height:6px; border-radius:50%; background:var(--cyan);
 }
 .proj__name{
   font-family:var(--display); font-weight:700;
-  font-size:clamp(1.4rem,2.8vw,2.4rem); line-height:1; letter-spacing:-.042em;
+  font-size:clamp(1.7rem,3.9vw,3.1rem); line-height:1; letter-spacing:-.042em;
 }
 .proj__badge{
-  display:inline-block; margin-left:11px; vertical-align:middle;
+  display:inline-block; margin-left:13px; vertical-align:middle;
   padding:4px 10px; border-radius:999px; border:1px solid var(--line);
   font-family:var(--mono); font-size:.56rem; letter-spacing:.08em;
   text-transform:uppercase; color:var(--grey-2);
 }
 .proj__desc{
-  margin-top:12px; max-width:52ch;
-  font-weight:300; font-size:clamp(.88rem,1vw,.98rem); line-height:1.62; color:var(--grey-2);
+  margin-top:16px; max-width:48ch;
+  font-weight:300; font-size:clamp(.9rem,1.05vw,1.02rem); line-height:1.66; color:var(--grey-2);
 }
-.proj__tags{ display:flex; flex-wrap:wrap; gap:6px; margin-top:14px; list-style:none; }
+.proj__tags{ display:flex; flex-wrap:wrap; gap:6px; margin-top:18px; list-style:none; }
 .proj__tags li{
   font-family:var(--mono); font-size:.58rem; letter-spacing:.1em; text-transform:uppercase;
   color:var(--grey-2); padding:4px 10px; border:1px solid var(--line); border-radius:999px;
 }
-/* Bouton plutôt que lien souligné : l'action est plus visible, et le nom de
-   domaine — qui ne disait rien au visiteur — disparaît. */
 .proj__link{
-  display:inline-flex; align-items:center; gap:9px; margin-top:18px;
-  padding:10px 20px; border:1px solid var(--line); border-radius:999px;
-  font-family:var(--body); font-weight:500; font-size:.84rem;
+  display:inline-flex; align-items:center; gap:9px; margin-top:24px;
+  padding:11px 22px; border:1px solid var(--line); border-radius:999px;
+  font-family:var(--body); font-weight:500; font-size:.86rem;
   color:var(--pure); text-decoration:none; width:max-content;
   transition:border-color .45s var(--ease-cine), background .45s var(--ease-cine);
 }
@@ -1062,19 +1084,96 @@ body{ background:var(--void); color:var(--pure); font-family:var(--body);
 .proj__link:hover i{ transform:translateX(5px); }
 .proj__link:focus-visible{ outline:2px solid var(--cyan); outline-offset:3px; }
 
+/* ── La fenêtre ──
+      Une seule image par projet : la capture de la page entière. Elle sert
+      d'aperçu à l'arrêt et de pellicule au défilement — on la translate
+      derrière le masque. Aucune requête tierce, aucun script embarqué, et
+      le mécanisme est le même partout, y compris au doigt. */
+.proj__view{
+  position:relative; z-index:1; min-width:0;
+  display:flex; flex-direction:column; align-items:center; gap:13px;
+}
+.frame{
+  position:relative; width:100%; --y:0;
+  border-radius:var(--fr); overflow:hidden; background:#0B0C0E;
+  box-shadow:0 42px 110px rgba(0,0,0,.72), 0 0 0 1px rgba(255,255,255,.09);
+  transition:box-shadow .9s var(--ease-cine);
+}
+/* Le gabarit dit l'usage réel du métier : on demande un devis de piscine ou
+   une table de restaurant depuis un téléphone ; on explore une conciergerie
+   de 42 pages depuis un ordinateur. */
+.frame--phone  { --fr:26px; aspect-ratio:390/780;  max-width:min(100%,286px); }
+.frame--desktop{ --fr:11px; aspect-ratio:1440/683; max-width:min(100%,700px); }
+/* Une fois ouvert, le projet éclaire sa propre couleur */
+.proj.is-on .frame{
+  box-shadow:0 42px 110px rgba(0,0,0,.72),
+             0 0 100px color-mix(in srgb, var(--pacc) 20%, transparent),
+             0 0 0 1px color-mix(in srgb, var(--pacc) 34%, transparent);
+}
+/* Le volet s'ouvre de haut en bas sur la hauteur de la fenêtre, pas sur
+   celle de la pellicule : sinon la révélation serait finie en trois pixels. */
+.frame__vp{
+  position:absolute; inset:0; overflow:hidden;
+  clip-path:inset(0 0 var(--rv,100%) 0);
+  transition:clip-path 1.05s var(--ease-cine);
+}
+.proj.is-live .frame__vp{ --rv:0%; }
+.frame__strip{
+  display:block; width:100%; height:auto;
+  transform:translate3d(0, calc(var(--y) * -1px), 0);
+}
+/* Promotion en calque réservée au projet à l'écran : les pellicules font
+   plusieurs milliers de pixels de haut, les garder toutes promues coûterait
+   une mémoire graphique inutile. */
+.proj.is-on .frame__strip{ will-change:transform; }
+.frame__cap{
+  display:flex; flex-wrap:wrap; justify-content:center; gap:0 6px;
+  font-family:var(--mono); font-size:.57rem; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--grey); text-align:center;
+}
+.frame__cap-dev::before{ content:"· "; opacity:.5; }
+.frame__cap b{ color:var(--grey-2); font-weight:400; }
+
 .works-note{
   margin-top:clamp(30px,4vh,52px); padding-top:22px; border-top:1px solid var(--line);
   font-family:var(--mono); font-size:.68rem; letter-spacing:.05em; color:var(--grey);
 }
 .works-note b{ color:var(--grey-2); font-weight:400; }
 
-@media (max-width:900px){
-  .panel{ height:clamp(228px,35svh,300px); }
-  .hs-foot{ bottom:10px; font-size:.54rem; gap:9px; }
-  .proj{
-    grid-template-columns:44% minmax(0,1fr); gap:14px;
-    padding:clamp(26px,4vh,42px) var(--pad) clamp(34px,5vh,44px);
+/* La bande basse ne se déclenche qu'à partir du téléphone, ou dès que la
+   hauteur manque (téléphone en paysage) : une tablette a la place de tenir
+   la composition en pleine hauteur. */
+@media (max-width:700px), (max-height:560px){
+  /* Au doigt on revient à une bande basse : la carte doit rester lisible
+     au-dessus, et une fenêtre pleine hauteur mangerait tout l'écran. */
+  .panel::before{
+    background:linear-gradient(180deg,
+      rgba(5,5,6,0) 0%, rgba(5,5,6,.62) 26%, rgba(5,5,6,.95) 58%, #050505 100%);
   }
+  .proj{
+    /* Le texte garde la colonne large : c'est lui qui porte l'argument quand
+       la fenêtre n'est plus qu'une vignette. */
+    grid-template-columns:minmax(0,1fr) 38%;
+    align-items:end; align-content:end; gap:16px;
+    padding:clamp(24px,4vh,40px) var(--pad) clamp(46px,7vh,60px);
+  }
+  .proj__view{ gap:8px; }
+  /* Les rayons sont proportionnels au gabarit, pas au téléphone dessiné :
+     à 124 px de large, 26 px de rayon rongeraient le contenu. */
+  .frame--phone  { --fr:15px; max-width:min(100%,124px); }
+  /* Une page de 1440 px réduite à 140, personne ne la lit. On passe la
+     fenêtre en portrait et on grossit la pellicule : on montre la bande
+     centrale de la page à une taille où l'on distingue encore la mise en
+     page. La course se recalcule seule, elle part de la hauteur mesurée. */
+  .frame--desktop{ --fr:7px; aspect-ratio:3/4; max-width:min(100%,140px); }
+  /* max-width:none : le garde-fou global img{max-width:100%} plafonnerait
+     l'agrandissement et la pellicule resterait à la largeur du cadre. */
+  .frame--desktop .frame__strip{ width:230%; max-width:none; margin-left:-65%; }
+  /* Le gabarit se lit sur la forme du cadre : sur trois lignes, la mention
+     coûtait plus de place qu'elle n'apportait. */
+  .frame__cap{ font-size:.5rem; letter-spacing:.06em; }
+  .frame__cap-dev{ display:none; }
+  .proj__info{ max-width:none; }
   .proj__where{ margin-bottom:7px; font-size:.56rem; letter-spacing:.09em; }
   .proj__name{ font-size:clamp(1.15rem,5.4vw,1.7rem); }
   .proj__badge{ margin-left:0; margin-top:8px; display:block; width:max-content; }
@@ -1083,10 +1182,44 @@ body{ background:var(--void); color:var(--pure); font-family:var(--body);
     overflow:hidden; margin-top:8px; font-size:.82rem; line-height:1.5;
   }
   .proj__tags{ display:none; }
-  /* Bouton plutôt que lien souligné : l'action est plus visible et le nom de
-   domaine, qui ne disait rien au visiteur, disparaît. */
   .proj__link{ margin-top:12px; padding:9px 17px; font-size:.8rem; }
-  .hs-foot{ bottom:16px; font-size:.58rem; gap:12px; }
+  .hs-foot{ bottom:14px; font-size:.56rem; gap:11px; }
+}
+
+@media (prefers-reduced-motion:reduce){
+  /* init() rend la main avant d'appeler golfMap() en mouvement réduit : la
+     scène collée resterait vide et la section entière disparaîtrait — carte
+     jamais dessinée, panneau jamais ouvert. On la déplie donc en liste : les
+     trois projets à la suite, chacun avec le haut de son site. Rien ne bouge,
+     tout est là. */
+  .hscroll{ margin-inline:0; }
+  .hs-foot{ display:none; }
+  .hscroll__stage{ position:static; height:auto; overflow:visible; }
+  .mapwrap{ display:none; }
+  .panel{
+    position:static; opacity:1;
+    display:grid; gap:clamp(52px,8vh,96px); padding-top:clamp(40px,6vh,72px);
+  }
+  .panel::before{ display:none; }
+  .proj{
+    position:static; opacity:1; visibility:visible;
+    grid-template-columns:minmax(0,1fr) minmax(0,1.05fr);
+    align-items:center; align-content:center; padding:0;
+  }
+  .proj__view{ align-items:center; }
+  .proj__tags{ display:flex; }
+  .proj__desc{ display:block; overflow:visible; }
+  .frame--phone  { max-width:min(100%,286px); }
+  .frame--desktop{ aspect-ratio:1440/683; max-width:min(100%,700px); }
+  .frame--desktop .frame__strip{ width:100%; max-width:100%; margin-left:0; }
+  /* Ni volet d'ouverture, ni défilement de la pellicule */
+  .frame__vp{ clip-path:none; transition:none; }
+  .frame__strip{ transform:none; }
+}
+
+@media (prefers-reduced-motion:reduce) and (max-width:700px){
+  .proj{ grid-template-columns:1fr; gap:22px; }
+  .proj__view{ order:-1; }
 }
 
 /* ═══════════════ FORMULES ═══════════════ */
@@ -1292,83 +1425,6 @@ body{ background:var(--void); color:var(--pure); font-family:var(--body);
   .nots{ grid-template-columns:1fr; gap:26px; }
 }
 
-/* ═══════════════ RÉALISATIONS ═══════════════ */
-.works-sec{
-  position:relative;
-  padding:clamp(80px,13vh,170px) var(--pad) clamp(40px,6vh,80px);
-  background:
-    radial-gradient(70% 44% at 18% 4%, rgba(201,168,124,.045), transparent 62%),
-    #08090B;
-  border-top:1px solid var(--line);
-}
-
-/* ── Défilement latéral piloté par le scroll vertical ──
-      Le conteneur est très haut, la scène est collée en haut : on convertit
-      la descente en translation horizontale. Sur mobile on rend la main au
-      doigt (scroll natif + accroche) — jamais de détournement tactile. */
-.hscroll{ position:relative; margin-inline:calc(var(--pad) * -1); }
-.hscroll__stage{
-  position:sticky; top:0; height:100svh;
-  display:flex; align-items:center; overflow:hidden;
-}
-
-
-/* ── Le chargement joué en direct ──
-      Squelette tant que le projet n'est pas au centre, puis le contenu
-      apparaît en cascade. L'argument de vente devient littéral. */
-@keyframes shimmer{ from{ transform:translateX(-65%) } to{ transform:translateX(65%) } }
-/* Lien de fin de carte, aligné en bas quelle que soit la longueur du texte */
-.work__link{
-  margin-top:auto; padding-top:clamp(18px,1.8vw,26px);
-  display:inline-flex; align-items:center; gap:9px;
-  font-family:var(--body); font-weight:500; font-size:.86rem;
-  color:var(--pure); text-decoration:none;
-}
-.work__link u{ text-decoration:none; padding-bottom:2px;
-  border-bottom:1px solid rgba(255,255,255,.25); transition:border-color .4s, color .4s; }
-.work__link i{ font-style:normal; transition:transform .6s var(--ease-cine); }
-.work__card:hover .work__link u{ border-color:var(--pacc); color:var(--pacc); }
-.work__card:hover .work__link i{ transform:translateX(5px); }
-.work__link:focus-visible{ outline:2px solid var(--cyan); outline-offset:5px; }
-
-/* ── Maquette navigateur ── */
-/* Le cadre de la capture : format 16/10 fixe, sinon l'image impose sa propre
-   hauteur et les trois fiches n'ont plus le même gabarit. */
-.mock__shot{ position:relative; aspect-ratio:16/10; overflow:hidden; background:#0B0C0E; }
-.mock__shot img{
-  display:block; width:100%; height:100%;
-  object-fit:cover; object-position:50% 0;
-  /* Découverte de haut en bas : la capture se charge comme une page */
-  clip-path:inset(0 0 var(--rv,100%) 0);
-  transition:clip-path 1.1s var(--ease-cine);
-}
-.proj.is-live .mock__shot img{ --rv:0%; }
-
-.mock{
-  border-radius:14px; overflow:hidden; border:0;
-  box-shadow:0 42px 110px rgba(0,0,0,.7), 0 0 0 1px rgba(255,255,255,.08);
-  transition:box-shadow .9s var(--ease-cine), transform .8s var(--ease-cine);
-}
-/* Une fois chargé, le projet éclaire sa propre couleur */
-.work.is-live .mock{
-  box-shadow:0 42px 110px rgba(0,0,0,.7),
-             0 0 100px color-mix(in srgb, var(--pacc) 22%, transparent),
-             0 0 0 1px color-mix(in srgb, var(--pacc) 32%, transparent);
-}
-
-.works-note{
-  margin-top:clamp(30px,4vh,52px); padding-top:22px; border-top:1px solid var(--line);
-  font-family:var(--mono); font-size:.68rem; letter-spacing:.05em; color:var(--grey);
-}
-.works-note b{ color:var(--grey-2); font-weight:400; }
-
-@media (max-width:900px){
-  /* Même principe au doigt : le scroll vertical reste vertical, il pilote
-     juste la translation horizontale. Aucun geste n'est détourné. */
-  .work{ width:min(78vw,420px); }
-    .hs-foot{ bottom:18px; gap:12px; font-size:.6rem; }
-  }
-
 @media (max-width:980px){
   .plans{ grid-template-columns:1fr; }
   .plan--hi{ order:-1; }        /* la plus demandée en tête au doigt */
@@ -1376,7 +1432,7 @@ body{ background:var(--void); color:var(--pure); font-family:var(--body);
 
 @media (max-width:900px){
   .sec-head{ grid-template-columns:1fr; align-items:start; }
-      .svc.is-open }
+}
 
 /* ═══════════════ GARDE-FOU DÉBORDEMENT ═══════════════
    La page ne doit jamais pouvoir se décaler latéralement. On utilise `clip`
@@ -1833,10 +1889,6 @@ body.pl-lock .hero__veil{ opacity:0; }
       </div>
       <div class="panel">
     <article class="proj" data-i style="--pacc:#0E8FB5">
-      <div class="proj__view">
-        <div class="mock">          <div class="mock__shot"><img src="assets/img/shot-mdz-piscine-900.webp" srcset="assets/img/shot-mdz-piscine-900.webp 900w, assets/img/shot-mdz-piscine-600.webp 600w" sizes="(max-width:760px) 100vw, 50vw" alt="Aperçu du site Mdz Piscine" width="900" height="426" loading="lazy" decoding="async"></div>
-        </div>
-      </div>
       <div class="proj__info">
         <p class="proj__where">Artisan · piscines</p>
         <h3 class="proj__name">MDZ Piscine <span class="proj__badge">Démonstration</span></h3>
@@ -1844,12 +1896,18 @@ body.pl-lock .hero__veil{ opacity:0; }
         <ul class="proj__tags"><li>Page unique</li><li>Formulaire devis</li><li>Avant / après</li></ul>
         <a class="proj__link" href="https://fvccrew.github.io/mdz-piscine/" target="_blank" rel="noopener"><span>Consulter le site</span><i aria-hidden="true">→</i></a>
       </div>
+      <div class="proj__view">
+        <div class="frame frame--phone">
+          <div class="frame__vp">
+            <img class="frame__strip" src="assets/img/strip-mdz-piscine.webp"
+                 alt="Le site MDZ Piscine, capture de la page entière"
+                 width="488" height="10688" loading="lazy" decoding="async">
+          </div>
+        </div>
+        <p class="frame__cap"><span>Capture réelle · <b>page entière</b></span><span class="frame__cap-dev">mobile 390 px</span></p>
+      </div>
     </article>
     <article class="proj" data-i style="--pacc:#C4A265">
-      <div class="proj__view">
-        <div class="mock">          <div class="mock__shot"><img src="assets/img/shot-st-prestige-900.webp" srcset="assets/img/shot-st-prestige-900.webp 900w, assets/img/shot-st-prestige-600.webp 600w" sizes="(max-width:760px) 100vw, 50vw" alt="Aperçu du site St Prestige" width="900" height="427" loading="lazy" decoding="async"></div>
-        </div>
-      </div>
       <div class="proj__info">
         <p class="proj__where">Conciergerie de luxe</p>
         <h3 class="proj__name">ST Prestige <span class="proj__badge">Démonstration</span></h3>
@@ -1857,18 +1915,34 @@ body.pl-lock .hero__veil{ opacity:0; }
         <ul class="proj__tags"><li>Trilingue</li><li>42 pages</li><li>Or sur noir</li></ul>
         <a class="proj__link" href="https://fvccrew.github.io/st-prestige/" target="_blank" rel="noopener"><span>Consulter le site</span><i aria-hidden="true">→</i></a>
       </div>
+      <div class="proj__view">
+        <div class="frame frame--desktop">
+          <div class="frame__vp">
+            <img class="frame__strip" src="assets/img/strip-st-prestige.webp"
+                 alt="Le site ST Prestige, capture de la page entière"
+                 width="1440" height="4161" loading="lazy" decoding="async">
+          </div>
+        </div>
+        <p class="frame__cap"><span>Capture réelle · <b>page entière</b></span><span class="frame__cap-dev">desktop 1440 px</span></p>
+      </div>
     </article>
     <article class="proj" data-i style="--pacc:#C63B2F">
-      <div class="proj__view">
-        <div class="mock">          <div class="mock__shot"><img src="assets/img/shot-da-enzo-900.webp" srcset="assets/img/shot-da-enzo-900.webp 900w, assets/img/shot-da-enzo-600.webp 600w" sizes="(max-width:760px) 100vw, 50vw" alt="Aperçu du site Da Enzo" width="900" height="427" loading="lazy" decoding="async"></div>
-        </div>
-      </div>
       <div class="proj__info">
         <p class="proj__where">Restaurant</p>
         <h3 class="proj__name">Da Enzo <span class="proj__badge">Démonstration</span></h3>
         <p class="proj__desc">Trattoria italienne. Carte, horaires et itinéraire en trois clics maximum — la seule chose que cherche vraiment quelqu’un qui a faim.</p>
         <ul class="proj__tags"><li>Carte</li><li>Itinéraire</li><li>Horaires</li></ul>
         <a class="proj__link" href="https://fvccrew.github.io/da-enzo/" target="_blank" rel="noopener"><span>Consulter le site</span><i aria-hidden="true">→</i></a>
+      </div>
+      <div class="proj__view">
+        <div class="frame frame--phone">
+          <div class="frame__vp">
+            <img class="frame__strip" src="assets/img/strip-da-enzo.webp"
+                 alt="Le site Da Enzo, capture de la page entière"
+                 width="488" height="6576" loading="lazy" decoding="async">
+          </div>
+        </div>
+        <p class="frame__cap"><span>Capture réelle · <b>page entière</b></span><span class="frame__cap-dev">mobile 390 px</span></p>
       </div>
     </article>
       </div>

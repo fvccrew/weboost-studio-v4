@@ -245,6 +245,10 @@ function golfMap(){
   const cnt   = wrap.querySelector('.hs-count b');
   const panel  = wrap.querySelector('.panel');
   const panels = Array.from(wrap.querySelectorAll('.proj'));
+  const frames = panels.map(el => el.querySelector('.frame'));
+  const strips = panels.map(el => el.querySelector('.frame__strip'));
+  const travel  = frames.map(() => 0);    // course utile de chaque pellicule
+  const anchors = frames.map(() => null); // point d'accroche du fil, en repère scène
   const ctx   = cv.getContext('2d', { alpha:true, desynchronized:true });
 
   const WORLD_W = 4200, WORLD_H = 900;
@@ -311,7 +315,43 @@ function golfMap(){
   })();
 
   let W=0, H=0, dpr=1, scale=1, camMax=0, dist=0, t=0, ticking=false, active=-1;
+  let span=0;   // demi-largeur de la zone d'un projet, en pixels écran
   let VEX=1, baseY=0, small=false;
+
+  /* Course de la pellicule et point d'accroche du fil (coin bas-gauche de la
+     fenêtre). Mesurés après mise en page : jamais dans la boucle de rendu,
+     où une lecture de géométrie coûterait un recalcul à chaque image.
+
+     Les repères ne sont pas espacés régulièrement sur la côte : le premier
+     est déjà presque au centre quand la scène se colle, sa zone est donc
+     bien plus courte que les autres. Sans garde-fou, sa page défilerait
+     treize fois plus vite que le doigt. On plafonne le rapport : la fenêtre
+     montre alors le haut du site, posément, plutôt que tout le site en un
+     éclair. */
+  const MAX_RATIO = 3;
+  /* Écart, en pixels écran, entre l'entrée et la sortie effectives du repère.
+     Bornée par ±span, mais aussi par les positions extrêmes de la caméra :
+     un repère déjà visible au départ n'entre jamais par la droite. */
+  const reach = jx => ({
+    hi: Math.min(span,  jx * scale - W/2),            // caméra au début
+    lo: Math.max(-span, (jx - camMax) * scale - W/2)  // caméra au bout
+  });
+
+  const measureFrames = () => {
+    const sr = stage.getBoundingClientRect();
+    frames.forEach((f, i) => {
+      if (!f) return;
+      const st = strips[i];
+      const full = st ? Math.max(0, st.offsetHeight - f.clientHeight) : 0;
+      const { hi, lo } = reach(jobs[i] ? jobs[i].x : 0);
+      // Scroll de page réellement passé sur ce projet, en pixels
+      const run = (camMax && scale && hi > lo)
+        ? Math.max(1, (hi - lo) * dist / (scale * camMax)) : 1;
+      travel[i] = Math.min(full, run * MAX_RATIO);
+      const r = f.getBoundingClientRect();
+      anchors[i] = { x: r.left - sr.left, y: r.bottom - sr.top };
+    });
+  };
 
   /* Cadrage : on décide d'abord COMBIEN de côte doit tenir à l'écran, puis
      on en déduit l'échelle. Calculer à partir de la hauteur donnait, sur
@@ -331,7 +371,12 @@ function golfMap(){
     baseY  = H * (small ? 0.36 : 0.44);
     camMax = Math.max(1, WORLD_W - VIEW_W);
     dist   = camMax * scale * (small ? 2.0 : 1.25);   // course de scroll
+    /* Zone d'un projet. Exprimée en fraction de l'écran, elle couvrait sur
+       téléphone une tranche de côte deux fois plus étroite que sur ordinateur
+       — d'où de longues plages de carte nue entre deux repères. */
+    span   = W * (small ? 0.30 : 0.20);
     wrap.style.height = (stage.clientHeight + dist) + 'px';
+    measureFrames();
   };
 
   const SY = wy => (wy - 450) * scale * VEX + baseY;
@@ -350,8 +395,7 @@ function golfMap(){
     ctx.stroke();
   };
 
-  const draw = (p) => {
-    const camX = p * camMax;
+  const draw = (camX) => {
     ctx.setTransform(dpr,0,0,dpr,0,0);
     ctx.clearRect(0,0,W,H);
     ctx.lineCap = 'round'; ctx.lineJoin = 'round';
@@ -380,6 +424,21 @@ function golfMap(){
       const r = 3 + f*9;
       ctx.globalAlpha = f * .5;
       ctx.drawImage(glow, sx - r, SY(PATH[i][1]) - r, r*2, r*2);
+    }
+
+    /* Le fil qui suspend la fenêtre à son repère. Tracé ici et pas en CSS :
+       seul le canevas connaît l'altitude du point sur la côte, qui bouge à
+       chaque image. Dégradé vers le haut : la lumière vient de la côte. */
+    const anc = active >= 0 ? anchors[active] : null;
+    if (anc){
+      const j = jobs[active];
+      const jx = (j.x - camX) * scale, jy = SY(yAtX(j.x));
+      ctx.globalCompositeOperation = 'source-over';
+      const grad = ctx.createLinearGradient(jx, jy, anc.x, anc.y);
+      grad.addColorStop(0, 'rgba(201,168,124,.55)');
+      grad.addColorStop(1, 'rgba(201,168,124,0)');
+      ctx.strokeStyle = grad; ctx.lineWidth = 1; ctx.globalAlpha = 1;
+      ctx.beginPath(); ctx.moveTo(jx, jy); ctx.lineTo(anc.x, anc.y); ctx.stroke();
     }
 
     // Les communes
@@ -428,28 +487,42 @@ function golfMap(){
   const update = () => {
     ticking = false;
     const p = clamp(-wrap.getBoundingClientRect().top / (dist || 1), 0, 1);
-    draw(p);
-    if (rail) rail.style.width = (p*100).toFixed(1) + '%';
-
-    // La fiche du point le plus proche du centre s'affiche
     const camX = p * camMax;
-    let best = -1, bd = 1e9;
+
+    /* Le repère le plus proche du centre. On garde l'écart signé : il donne
+       le sens de la traversée, dont on tire le défilement de la page. */
+    let best = -1, bd = 1e9, off = 0;
     jobs.forEach((j,i) => {
-      const d = Math.abs((j.x - camX) * scale - W/2);
-      if (d < bd){ bd = d; best = i; }
+      const d = (j.x - camX) * scale - W/2;
+      if (Math.abs(d) < bd){ bd = Math.abs(d); off = d; best = i; }
     });
     /* Le descriptif n'apparaît qu'en traversant la commune. Entre deux
        points, la carte reste nue — c'est ce qui rend l'arrivée lisible. */
-    if (bd > W * 0.20) best = -1;
+    if (bd > span) best = -1;
+
     if (best !== active){
       active = best;
       panels.forEach((el,i) => el.classList.toggle('is-on', i === active));
       if (panel) panel.classList.toggle('is-open', active >= 0);
       if (active >= 0){
-        panels[active].classList.add('is-live');   // le mini-site se charge
+        panels[active].classList.add('is-live');   // le volet s'ouvre
         if (cnt) cnt.textContent = String(active+1).padStart(2,'0');
       }
     }
+
+    /* Le repère entre par la droite, passe au centre, sort par la gauche :
+       cette course devient celle de la page dans sa fenêtre. On la normalise
+       sur l'écart réellement atteignable, et pas sur ±span : le premier
+       repère est déjà près du centre quand la scène se colle, sa page se
+       serait ouverte au milieu au lieu du haut. */
+    if (active >= 0 && frames[active]){
+      const { hi, lo } = reach(jobs[active].x);
+      const local = hi > lo ? clamp((hi - off) / (hi - lo), 0, 1) : 0;
+      frames[active].style.setProperty('--y', (local * travel[active]).toFixed(1));
+    }
+
+    draw(camX);
+    if (rail) rail.style.width = (p*100).toFixed(1) + '%';
   };
 
   const onScroll = () => { if (!ticking){ ticking = true; requestAnimationFrame(update); } };
@@ -467,6 +540,9 @@ function golfMap(){
   addEventListener('scroll', onScroll, { passive:true });
   addEventListener('resize', () => { resize(); onScroll(); }, { passive:true });
   if (document.fonts) document.fonts.ready.then(() => { resize(); onScroll(); });
+  strips.forEach(st => {
+    if (st && !st.complete) st.addEventListener('load', () => { measureFrames(); onScroll(); }, { once:true });
+  });
   resize(); requestAnimationFrame(tick);
 }
 const TAU2 = Math.PI * 2;
