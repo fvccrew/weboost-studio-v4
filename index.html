@@ -1012,8 +1012,8 @@ body{ background:var(--void); color:var(--pure); font-family:var(--body);
   display:grid; grid-template-columns:auto minmax(0,1fr) auto auto;
   align-items:baseline; gap:clamp(11px,1.7vw,22px); width:100%;
   padding:clamp(15px,2.3vh,26px) 2px;
-  background:none; border:0; border-bottom:1px solid var(--line);
-  color:inherit; font:inherit; text-align:left; cursor:pointer;
+  border-bottom:1px solid var(--line);
+  color:inherit; text-decoration:none; text-align:left; cursor:pointer;
   transition:padding-left .45s var(--ease-cine), border-color .45s var(--ease-cine);
 }
 .idx__row.is-on .idx__btn{ padding-left:clamp(8px,1.2vw,18px); border-bottom-color:var(--pacc); }
@@ -1040,6 +1040,9 @@ body{ background:var(--void); color:var(--pure); font-family:var(--body);
   transition:opacity .4s var(--ease-cine), transform .5s var(--ease-cine);
 }
 .idx__row.is-on .idx__go{ opacity:1; transform:none; }
+.idx__go i{ display:inline-block; transition:transform .5s var(--ease-cine); }
+.idx__btn:hover .idx__go i,
+.idx__btn:focus-visible .idx__go i{ transform:translateX(4px); }
 
 /* ── La planche d'aperçu ── */
 .works__plate{ min-width:0; }
@@ -1123,87 +1126,13 @@ body{ background:var(--void); color:var(--pure); font-family:var(--body);
 }
 .works-note b{ color:var(--grey-2); font-weight:400; }
 
-/* ═══════════════ LA DÉMO, EN PLEIN ÉCRAN ET À LA DEMANDE ═══════════════
-   Scroll natif : on parcourt la page comme n'importe quel site, sans geste
-   détourné. Échap ou clic hors du cadre pour sortir. */
-.demo{
-  position:fixed; inset:0; z-index:60; display:flex; flex-direction:column;
-  background:#050506; opacity:0; transition:opacity .3s var(--ease-cine);
-}
-.demo.is-on{ opacity:1; }
-.demo[hidden]{ display:none; }
-.demo__bar{
-  display:flex; align-items:center; gap:clamp(10px,2vw,22px); flex-wrap:wrap;
-  padding:clamp(11px,1.7vh,17px) var(--pad);
-  border-bottom:1px solid var(--line); background:rgba(8,8,10,.94);
-}
-.demo__title{ margin-right:auto; min-width:0; }
-.demo__job{
-  margin:0 0 3px; font-family:var(--mono); font-size:.56rem; letter-spacing:.12em;
-  text-transform:uppercase; color:var(--pacc,var(--cyan));
-}
-.demo__name{
-  margin:0; font-family:var(--display); font-weight:700; letter-spacing:-.035em;
-  font-size:clamp(1.05rem,2.2vw,1.55rem);
-}
-.demo__badge{
-  display:inline-block; margin-left:11px; vertical-align:middle;
-  padding:3px 9px; border-radius:999px; border:1px solid var(--line);
-  font-family:var(--mono); font-size:.52rem; letter-spacing:.08em;
-  text-transform:uppercase; color:var(--grey-2);
-}
-.swap{ display:flex; border:1px solid var(--line); border-radius:999px; overflow:hidden; flex:none; }
-.swap button{
-  padding:8px 15px; background:none; border:0; cursor:pointer;
-  font-family:var(--mono); font-size:.55rem; letter-spacing:.12em; text-transform:uppercase;
-  color:var(--grey-2); transition:background .3s, color .3s;
-}
-.swap button.is-on{ background:var(--pacc,var(--cyan)); color:#0A0A0C; }
-.swap button:focus-visible{ outline:2px solid var(--cyan); outline-offset:-2px; }
-.demo__close{
-  width:38px; height:38px; flex:none; border-radius:50%; cursor:pointer;
-  border:1px solid var(--line); background:none; color:var(--pure);
-  font-size:.95rem; line-height:1;
-  transition:border-color .3s, background .3s;
-}
-.demo__close:hover{ border-color:var(--pacc,var(--cyan)); background:rgba(255,255,255,.07); }
-.demo__scroll{
-  flex:1; overflow-y:auto; overflow-x:hidden; overscroll-behavior:contain;
-  padding:clamp(14px,3vh,36px) var(--pad) clamp(40px,7vh,80px);
-}
-/* Une capture trop haute pour le format WebP (16 383 px) est découpée en
-   tranches : le cadre porte l'arrondi et l'ombre, les tranches s'empilent
-   bord à bord à l'intérieur et se lisent comme une seule page. */
-.demo__stage{
-  margin:0 auto; width:min(100%, var(--stage-w,1180px));
-  border-radius:var(--stage-r,6px); overflow:hidden; font-size:0;
-  box-shadow:0 40px 120px rgba(0,0,0,.7), 0 0 0 1px rgba(255,255,255,.11);
-}
-.demo__stage img{ width:100%; height:auto; display:block; }
-.demo__foot{
-  margin:clamp(18px,3vh,30px) auto 0; width:min(100%, var(--stage-w,1180px));
-  display:flex; flex-wrap:wrap; align-items:center; gap:14px;
-  font-family:var(--mono); font-size:.58rem; letter-spacing:.1em;
-  text-transform:uppercase; color:var(--grey);
-}
-.demo__link{
-  display:inline-flex; align-items:center; gap:9px;
-  padding:10px 20px; border:1px solid var(--line); border-radius:999px;
-  font-family:var(--body); font-weight:500; font-size:.84rem; text-transform:none;
-  letter-spacing:0; color:var(--pure); text-decoration:none;
-  transition:border-color .4s var(--ease-cine), background .4s var(--ease-cine);
-}
-.demo__link:hover{ border-color:var(--pacc,var(--cyan)); background:rgba(255,255,255,.05); }
-.demo__link i{ font-style:normal; transition:transform .5s var(--ease-cine); }
-.demo__link:hover i{ transform:translateX(4px); }
-
 @media (max-width:900px){
   .works{ grid-template-columns:1fr; gap:26px; }
   .works__plate{ order:-1; }
   .plate{ width:min(100%,440px); }
   .plate__win{ transform:rotateY(-7deg); }
   /* À cette largeur, quatre colonnes sur une ligne écraseraient le nom :
-     le métier passe à la trappe, il est repris dans la démo. */
+     le métier passe à la trappe, il reste dans le descriptif sous la planche. */
   .idx__btn{ grid-template-columns:auto minmax(0,1fr) auto; }
   .idx__job{ display:none; }
   .plate__desc{ min-height:0; }
@@ -1212,11 +1141,10 @@ body{ background:var(--void); color:var(--pure); font-family:var(--body);
 }
 
 @media (prefers-reduced-motion:reduce){
-  /* Le sommaire et la démo ne dépendent pas du scroll : ils fonctionnent à
-     l'identique. Seules la dérive de l'aperçu et l'inclinaison s'arrêtent. */
+  /* Le sommaire ne dépend pas du scroll : il fonctionne à l'identique.
+     Seules la dérive de l'aperçu et l'inclinaison s'arrêtent. */
   .plate__sheet img{ animation:none; }
   .plate__win{ transform:none; }
-  .demo{ transition:none; }
 }
 
 /* ═══════════════ FORMULES ═══════════════ */
@@ -1870,45 +1798,41 @@ body.pl-lock .hero__veil{ opacity:0; }
   <div class="works">
     <div class="works__list">
       <ol class="idx" id="idx">
-      <li class="idx__row is-on" style="--pacc:#0E8FB5"
-          data-slug="mdz-piscine" data-name="MDZ Piscine" data-job="Artisan · piscines"
-          data-url="https://fvccrew.github.io/mdz-piscine/" data-preview="1120x5210" data-desktop="2360x10979" data-mobile="780x8550|780x8550">
-        <button class="idx__btn" type="button">
+      <li class="idx__row is-on" style="--pacc:#0E8FB5" data-preview="1120x5210">
+        <a class="idx__btn" href="https://fvccrew.github.io/mdz-piscine/" target="_blank" rel="noopener"
+           aria-label="MDZ Piscine, artisan piscines — voir le site (nouvelle fenêtre)">
           <span class="idx__num">01</span>
           <span class="idx__name">MDZ Piscine</span>
           <span class="idx__job">Artisan · piscines</span>
           <span class="idx__go">Voir le site <i aria-hidden="true">→</i></span>
-        </button>
+        </a>
       </li>
-      <li class="idx__row" style="--pacc:#B5544C"
-          data-slug="aurelis" data-name="AURELIS" data-job="Horlogerie"
-          data-url="https://fvccrew.github.io/aurelis/" data-preview="1120x9208" data-desktop="2360x9702|2360x9701" data-mobile="780x9522|780x9522">
-        <button class="idx__btn" type="button">
+      <li class="idx__row" style="--pacc:#B5544C" data-preview="1120x9208">
+        <a class="idx__btn" href="https://fvccrew.github.io/aurelis/" target="_blank" rel="noopener"
+           aria-label="AURELIS, horlogerie — voir le site (nouvelle fenêtre)">
           <span class="idx__num">02</span>
           <span class="idx__name">AURELIS</span>
           <span class="idx__job">Horlogerie</span>
           <span class="idx__go">Voir le site <i aria-hidden="true">→</i></span>
-        </button>
+        </a>
       </li>
-      <li class="idx__row" style="--pacc:#C4A265"
-          data-slug="st-prestige" data-name="ST Prestige" data-job="Conciergerie de luxe"
-          data-url="https://fvccrew.github.io/st-prestige/" data-preview="1120x3423" data-desktop="2360x7213" data-mobile="780x11358">
-        <button class="idx__btn" type="button">
+      <li class="idx__row" style="--pacc:#C4A265" data-preview="1120x3423">
+        <a class="idx__btn" href="https://fvccrew.github.io/st-prestige/" target="_blank" rel="noopener"
+           aria-label="ST Prestige, conciergerie de luxe — voir le site (nouvelle fenêtre)">
           <span class="idx__num">03</span>
           <span class="idx__name">ST Prestige</span>
           <span class="idx__job">Conciergerie de luxe</span>
           <span class="idx__go">Voir le site <i aria-hidden="true">→</i></span>
-        </button>
+        </a>
       </li>
-      <li class="idx__row" style="--pacc:#C63B2F"
-          data-slug="da-enzo" data-name="Da Enzo" data-job="Restaurant"
-          data-url="https://fvccrew.github.io/da-enzo/" data-preview="1120x2755" data-desktop="2360x5805" data-mobile="780x10522">
-        <button class="idx__btn" type="button">
+      <li class="idx__row" style="--pacc:#C63B2F" data-preview="1120x2755">
+        <a class="idx__btn" href="https://fvccrew.github.io/da-enzo/" target="_blank" rel="noopener"
+           aria-label="Da Enzo, restaurant — voir le site (nouvelle fenêtre)">
           <span class="idx__num">04</span>
           <span class="idx__name">Da Enzo</span>
           <span class="idx__job">Restaurant</span>
           <span class="idx__go">Voir le site <i aria-hidden="true">→</i></span>
-        </button>
+        </a>
       </li>
       </ol>
       <p class="works-note" data-reveal>
@@ -1945,15 +1869,15 @@ body.pl-lock .hero__veil{ opacity:0; }
           <p>Construction et entretien de piscines. Une seule page, pensée pour un devis demandé depuis le téléphone, au bord du bassin d’un voisin.</p>
           <ul class="plate__tags"><li>Page unique</li><li>Formulaire devis</li><li>Avant / après</li></ul>
         </div>
-        <div class="">
+        <div>
           <p>Manufacture horlogère genevoise. Quatre modèles, une page chacun, enchaînées derrière un voile qui masque le rechargement — sur un objet pareil, le moindre à-coup casse l’illusion.</p>
           <ul class="plate__tags"><li>Quatre modèles</li><li>Transitions de page</li><li>Noir et bordeaux</li></ul>
         </div>
-        <div class="">
+        <div>
           <p>Conciergerie de luxe en français, anglais et italien. 42 pages, arborescence complète et bascule de langue sans rechargement.</p>
           <ul class="plate__tags"><li>Trilingue</li><li>42 pages</li><li>Or sur noir</li></ul>
         </div>
-        <div class="">
+        <div>
           <p>Trattoria italienne. Carte, horaires et itinéraire en trois clics maximum — la seule chose que cherche vraiment quelqu’un qui a faim.</p>
           <ul class="plate__tags"><li>Carte</li><li>Itinéraire</li><li>Horaires</li></ul>
         </div>
@@ -2226,28 +2150,6 @@ body.pl-lock .hero__veil{ opacity:0; }
     <p><em>Ce site n’utilise aucun cookie</em><span class="sep">·</span>Hébergé en France</p>
   </div>
 </footer>
-
-<!-- Démo plein écran, ouverte depuis le sommaire des Réalisations -->
-<div class="demo" id="demo" hidden role="dialog" aria-modal="true" aria-labelledby="demo-name">
-  <header class="demo__bar">
-    <div class="demo__title">
-      <p class="demo__job" id="demo-job"></p>
-      <h3 class="demo__name" id="demo-name"></h3>
-    </div>
-    <div class="swap" id="demo-swap" role="group" aria-label="Format d’affichage">
-      <button type="button" data-fmt="desktop" class="is-on">Desktop</button>
-      <button type="button" data-fmt="mobile">Mobile</button>
-    </div>
-    <button class="demo__close" id="demo-close" type="button" aria-label="Fermer la démo">✕</button>
-  </header>
-  <div class="demo__scroll" id="demo-scroll">
-    <div class="demo__stage" id="demo-stage"></div>
-    <p class="demo__foot">
-      <span id="demo-cap"></span>
-      <a class="demo__link" id="demo-link" target="_blank" rel="noopener">Consulter le site <i aria-hidden="true">→</i></a>
-    </p>
-  </div>
-</div>
 
 <script src="assets/js/gsap.min.js" defer></script>
 <script src="assets/js/preloader.js" defer></script>

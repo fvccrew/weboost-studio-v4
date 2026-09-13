@@ -229,31 +229,22 @@ function reveal(){
 }
 
 /* ───────── RÉALISATIONS — LE SOMMAIRE ─────────
-   Une ligne par projet, la planche d'aperçu à droite, et la démo en plein
-   écran à la demande. Rien n'est piloté par le scroll : c'est ce qui rend
-   la section indépendante du nombre de projets — trois lignes ou trente,
-   même hauteur, et personne n'est obligé de traverser le portfolio.
+   Une ligne par projet, la planche d'aperçu à droite. Chaque ligne est un
+   lien : elle ouvre le vrai site, pas une capture. Rien n'est piloté par le
+   scroll — c'est ce qui rend la section indépendante du nombre de projets :
+   trois lignes ou trente, même hauteur, et personne n'est obligé de
+   traverser le portfolio.
 
    Volontairement hors de init() : celui-ci rend la main en mouvement
    réduit, et le sommaire, lui, doit rester utilisable dans tous les cas. */
 function worksIndex(){
   const idx = document.getElementById('idx');
-  const demo = document.getElementById('demo');
-  if (!idx || !demo) return;
+  if (!idx) return;
 
   const rows   = Array.from(idx.querySelectorAll('.idx__row'));
   const sheets = Array.from(document.querySelectorAll('.plate__sheet'));
   const descs  = Array.from(document.querySelectorAll('.plate__desc > div'));
   if (!rows.length) return;
-
-  const stage  = document.getElementById('demo-stage');
-  const scroll = document.getElementById('demo-scroll');
-  const swap   = document.getElementById('demo-swap');
-  const closeB = document.getElementById('demo-close');
-  const elName = document.getElementById('demo-name');
-  const elJob  = document.getElementById('demo-job');
-  const elCap  = document.getElementById('demo-cap');
-  const elLink = document.getElementById('demo-link');
 
   /* ── Aperçu au survol ── */
   /* Relancer une animation CSS depuis le début : on la coupe, on force un
@@ -279,10 +270,8 @@ function worksIndex(){
     applyPlay();
   };
   rows.forEach((r,i) => {
-    const btn = r.querySelector('.idx__btn');
     r.addEventListener('pointerenter', () => show(i));
-    btn.addEventListener('focus', () => show(i));
-    btn.addEventListener('click', () => open(i));
+    r.querySelector('.idx__btn').addEventListener('focus', () => show(i));
   });
 
   /* Dérive de l'aperçu : on fixe la vitesse, pas la durée. Les trois
@@ -360,90 +349,8 @@ function worksIndex(){
       applyPlay();
     }, { threshold:.25 }).observe(plate);
   }
-
-  /* ── La démo ── */
-  let cur = null, fmt = 'desktop', lastFocus = null;
-
-  const paint = (next, keepPlace) => {
-    if (!cur) return;
-    /* On garde la position relative dans la page en changeant de format :
-       repartir en haut ferait perdre l'endroit qu'on était en train de lire. */
-    const max = scroll.scrollHeight - scroll.clientHeight;
-    const ratio = keepPlace && max > 0 ? scroll.scrollTop / max : 0;
-    fmt = next;
-    const phone = fmt === 'mobile';
-    stage.style.setProperty('--stage-w', phone ? '390px' : '1180px');
-    stage.style.setProperty('--stage-r', phone ? '26px' : '6px');
-    /* Les captures dépassant la limite du format WebP sont découpées : on
-       empile les tranches bord à bord, elles se lisent comme une page. Les
-       dimensions viennent des attributs, la mise en page est donc juste
-       avant même que les images ne soient arrivées. */
-    const parts = (cur.dataset[fmt] || '').split('|').filter(Boolean);
-    const alt = `Le site ${cur.dataset.name}, page entière, version ${phone ? 'mobile' : 'desktop'}`;
-    stage.innerHTML = parts.map((d, k) => {
-      const [w, h] = d.split('x');
-      return `<img src="assets/img/demo-${cur.dataset.slug}-${fmt}-${k+1}.webp"`
-           + ` width="${w}" height="${h}" decoding="async"`
-           + ` alt="${k === 0 ? alt : ''}">`;
-    }).join('');
-    elCap.textContent = `Capture réelle · page entière · ${phone ? 'mobile 390 px' : 'desktop 1440 px'}`;
-    Array.from(swap.children).forEach(b => b.classList.toggle('is-on', b.dataset.fmt === fmt));
-    requestAnimationFrame(() => {
-      const m = scroll.scrollHeight - scroll.clientHeight;
-      scroll.scrollTop = ratio * m;
-    });
-  };
-
-  function open(i){
-    cur = rows[i];
-    lastFocus = document.activeElement;
-    demo.style.setProperty('--pacc', getComputedStyle(cur).getPropertyValue('--pacc'));
-    elName.innerHTML = `${cur.dataset.name} <span class="demo__badge">Démonstration</span>`;
-    elJob.textContent = cur.dataset.job;
-    elLink.href = cur.dataset.url;
-    demo.hidden = false;
-    paint('desktop', false);
-    scroll.scrollTop = 0;
-    requestAnimationFrame(() => demo.classList.add('is-on'));
-    document.body.style.overflow = 'hidden';
-    closeB.focus();
-  }
-  const close = () => {
-    demo.classList.remove('is-on');
-    document.body.style.overflow = '';
-    // On vide la scène : plusieurs mégaoctets d'images n'ont pas à rester
-    // en mémoire une fois la démo refermée.
-    setTimeout(() => { demo.hidden = true; stage.innerHTML = ''; }, 300);
-    if (lastFocus) lastFocus.focus();
-  };
-
-  closeB.addEventListener('click', close);
-  demo.addEventListener('click', e => { if (e.target === demo) close(); });
-  swap.addEventListener('click', e => {
-    const b = e.target.closest('button');
-    if (b) paint(b.dataset.fmt, true);
-  });
-  addEventListener('keydown', e => {
-    if (demo.hidden) return;
-    if (e.key === 'Escape'){ close(); return; }
-    if (e.key !== 'Tab') return;
-    // Tant que la démo est ouverte, le clavier n'en sort pas
-    const f = demo.querySelectorAll('button, a[href]');
-    const first = f[0], last = f[f.length - 1];
-    if (e.shiftKey && document.activeElement === first){ e.preventDefault(); last.focus(); }
-    else if (!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); }
-  });
 }
 document.addEventListener('DOMContentLoaded', worksIndex);
-
-
-
-
-
-
-
-
-
 
 /* ───────── CARTE DU GOLFE ─────────
    Chaque contour a sa longueur propre : sans la mesurer, Rayol-Canadel
