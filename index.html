@@ -1070,7 +1070,7 @@ body{ background:var(--void); color:var(--pure); font-family:var(--body);
   animation:plateDrift var(--drift-t,24s) linear 1s infinite alternate;
   animation-play-state:paused;
 }
-.plate__sheet.is-on img{ animation-play-state:running; }
+.plate.is-seen .plate__sheet.is-on img{ animation-play-state:running; }
 /* La course est en pixels, pas en pourcentage de l'image : à durée égale,
    une capture deux fois plus haute dérivait deux fois plus vite. Le script
    fixe la vitesse et en déduit la durée, projet par projet. */

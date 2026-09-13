@@ -257,10 +257,26 @@ function worksIndex(){
   const elLink = document.getElementById('demo-link');
 
   /* ── Aperçu au survol ── */
+  /* Relancer une animation CSS depuis le début : on la coupe, on force un
+     recalcul, on rend la main à la feuille de style. */
+  const rewind = im => {
+    if (!im) return;
+    im.style.animation = 'none';
+    void im.offsetWidth;
+    im.style.animation = '';
+  };
+
+  let active = 0;
   const show = i => {
+    if (i === active) return;                 // pas de relance sur soi-même
+    active = i;
     rows.forEach((r,k)   => r.classList.toggle('is-on', k === i));
     sheets.forEach((s,k) => s.classList.toggle('is-on', k === i));
     descs.forEach((d,k)  => d.classList.toggle('is-on', k === i));
+    /* On remet à zéro la planche qui ARRIVE, jamais celle qui part : celle-ci
+       est encore visible le temps de son fondu, elle ressauterait en haut. La
+       nouvelle, elle, est à peine opaque au moment de la remise à zéro. */
+    rewind(sheets[i] && sheets[i].querySelector('img'));
   };
   rows.forEach((r,i) => {
     const btn = r.querySelector('.idx__btn');
@@ -302,6 +318,20 @@ function worksIndex(){
       if (im && im.dataset.src){ im.src = im.dataset.src; delete im.dataset.src; }
     });
   }, { rootMargin:'400px' }).observe(idx);
+
+  /* La dérive ne démarre qu'à l'arrivée du visiteur sur la section. Lancée au
+     chargement, la première planche aurait déjà descendu la page avant même
+     d'être regardée. */
+  const plate = document.querySelector('.plate');
+  if (plate){
+    new IntersectionObserver((es, o) => {
+      if (!es[0].isIntersecting) return;
+      o.disconnect();
+      setDrift();
+      rewind(sheets[active] && sheets[active].querySelector('img'));
+      plate.classList.add('is-seen');
+    }, { threshold:.25 }).observe(plate);
+  }
 
   /* ── La démo ── */
   let cur = null, fmt = 'desktop', lastFocus = null;
