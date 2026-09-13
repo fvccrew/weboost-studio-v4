@@ -247,7 +247,6 @@ function worksIndex(){
   if (!rows.length) return;
 
   const stage  = document.getElementById('demo-stage');
-  const img    = document.getElementById('demo-img');
   const scroll = document.getElementById('demo-scroll');
   const swap   = document.getElementById('demo-swap');
   const closeB = document.getElementById('demo-close');
@@ -304,7 +303,7 @@ function worksIndex(){
     sheets.forEach((sh, k) => {
       const im = sh.querySelector('img'), row = rows[k];
       if (!im) return;
-      const dw = row && +row.dataset.dw, dh = row && +row.dataset.dh;
+      const [dw, dh] = ((row && row.dataset.preview) || '').split('x').map(Number);
       const shown = (dw && dh) ? w * dh / dw : im.offsetHeight;
       const travel = Math.max(0, shown - h);
       im.style.setProperty('--drift', travel.toFixed(0));
@@ -375,10 +374,18 @@ function worksIndex(){
     const phone = fmt === 'mobile';
     stage.style.setProperty('--stage-w', phone ? '390px' : '1180px');
     stage.style.setProperty('--stage-r', phone ? '26px' : '6px');
-    img.width  = +cur.dataset[phone ? 'mw' : 'dw'];
-    img.height = +cur.dataset[phone ? 'mh' : 'dh'];
-    img.src = `assets/img/demo-${cur.dataset.slug}-${fmt}.webp`;
-    img.alt = `Le site ${cur.dataset.name}, page entière, version ${phone ? 'mobile' : 'desktop'}`;
+    /* Les captures dépassant la limite du format WebP sont découpées : on
+       empile les tranches bord à bord, elles se lisent comme une page. Les
+       dimensions viennent des attributs, la mise en page est donc juste
+       avant même que les images ne soient arrivées. */
+    const parts = (cur.dataset[fmt] || '').split('|').filter(Boolean);
+    const alt = `Le site ${cur.dataset.name}, page entière, version ${phone ? 'mobile' : 'desktop'}`;
+    stage.innerHTML = parts.map((d, k) => {
+      const [w, h] = d.split('x');
+      return `<img src="assets/img/demo-${cur.dataset.slug}-${fmt}-${k+1}.webp"`
+           + ` width="${w}" height="${h}" decoding="async"`
+           + ` alt="${k === 0 ? alt : ''}">`;
+    }).join('');
     elCap.textContent = `Capture réelle · page entière · ${phone ? 'mobile 390 px' : 'desktop 1440 px'}`;
     Array.from(swap.children).forEach(b => b.classList.toggle('is-on', b.dataset.fmt === fmt));
     requestAnimationFrame(() => {
@@ -404,7 +411,9 @@ function worksIndex(){
   const close = () => {
     demo.classList.remove('is-on');
     document.body.style.overflow = '';
-    setTimeout(() => { demo.hidden = true; img.removeAttribute('src'); }, 300);
+    // On vide la scène : plusieurs mégaoctets d'images n'ont pas à rester
+    // en mémoire une fois la démo refermée.
+    setTimeout(() => { demo.hidden = true; stage.innerHTML = ''; }, 300);
     if (lastFocus) lastFocus.focus();
   };
 

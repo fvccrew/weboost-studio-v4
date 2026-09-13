@@ -1171,11 +1171,15 @@ body{ background:var(--void); color:var(--pure); font-family:var(--body);
   flex:1; overflow-y:auto; overflow-x:hidden; overscroll-behavior:contain;
   padding:clamp(14px,3vh,36px) var(--pad) clamp(40px,7vh,80px);
 }
-.demo__stage{ margin:0 auto; width:min(100%, var(--stage-w,1180px)); }
-.demo__stage img{
-  width:100%; height:auto; display:block; border-radius:var(--stage-r,6px);
+/* Une capture trop haute pour le format WebP (16 383 px) est découpée en
+   tranches : le cadre porte l'arrondi et l'ombre, les tranches s'empilent
+   bord à bord à l'intérieur et se lisent comme une seule page. */
+.demo__stage{
+  margin:0 auto; width:min(100%, var(--stage-w,1180px));
+  border-radius:var(--stage-r,6px); overflow:hidden; font-size:0;
   box-shadow:0 40px 120px rgba(0,0,0,.7), 0 0 0 1px rgba(255,255,255,.11);
 }
+.demo__stage img{ width:100%; height:auto; display:block; }
 .demo__foot{
   margin:clamp(18px,3vh,30px) auto 0; width:min(100%, var(--stage-w,1180px));
   display:flex; flex-wrap:wrap; align-items:center; gap:14px;
@@ -1868,8 +1872,7 @@ body.pl-lock .hero__veil{ opacity:0; }
       <ol class="idx" id="idx">
       <li class="idx__row is-on" style="--pacc:#0E8FB5"
           data-slug="mdz-piscine" data-name="MDZ Piscine" data-job="Artisan · piscines"
-          data-url="https://fvccrew.github.io/mdz-piscine/" data-dw="1440" data-dh="6699"
-          data-mw="488" data-mh="10688">
+          data-url="https://fvccrew.github.io/mdz-piscine/" data-preview="1120x5210" data-desktop="2360x10979" data-mobile="780x8550|780x8550">
         <button class="idx__btn" type="button">
           <span class="idx__num">01</span>
           <span class="idx__name">MDZ Piscine</span>
@@ -1879,8 +1882,7 @@ body.pl-lock .hero__veil{ opacity:0; }
       </li>
       <li class="idx__row" style="--pacc:#B5544C"
           data-slug="aurelis" data-name="AURELIS" data-job="Horlogerie"
-          data-url="https://fvccrew.github.io/aurelis/" data-dw="1320" data-dh="16380"
-          data-mw="420" data-mh="16380">
+          data-url="https://fvccrew.github.io/aurelis/" data-preview="1120x13898" data-desktop="2360x14643|2360x14642" data-mobile="780x15216|780x15216">
         <button class="idx__btn" type="button">
           <span class="idx__num">02</span>
           <span class="idx__name">AURELIS</span>
@@ -1890,8 +1892,7 @@ body.pl-lock .hero__veil{ opacity:0; }
       </li>
       <li class="idx__row" style="--pacc:#C4A265"
           data-slug="st-prestige" data-name="ST Prestige" data-job="Conciergerie de luxe"
-          data-url="https://fvccrew.github.io/st-prestige/" data-dw="1440" data-dh="4161"
-          data-mw="488" data-mh="7099">
+          data-url="https://fvccrew.github.io/st-prestige/" data-preview="1120x3423" data-desktop="2360x7213" data-mobile="780x11358">
         <button class="idx__btn" type="button">
           <span class="idx__num">03</span>
           <span class="idx__name">ST Prestige</span>
@@ -1901,8 +1902,7 @@ body.pl-lock .hero__veil{ opacity:0; }
       </li>
       <li class="idx__row" style="--pacc:#C63B2F"
           data-slug="da-enzo" data-name="Da Enzo" data-job="Restaurant"
-          data-url="https://fvccrew.github.io/da-enzo/" data-dw="1440" data-dh="3542"
-          data-mw="488" data-mh="6576">
+          data-url="https://fvccrew.github.io/da-enzo/" data-preview="1120x2755" data-desktop="2360x5805" data-mobile="780x10522">
         <button class="idx__btn" type="button">
           <span class="idx__num">04</span>
           <span class="idx__name">Da Enzo</span>
@@ -1923,20 +1923,20 @@ body.pl-lock .hero__veil{ opacity:0; }
       <div class="plate">
         <div class="plate__win">
         <div class="plate__sheet is-on">
-          <img src="assets/img/demo-mdz-piscine-desktop.webp" alt="Le site MDZ Piscine, capture de la page entière"
-               width="1440" height="6699" loading="lazy" decoding="async">
+          <img src="assets/img/demo-mdz-piscine-preview.webp" alt="Le site MDZ Piscine, capture de la page entière"
+               width="1120" height="5210" loading="lazy" decoding="async">
         </div>
         <div class="plate__sheet">
-          <img data-src="assets/img/demo-aurelis-desktop.webp" alt="Le site AURELIS, capture de la page entière"
-               width="1320" height="16380" loading="lazy" decoding="async">
+          <img data-src="assets/img/demo-aurelis-preview.webp" alt="Le site AURELIS, capture de la page entière"
+               width="1120" height="13898" loading="lazy" decoding="async">
         </div>
         <div class="plate__sheet">
-          <img data-src="assets/img/demo-st-prestige-desktop.webp" alt="Le site ST Prestige, capture de la page entière"
-               width="1440" height="4161" loading="lazy" decoding="async">
+          <img data-src="assets/img/demo-st-prestige-preview.webp" alt="Le site ST Prestige, capture de la page entière"
+               width="1120" height="3423" loading="lazy" decoding="async">
         </div>
         <div class="plate__sheet">
-          <img data-src="assets/img/demo-da-enzo-desktop.webp" alt="Le site Da Enzo, capture de la page entière"
-               width="1440" height="3542" loading="lazy" decoding="async">
+          <img data-src="assets/img/demo-da-enzo-preview.webp" alt="Le site Da Enzo, capture de la page entière"
+               width="1120" height="2755" loading="lazy" decoding="async">
         </div>
         </div>
       </div>
@@ -2241,7 +2241,7 @@ body.pl-lock .hero__veil{ opacity:0; }
     <button class="demo__close" id="demo-close" type="button" aria-label="Fermer la démo">✕</button>
   </header>
   <div class="demo__scroll" id="demo-scroll">
-    <div class="demo__stage" id="demo-stage"><img id="demo-img" alt=""></div>
+    <div class="demo__stage" id="demo-stage"></div>
     <p class="demo__foot">
       <span id="demo-cap"></span>
       <a class="demo__link" id="demo-link" target="_blank" rel="noopener">Consulter le site <i aria-hidden="true">→</i></a>
