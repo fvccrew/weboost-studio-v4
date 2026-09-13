@@ -272,6 +272,8 @@ function worksIndex(){
   const charger = i => {
     const im = sheets[i] && sheets[i].querySelector('img');
     if (!im || !im.dataset.src) return;
+    // srcset avant src : c'est lui qui décide de la version téléchargée
+    if (im.dataset.srcset){ im.srcset = im.dataset.srcset; delete im.dataset.srcset; }
     im.src = im.dataset.src;
     delete im.dataset.src;
     // Le src n'est posé que maintenant : c'est ici qu'on peut écouter sa fin

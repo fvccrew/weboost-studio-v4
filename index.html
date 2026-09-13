@@ -1058,11 +1058,19 @@ body{ background:var(--void); color:var(--pure); font-family:var(--body);
   transform:rotateY(-13deg) rotateX(2deg); transform-origin:58% 50%;
   box-shadow:-42px 46px 120px rgba(0,0,0,.78), 0 0 0 1px rgba(255,255,255,.12);
 }
+/* visibility en plus de l'opacité : une planche invisible n'est alors ni
+   peinte ni composée, et le navigateur peut libérer son image — quatre
+   captures pleine page, c'est 23 mégapixels si toutes restent à l'écran.
+   Le délai sur la sortie laisse le fondu se terminer avant l'escamotage. */
 .plate__sheet{
   position:absolute; inset:0; overflow:hidden;
-  opacity:0; transition:opacity .34s var(--ease-cine);
+  opacity:0; visibility:hidden;
+  transition:opacity .34s var(--ease-cine), visibility 0s linear .34s;
 }
-.plate__sheet.is-on{ opacity:1; }
+.plate__sheet.is-on{
+  opacity:1; visibility:visible;
+  transition:opacity .34s var(--ease-cine), visibility 0s;
+}
 .plate__sheet img{ position:absolute; top:0; left:0; width:100%; height:auto; }
 /* Dérive lente : elle dit que l'aperçu est une page entière, pas une
    vignette. Assez lente pour ne jamais attirer l'œil.
@@ -1803,7 +1811,7 @@ body.pl-lock .hero__veil{ opacity:0; }
   <div class="works">
     <div class="works__list">
       <ol class="idx" id="idx">
-      <li class="idx__row is-on" style="--pacc:#0E8FB5" data-preview="1120x2100">
+      <li class="idx__row is-on" style="--pacc:#0E8FB5" data-preview="1120x5210">
         <a class="idx__btn" href="https://fvccrew.github.io/mdz-piscine/" target="_blank" rel="noopener"
            aria-label="MDZ Piscine, artisan piscines — voir le site (nouvelle fenêtre)">
           <span class="idx__num">01</span>
@@ -1812,7 +1820,7 @@ body.pl-lock .hero__veil{ opacity:0; }
           <span class="idx__go">Voir le site <i aria-hidden="true">→</i></span>
         </a>
       </li>
-      <li class="idx__row" style="--pacc:#B5544C" data-preview="1120x2100">
+      <li class="idx__row" style="--pacc:#B5544C" data-preview="1120x9208">
         <a class="idx__btn" href="https://fvccrew.github.io/aurelis/" target="_blank" rel="noopener"
            aria-label="AURELIS, horlogerie — voir le site (nouvelle fenêtre)">
           <span class="idx__num">02</span>
@@ -1821,7 +1829,7 @@ body.pl-lock .hero__veil{ opacity:0; }
           <span class="idx__go">Voir le site <i aria-hidden="true">→</i></span>
         </a>
       </li>
-      <li class="idx__row" style="--pacc:#C4A265" data-preview="1120x2100">
+      <li class="idx__row" style="--pacc:#C4A265" data-preview="1120x3423">
         <a class="idx__btn" href="https://fvccrew.github.io/st-prestige/" target="_blank" rel="noopener"
            aria-label="ST Prestige, conciergerie de luxe — voir le site (nouvelle fenêtre)">
           <span class="idx__num">03</span>
@@ -1830,7 +1838,7 @@ body.pl-lock .hero__veil{ opacity:0; }
           <span class="idx__go">Voir le site <i aria-hidden="true">→</i></span>
         </a>
       </li>
-      <li class="idx__row" style="--pacc:#C63B2F" data-preview="1120x2100">
+      <li class="idx__row" style="--pacc:#C63B2F" data-preview="1120x2755">
         <a class="idx__btn" href="https://fvccrew.github.io/da-enzo/" target="_blank" rel="noopener"
            aria-label="Da Enzo, restaurant — voir le site (nouvelle fenêtre)">
           <span class="idx__num">04</span>
@@ -1852,20 +1860,32 @@ body.pl-lock .hero__veil{ opacity:0; }
       <div class="plate">
         <div class="plate__win">
         <div class="plate__sheet is-on">
-          <img src="assets/img/demo-mdz-piscine-preview.webp" alt="Le site MDZ Piscine, capture de la page entière"
-               width="1120" height="2100" loading="lazy" decoding="async">
+          <img src="assets/img/demo-mdz-piscine-preview-560.webp"
+               srcset="assets/img/demo-mdz-piscine-preview-560.webp 560w, assets/img/demo-mdz-piscine-preview-780.webp 780w, assets/img/demo-mdz-piscine-preview.webp 1120w"
+               sizes="(max-width:480px) calc(100vw - 40px), (max-width:900px) 440px, 560px"
+               alt="Le site MDZ Piscine, capture de la page entière"
+               width="1120" height="5210" loading="lazy" decoding="async">
         </div>
         <div class="plate__sheet">
-          <img data-src="assets/img/demo-aurelis-preview.webp" alt="Le site AURELIS, capture de la page entière"
-               width="1120" height="2100" loading="lazy" decoding="async">
+          <img data-src="assets/img/demo-aurelis-preview-560.webp"
+               data-srcset="assets/img/demo-aurelis-preview-560.webp 560w, assets/img/demo-aurelis-preview-780.webp 780w, assets/img/demo-aurelis-preview.webp 1120w"
+               sizes="(max-width:480px) calc(100vw - 40px), (max-width:900px) 440px, 560px"
+               alt="Le site AURELIS, capture de la page entière"
+               width="1120" height="9208" loading="lazy" decoding="async">
         </div>
         <div class="plate__sheet">
-          <img data-src="assets/img/demo-st-prestige-preview.webp" alt="Le site ST Prestige, capture de la page entière"
-               width="1120" height="2100" loading="lazy" decoding="async">
+          <img data-src="assets/img/demo-st-prestige-preview-560.webp"
+               data-srcset="assets/img/demo-st-prestige-preview-560.webp 560w, assets/img/demo-st-prestige-preview-780.webp 780w, assets/img/demo-st-prestige-preview.webp 1120w"
+               sizes="(max-width:480px) calc(100vw - 40px), (max-width:900px) 440px, 560px"
+               alt="Le site ST Prestige, capture de la page entière"
+               width="1120" height="3423" loading="lazy" decoding="async">
         </div>
         <div class="plate__sheet">
-          <img data-src="assets/img/demo-da-enzo-preview.webp" alt="Le site Da Enzo, capture de la page entière"
-               width="1120" height="2100" loading="lazy" decoding="async">
+          <img data-src="assets/img/demo-da-enzo-preview-560.webp"
+               data-srcset="assets/img/demo-da-enzo-preview-560.webp 560w, assets/img/demo-da-enzo-preview-780.webp 780w, assets/img/demo-da-enzo-preview.webp 1120w"
+               sizes="(max-width:480px) calc(100vw - 40px), (max-width:900px) 440px, 560px"
+               alt="Le site Da Enzo, capture de la page entière"
+               width="1120" height="2755" loading="lazy" decoding="async">
         </div>
         </div>
       </div>
