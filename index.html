@@ -1059,6 +1059,11 @@ body{ background:var(--void); color:var(--pure); font-family:var(--body);
 /* Dérive lente : elle dit que l'aperçu est une page entière, pas une
    vignette. Assez lente pour ne jamais attirer l'œil.
 
+   La lecture (running / paused) est posée en ligne par le script et non par
+   une règle en cascade : sur WebKit, un animation-play-state qui bascule
+   parce qu'une classe a changé sur un ancêtre n'est pas toujours réévalué,
+   et les planches restaient figées.
+
    Deux précautions. `linear` et pas --ease-cine : sur une boucle de 42 s,
    cette courbe avalait la moitié du chemin en trois secondes puis rampait,
    ce qui se lisait comme un défaut de vitesse. Et l'animation est posée sur
@@ -1070,7 +1075,7 @@ body{ background:var(--void); color:var(--pure); font-family:var(--body);
   animation:plateDrift var(--drift-t,24s) linear 1s infinite alternate;
   animation-play-state:paused;
 }
-.plate.is-seen .plate__sheet.is-on img{ animation-play-state:running; }
+
 /* La course est en pixels, pas en pourcentage de l'image : à durée égale,
    une capture deux fois plus haute dérivait deux fois plus vite. Le script
    fixe la vitesse et en déduit la durée, projet par projet. */

@@ -277,6 +277,7 @@ function worksIndex(){
        est encore visible le temps de son fondu, elle ressauterait en haut. La
        nouvelle, elle, est à peine opaque au moment de la remise à zéro. */
     rewind(sheets[i] && sheets[i].querySelector('img'));
+    applyPlay();
   };
   rows.forEach((r,i) => {
     const btn = r.querySelector('.idx__btn');
@@ -290,23 +291,44 @@ function worksIndex(){
      défilait presque deux fois plus vite que la plus courte. */
   const DRIFT_SPEED = 62;                       // pixels par seconde
   const win = document.querySelector('.plate__win');
+
+  /* La hauteur d'affichage est déduite des dimensions connues de la capture,
+     pas de offsetHeight : les planches 2 et suivantes n'ont pas encore de
+     `src` au démarrage, et un navigateur qui ne leur donne alors aucune
+     hauteur ramenait leur course à zéro — l'animation tournait sur une
+     distance nulle, donc rien ne bougeait. Avec data-dw / data-dh, le calcul
+     est exact avant même que l'image n'arrive, et identique partout. */
   const setDrift = () => {
     if (!win) return;
-    const h = win.clientHeight;
-    sheets.forEach(sh => {
-      const im = sh.querySelector('img');
+    const w = win.clientWidth, h = win.clientHeight;
+    sheets.forEach((sh, k) => {
+      const im = sh.querySelector('img'), row = rows[k];
       if (!im) return;
-      const travel = Math.max(0, im.offsetHeight - h);
+      const dw = row && +row.dataset.dw, dh = row && +row.dataset.dh;
+      const shown = (dw && dh) ? w * dh / dw : im.offsetHeight;
+      const travel = Math.max(0, shown - h);
       im.style.setProperty('--drift', travel.toFixed(0));
       im.style.setProperty('--drift-t', Math.max(6, travel / DRIFT_SPEED).toFixed(1) + 's');
     });
   };
-  setDrift();
-  addEventListener('resize', setDrift, { passive:true });
-  sheets.forEach(sh => {
+
+  /* Lecture posée en ligne, planche par planche : voir le commentaire de la
+     feuille de style — une bascule paused → running par changement de classe
+     sur un ancêtre n'est pas fiable sur WebKit. */
+  let seen = false;
+  const applyPlay = () => sheets.forEach((sh, k) => {
     const im = sh.querySelector('img');
-    if (im && !im.complete) im.addEventListener('load', setDrift, { once:true });
+    if (im) im.style.animationPlayState = (seen && k === active) ? 'running' : 'paused';
   });
+
+  setDrift();
+  /* Un changement de --drift n'est pas repris par une animation déjà lancée :
+     on la recrée pour que la nouvelle course soit prise en compte. */
+  addEventListener('resize', () => {
+    setDrift();
+    rewind(sheets[active] && sheets[active].querySelector('img'));
+    applyPlay();
+  }, { passive:true });
 
   /* Les planches 2 et 3 n'arrivent qu'à l'approche de la section : trois
      captures pleine page, ce n'est pas gratuit sur un forfait mobile. */
@@ -315,7 +337,13 @@ function worksIndex(){
     o.disconnect();
     sheets.forEach(s => {
       const im = s.querySelector('img');
-      if (im && im.dataset.src){ im.src = im.dataset.src; delete im.dataset.src; }
+      if (!im || !im.dataset.src) return;
+      im.src = im.dataset.src;
+      delete im.dataset.src;
+      // Le src n'est posé que maintenant : c'est ici qu'on peut écouter sa
+      // fin de chargement, pas au démarrage où `complete` vaut déjà true
+      // pour une image sans source.
+      im.addEventListener('load', () => { setDrift(); applyPlay(); }, { once:true });
     });
   }, { rootMargin:'400px' }).observe(idx);
 
@@ -327,9 +355,10 @@ function worksIndex(){
     new IntersectionObserver((es, o) => {
       if (!es[0].isIntersecting) return;
       o.disconnect();
+      seen = true;
       setDrift();
       rewind(sheets[active] && sheets[active].querySelector('img'));
-      plate.classList.add('is-seen');
+      applyPlay();
     }, { threshold:.25 }).observe(plate);
   }
 
