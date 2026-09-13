@@ -191,9 +191,20 @@ class ParticleField {
   constructor(count, w, h){
     this.w = w; this.h = h;
     this.list = new Array(count);
-    for (let i = 0; i < count; i++){
+    for (let i = 0; i < count; i++) this.list[i] = this.grain();
+  }
+
+  /* Ajouter des particules après coup : la nuée démarre volontairement
+     modeste et ne s'étoffe que si la machine tient la cadence. */
+  etoffe(total){
+    while (this.list.length < total) this.list.push(this.grain());
+  }
+
+  grain(){
+    const w = this.w, h = this.h;
+    {
       const z = Math.random();                    // profondeur → DOF + parallaxe
-      this.list[i] = {
+      return {
         x: rand(0, w), y: rand(0, h),
         vx: 0, vy: 0,
         tx: w / 2, ty: h / 2,                     // cible logo
@@ -475,6 +486,7 @@ class Sequence {
     this.scan = { x:-300, live:false, alpha:0, reach:170, force:0, };
 
     this.time = 0; this.last = 0; this.raf = 0; this.done = false;
+    this.jauge = [];                              // horodatage des premières images
   }
 
   build(){
@@ -482,7 +494,13 @@ class Sequence {
     const w   = innerWidth, h = innerHeight;
     this.renderer = new Renderer(this.cv);
     this.renderer.resize(w, h);
-    this.field = new ParticleField(CONFIG.particles[t], w, h);
+    /* On construit modestement. Fabriquer 3 400 particules et échantillonner
+       le logo coûte, à soi seul, plusieurs secondes de fil principal sur une
+       machine lente — avant même la première image, donc avant tout verdict
+       possible sur sa vitesse. On part donc bas et on étoffe seulement si
+       les premières images prouvent que la machine suit. */
+    this.cible = CONFIG.particles[t];
+    this.field = new ParticleField(Math.min(this.cible, 1100), w, h);
     this.logo  = buildLogo(w, h, CONFIG.sampleStep[t]);
     this.field.assign(this.logo.points);
     this.scan.reach = t === 'low' ? 130 : 170;
@@ -507,7 +525,62 @@ class Sequence {
     const k = clamp(dt * 60, 0.2, 2);          // step normalisé 60fps
     this.field.update(this.S, this.scan, k, this.time);
     this.renderer.draw(this.field, this.S, this.scan, this.time, this.logo);
+    this.calibre(now);
   };
+
+  /* Densité réglée sur la machine réelle, pas sur ce qu'elle déclare.
+     tier() ne lit que la mémoire et le nombre de cœurs, qu'un ordinateur
+     lent peut très bien annoncer généreusement : sur le banc de mesure de
+     PageSpeed, les 3 400 particules coûtaient près de quatre secondes de
+     fil principal bloqué, et l'intro tournait à six images par seconde.
+     On mesure donc les premières images et on allège la nuée si elles
+     coûtent trop cher. Le logo n'est pas encore formé à cet instant, et
+     assign() ré-échantillonne ses points sur l'effectif restant : la
+     réduction ne se voit pas. */
+  calibre(now){
+    if (!this.jauge) return;
+    this.jauge.push(now);
+    const j = this.jauge, n = j.length;
+
+    const ecart = (a, b) => {
+      let m = Infinity;
+      for (let i = a; i <= b; i++) m = Math.min(m, j[i] - j[i - 1]);
+      return m;                                   // la meilleure image, pas la moyenne
+    };
+
+    /* Verdict rapide, à la quatrième image. En dessous d'une vingtaine
+       d'images par seconde l'intro ne rend plus service : elle saccade et
+       retient le site cinq secondes de plus. On lève le rideau tout de
+       suite plutôt que de la jouer mal. On regarde la MEILLEURE des trois
+       premières images et non leur moyenne : une machine rapide peut avoir
+       une image lente au démarrage, une machine lente n'en a aucune de
+       rapide. Et on tranche tôt, parce que chaque image d'attente est
+       elle-même du temps de calcul pris au visiteur. */
+    if (n === 4){
+      const meilleure = ecart(2, 3);
+      if (meilleure > 40){ this.jauge = null; this.bail(true); return; }
+      if (meilleure < 14 && this.field.list.length < this.cible){
+        this.field.etoffe(this.cible);            // la machine suit : nuée pleine
+        this.field.assign(this.logo.points);      // invisible, le logo n'est pas formé
+      }
+    }
+
+    if (n < 12) return;
+    const durees = [];
+    for (let i = 4; i < n; i++) durees.push(j[i] - j[i - 1]);
+    durees.sort((a, b) => a - b);
+    const median = durees[durees.length >> 1];
+    this.jauge = null;                            // une seule fois
+
+    /* Densité réglée sur la machine réelle : si les images coûtent plus que
+       le budget sans pour autant mériter l'abandon, on allège la nuée. */
+    const BUDGET = 22;                            // ms par image, soit ~45 fps
+    if (!(median > BUDGET)) return;
+    const garde = Math.max(400, Math.round(this.field.list.length * BUDGET / median));
+    if (garde >= this.field.list.length) return;
+    this.field.list.length = garde;
+    this.field.assign(this.logo.points);
+  }
 
   /* ── Timeline maître ─────────────────────────────────────────
      Durée totale ≈ 5,4 s. Toutes les phases se chevauchent :
@@ -721,6 +794,26 @@ function boot(){
     requestAnimationFrame(() =>
       document.dispatchEvent(new CustomEvent('preloader:done')));
   };
+
+  /* Sonde de vitesse, avant toute construction. L'intro est une animation
+     plein écran de cinq secondes : sur une machine quatre fois plus lente
+     qu'un ordinateur de bureau récent, elle saccade et retient le site pour
+     rien. Le problème est qu'on ne peut pas le constater en la jouant —
+     fabriquer les particules et échantillonner le logo coûte déjà plusieurs
+     secondes avant la première image. On mesure donc la machine sur un
+     calcul court : moins d'une milliseconde sur un poste sain, plus de deux
+     sur un poste qui ne tiendra pas la cadence. On garde la meilleure des
+     mesures, après une passe de chauffe, pour qu'un à-coup isolé ne prive
+     personne de l'intro. */
+  const sonde = () => {
+    const t = performance.now();
+    let x = 0;
+    for (let i = 0; i < 300000; i++) x += Math.sqrt(i);
+    if (x < 0) throw x;                        // empêche l'élimination du calcul
+    return performance.now() - t;
+  };
+  sonde();
+  if (Math.min(sonde(), sonde()) > 2) return bailOut();
 
   // Fallbacks : mouvement réduit, session déjà vue, GSAP absent
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) return bailOut();
