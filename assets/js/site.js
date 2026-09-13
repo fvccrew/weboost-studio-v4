@@ -228,70 +228,122 @@ function reveal(){
   document.querySelectorAll('.sec-title').forEach(el => io.observe(el));
 }
 
-/* ───────── RÉALISATIONS — L'EMPILEMENT ─────────
-   Un projet occupe un écran, épinglé le temps qu'on le lise. Descendre fait
-   descendre la page dans sa fenêtre : le geste et le mouvement vont dans le
-   même sens, ce que le balayage latéral de l'ancienne carte contredisait.
-   Le projet suivant monte ensuite par-dessus.
+/* ───────── RÉALISATIONS — LE SOMMAIRE ─────────
+   Une ligne par projet, la planche d'aperçu à droite, et la démo en plein
+   écran à la demande. Rien n'est piloté par le scroll : c'est ce qui rend
+   la section indépendante du nombre de projets — trois lignes ou trente,
+   même hauteur, et personne n'est obligé de traverser le portfolio.
 
-   Chaque créneau (.slot) est plus haut qu'un écran et son contenu y est
-   collé : la hauteur en trop est la durée de lecture du projet. */
-function worksStack(){
-  const stack = document.getElementById('stack');
-  if (!stack) return;
-  const slots = Array.from(stack.querySelectorAll('.slot'));
-  if (!slots.length) return;
+   Volontairement hors de init() : celui-ci rend la main en mouvement
+   réduit, et le sommaire, lui, doit rester utilisable dans tous les cas. */
+function worksIndex(){
+  const idx = document.getElementById('idx');
+  const demo = document.getElementById('demo');
+  if (!idx || !demo) return;
 
-  const pins   = slots.map(s => s.querySelector('.slot__pin'));
-  const strips = slots.map(s => s.querySelector('.frame__strip'));
-  const frames = slots.map(s => s.querySelector('.frame'));
-  const runs   = slots.map(() => 1);   // scroll passé sur le projet, en pixels
-  const travel = slots.map(() => 0);   // course utile de la pellicule
+  const rows   = Array.from(idx.querySelectorAll('.idx__row'));
+  const sheets = Array.from(document.querySelectorAll('.plate__sheet'));
+  const descs  = Array.from(document.querySelectorAll('.plate__desc > div'));
+  if (!rows.length) return;
 
-  /* La page ne défile jamais beaucoup plus vite que le doigt : au-delà on ne
-     lit plus rien. Quand la capture est trop longue pour la durée du créneau,
-     la fenêtre en montre le haut, posément, plutôt que tout d'un trait. */
-  const MAX_RATIO = 2;
+  const stage  = document.getElementById('demo-stage');
+  const img    = document.getElementById('demo-img');
+  const scroll = document.getElementById('demo-scroll');
+  const swap   = document.getElementById('demo-swap');
+  const closeB = document.getElementById('demo-close');
+  const elName = document.getElementById('demo-name');
+  const elJob  = document.getElementById('demo-job');
+  const elCap  = document.getElementById('demo-cap');
+  const elLink = document.getElementById('demo-link');
 
-  const measure = () => {
-    slots.forEach((slot, i) => {
-      const pin = pins[i], st = strips[i], fr = frames[i];
-      if (!pin || !st || !fr) return;
-      runs[i]   = Math.max(1, slot.offsetHeight - pin.offsetHeight);
-      travel[i] = Math.min(Math.max(0, st.offsetHeight - fr.clientHeight),
-                           runs[i] * MAX_RATIO);
-    });
+  /* ── Aperçu au survol ── */
+  const show = i => {
+    rows.forEach((r,k)   => r.classList.toggle('is-on', k === i));
+    sheets.forEach((s,k) => s.classList.toggle('is-on', k === i));
+    descs.forEach((d,k)  => d.classList.toggle('is-on', k === i));
   };
-
-  let ticking = false;
-  const update = () => {
-    ticking = false;
-    slots.forEach((slot, i) => {
-      const fr = frames[i];
-      if (!fr) return;
-      const q = clamp(-slot.getBoundingClientRect().top / runs[i], 0, 1);
-      fr.style.setProperty('--y', (q * travel[i]).toFixed(1));
-      fr.style.setProperty('--q', q.toFixed(4));
-    });
-  };
-  const onScroll = () => { if (!ticking){ ticking = true; requestAnimationFrame(update); } };
-
-  /* Le volet ne s'ouvre qu'à l'arrivée du projet : la capture se découvre de
-     haut en bas, comme une page qui se charge. */
-  const io = new IntersectionObserver(es => {
-    es.forEach(e => {
-      if (e.isIntersecting){ e.target.classList.add('is-live'); io.unobserve(e.target); }
-    });
-  }, { threshold:.15 });
-  slots.forEach(s => io.observe(s));
-
-  addEventListener('scroll', onScroll, { passive:true });
-  addEventListener('resize', () => { measure(); onScroll(); }, { passive:true });
-  strips.forEach(st => {
-    if (st && !st.complete) st.addEventListener('load', () => { measure(); onScroll(); }, { once:true });
+  rows.forEach((r,i) => {
+    const btn = r.querySelector('.idx__btn');
+    r.addEventListener('pointerenter', () => show(i));
+    btn.addEventListener('focus', () => show(i));
+    btn.addEventListener('click', () => open(i));
   });
-  measure(); update();
+
+  /* Les planches 2 et 3 n'arrivent qu'à l'approche de la section : trois
+     captures pleine page, ce n'est pas gratuit sur un forfait mobile. */
+  new IntersectionObserver((es, o) => {
+    if (!es[0].isIntersecting) return;
+    o.disconnect();
+    sheets.forEach(s => {
+      const im = s.querySelector('img');
+      if (im && im.dataset.src){ im.src = im.dataset.src; delete im.dataset.src; }
+    });
+  }, { rootMargin:'400px' }).observe(idx);
+
+  /* ── La démo ── */
+  let cur = null, fmt = 'desktop', lastFocus = null;
+
+  const paint = (next, keepPlace) => {
+    if (!cur) return;
+    /* On garde la position relative dans la page en changeant de format :
+       repartir en haut ferait perdre l'endroit qu'on était en train de lire. */
+    const max = scroll.scrollHeight - scroll.clientHeight;
+    const ratio = keepPlace && max > 0 ? scroll.scrollTop / max : 0;
+    fmt = next;
+    const phone = fmt === 'mobile';
+    stage.style.setProperty('--stage-w', phone ? '390px' : '1180px');
+    stage.style.setProperty('--stage-r', phone ? '26px' : '6px');
+    img.width  = +cur.dataset[phone ? 'mw' : 'dw'];
+    img.height = +cur.dataset[phone ? 'mh' : 'dh'];
+    img.src = `assets/img/demo-${cur.dataset.slug}-${fmt}.webp`;
+    img.alt = `Le site ${cur.dataset.name}, page entière, version ${phone ? 'mobile' : 'desktop'}`;
+    elCap.textContent = `Capture réelle · page entière · ${phone ? 'mobile 390 px' : 'desktop 1440 px'}`;
+    Array.from(swap.children).forEach(b => b.classList.toggle('is-on', b.dataset.fmt === fmt));
+    requestAnimationFrame(() => {
+      const m = scroll.scrollHeight - scroll.clientHeight;
+      scroll.scrollTop = ratio * m;
+    });
+  };
+
+  function open(i){
+    cur = rows[i];
+    lastFocus = document.activeElement;
+    demo.style.setProperty('--pacc', getComputedStyle(cur).getPropertyValue('--pacc'));
+    elName.innerHTML = `${cur.dataset.name} <span class="demo__badge">Démonstration</span>`;
+    elJob.textContent = cur.dataset.job;
+    elLink.href = cur.dataset.url;
+    demo.hidden = false;
+    paint('desktop', false);
+    scroll.scrollTop = 0;
+    requestAnimationFrame(() => demo.classList.add('is-on'));
+    document.body.style.overflow = 'hidden';
+    closeB.focus();
+  }
+  const close = () => {
+    demo.classList.remove('is-on');
+    document.body.style.overflow = '';
+    setTimeout(() => { demo.hidden = true; img.removeAttribute('src'); }, 300);
+    if (lastFocus) lastFocus.focus();
+  };
+
+  closeB.addEventListener('click', close);
+  demo.addEventListener('click', e => { if (e.target === demo) close(); });
+  swap.addEventListener('click', e => {
+    const b = e.target.closest('button');
+    if (b) paint(b.dataset.fmt, true);
+  });
+  addEventListener('keydown', e => {
+    if (demo.hidden) return;
+    if (e.key === 'Escape'){ close(); return; }
+    if (e.key !== 'Tab') return;
+    // Tant que la démo est ouverte, le clavier n'en sort pas
+    const f = demo.querySelectorAll('button, a[href]');
+    const first = f[0], last = f[f.length - 1];
+    if (e.shiftKey && document.activeElement === first){ e.preventDefault(); last.focus(); }
+    else if (!e.shiftKey && document.activeElement === last){ e.preventDefault(); first.focus(); }
+  });
 }
+document.addEventListener('DOMContentLoaded', worksIndex);
 
 
 
@@ -660,7 +712,7 @@ function init(){
        jamais dans la frame de l'arrivée. */
     /* Le reste part sur un temps mort du processeur : rien de tout cela
        n'est visible tant qu'on n'a pas commencé à descendre. */
-    const later = () => { reveal(); portrait(); worksStack(); golfeMap(); aboutRead(); };
+    const later = () => { reveal(); portrait(); golfeMap(); aboutRead(); };
     if ('requestIdleCallback' in window) requestIdleCallback(later, { timeout:1400 });
     else setTimeout(later, 700);
   };
