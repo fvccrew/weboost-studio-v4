@@ -1057,8 +1057,20 @@ body{ background:var(--void); color:var(--pure); font-family:var(--body);
 .plate__sheet.is-on{ opacity:1; }
 .plate__sheet img{ position:absolute; top:0; left:0; width:100%; height:auto; }
 /* Dérive lente : elle dit que l'aperçu est une page entière, pas une
-   vignette. Assez lente pour ne jamais attirer l'œil. */
-.plate__sheet.is-on img{ animation:plateDrift 42s var(--ease-cine) infinite alternate; }
+   vignette. Assez lente pour ne jamais attirer l'œil.
+
+   Deux précautions. `linear` et pas --ease-cine : sur une boucle de 42 s,
+   cette courbe avalait la moitié du chemin en trois secondes puis rampait,
+   ce qui se lisait comme un défaut de vitesse. Et l'animation est posée sur
+   toutes les planches, seule sa lecture s'arrête : rattachée à .is-on, elle
+   était détruite en quittant une ligne et recréée à zéro en y revenant —
+   l'aperçu ressautait en haut pendant le fondu, puis repartait d'un coup.
+   Ici chaque planche reprend exactement où on l'avait laissée. */
+.plate__sheet img{
+  animation:plateDrift 42s linear 1s infinite alternate;
+  animation-play-state:paused;
+}
+.plate__sheet.is-on img{ animation-play-state:running; }
 @keyframes plateDrift{ from{ transform:translate3d(0,0,0); } to{ transform:translate3d(0,-46%,0); } }
 
 /* Le descriptif du projet survolé, sous la planche : les trois restent dans
@@ -1178,7 +1190,7 @@ body{ background:var(--void); color:var(--pure); font-family:var(--body);
 @media (prefers-reduced-motion:reduce){
   /* Le sommaire et la démo ne dépendent pas du scroll : ils fonctionnent à
      l'identique. Seules la dérive de l'aperçu et l'inclinaison s'arrêtent. */
-  .plate__sheet.is-on img{ animation:none; }
+  .plate__sheet img{ animation:none; }
   .plate__win{ transform:none; }
   .demo{ transition:none; }
 }
