@@ -1067,11 +1067,17 @@ body{ background:var(--void); color:var(--pure); font-family:var(--body);
    l'aperçu ressautait en haut pendant le fondu, puis repartait d'un coup.
    Ici chaque planche reprend exactement où on l'avait laissée. */
 .plate__sheet img{
-  animation:plateDrift 42s linear 1s infinite alternate;
+  animation:plateDrift var(--drift-t,24s) linear 1s infinite alternate;
   animation-play-state:paused;
 }
 .plate__sheet.is-on img{ animation-play-state:running; }
-@keyframes plateDrift{ from{ transform:translate3d(0,0,0); } to{ transform:translate3d(0,-46%,0); } }
+/* La course est en pixels, pas en pourcentage de l'image : à durée égale,
+   une capture deux fois plus haute dérivait deux fois plus vite. Le script
+   fixe la vitesse et en déduit la durée, projet par projet. */
+@keyframes plateDrift{
+  from{ transform:translate3d(0,0,0); }
+  to  { transform:translate3d(0,calc(var(--drift,0) * -1px),0); }
+}
 
 /* Le descriptif du projet survolé, sous la planche : les trois restent dans
    la page, seul celui de la ligne active est visible. */

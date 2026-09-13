@@ -269,6 +269,29 @@ function worksIndex(){
     btn.addEventListener('click', () => open(i));
   });
 
+  /* Dérive de l'aperçu : on fixe la vitesse, pas la durée. Les trois
+     captures n'ont pas la même hauteur — à durée commune, la plus longue
+     défilait presque deux fois plus vite que la plus courte. */
+  const DRIFT_SPEED = 62;                       // pixels par seconde
+  const win = document.querySelector('.plate__win');
+  const setDrift = () => {
+    if (!win) return;
+    const h = win.clientHeight;
+    sheets.forEach(sh => {
+      const im = sh.querySelector('img');
+      if (!im) return;
+      const travel = Math.max(0, im.offsetHeight - h);
+      im.style.setProperty('--drift', travel.toFixed(0));
+      im.style.setProperty('--drift-t', Math.max(6, travel / DRIFT_SPEED).toFixed(1) + 's');
+    });
+  };
+  setDrift();
+  addEventListener('resize', setDrift, { passive:true });
+  sheets.forEach(sh => {
+    const im = sh.querySelector('img');
+    if (im && !im.complete) im.addEventListener('load', setDrift, { once:true });
+  });
+
   /* Les planches 2 et 3 n'arrivent qu'à l'approche de la section : trois
      captures pleine page, ce n'est pas gratuit sur un forfait mobile. */
   new IntersectionObserver((es, o) => {
