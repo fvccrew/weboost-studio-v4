@@ -1047,8 +1047,13 @@ body{ background:var(--void); color:var(--pure); font-family:var(--body);
 /* ── La planche d'aperçu ── */
 .works__plate{ min-width:0; }
 .plate{ position:relative; width:min(100%,560px); margin-inline:auto; perspective:1500px; }
+/* Le cadre a exactement les proportions d'un écran de 1440 × 900 — celui sur
+   lequel les captures sont prises. Chaque planche montre donc le premier
+   écran du site, ni plus ni moins : à 1020 px de haut, MDZ Piscine, dont le
+   hero fait pile 900, laissait dépasser le début de la section suivante et
+   semblait déjà défilé. */
 .plate__win{
-  position:relative; width:100%; aspect-ratio:1440/1020;
+  position:relative; width:100%; aspect-ratio:1440/900;
   overflow:hidden; border-radius:5px; background:#0B0C0E;
   transform:rotateY(-13deg) rotateX(2deg); transform-origin:58% 50%;
   box-shadow:-42px 46px 120px rgba(0,0,0,.78), 0 0 0 1px rgba(255,255,255,.12);
