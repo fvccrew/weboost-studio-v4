@@ -269,9 +269,26 @@ function worksIndex(){
     rewind(sheets[i] && sheets[i].querySelector('img'));
     applyPlay();
   };
+  const charger = i => {
+    const im = sheets[i] && sheets[i].querySelector('img');
+    if (!im || !im.dataset.src) return;
+    im.src = im.dataset.src;
+    delete im.dataset.src;
+    // Le src n'est posé que maintenant : c'est ici qu'on peut écouter sa fin
+    // de chargement, pas au démarrage où `complete` vaut déjà true pour une
+    // image sans source.
+    im.addEventListener('load', () => { setDrift(); applyPlay(); }, { once:true });
+  };
+  const auRepos = window.requestIdleCallback || (f => setTimeout(f, 240));
+  const chargerLaSuite = i => {
+    if (i >= sheets.length) return;
+    charger(i);
+    auRepos(() => chargerLaSuite(i + 1));
+  };
+
   rows.forEach((r,i) => {
-    r.addEventListener('pointerenter', () => show(i));
-    r.querySelector('.idx__btn').addEventListener('focus', () => show(i));
+    r.addEventListener('pointerenter', () => { charger(i); show(i); });
+    r.querySelector('.idx__btn').addEventListener('focus', () => { charger(i); show(i); });
   });
 
   /* Dérive de l'aperçu : on fixe la vitesse, pas la durée. Les trois
@@ -318,21 +335,15 @@ function worksIndex(){
     applyPlay();
   }, { passive:true });
 
-  /* Les planches 2 et 3 n'arrivent qu'à l'approche de la section : trois
-     captures pleine page, ce n'est pas gratuit sur un forfait mobile. */
+  /* Les aperçus n'arrivent qu'à l'approche de la section, et un par un.
+     Les charger tous d'un coup faisait arriver quatre images en même temps
+     alors qu'une seule est visible ; les suivantes attendent un moment creux
+     du navigateur, ou le survol de leur ligne si le visiteur va plus vite. */
   new IntersectionObserver((es, o) => {
     if (!es[0].isIntersecting) return;
     o.disconnect();
-    sheets.forEach(s => {
-      const im = s.querySelector('img');
-      if (!im || !im.dataset.src) return;
-      im.src = im.dataset.src;
-      delete im.dataset.src;
-      // Le src n'est posé que maintenant : c'est ici qu'on peut écouter sa
-      // fin de chargement, pas au démarrage où `complete` vaut déjà true
-      // pour une image sans source.
-      im.addEventListener('load', () => { setDrift(); applyPlay(); }, { once:true });
-    });
+    charger(active);
+    auRepos(() => chargerLaSuite(0));
   }, { rootMargin:'400px' }).observe(idx);
 
   /* La dérive ne démarre qu'à l'arrivée du visiteur sur la section. Lancée au
